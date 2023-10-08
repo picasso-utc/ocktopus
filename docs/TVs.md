@@ -87,6 +87,7 @@ UML
 
 Les classes/objet en rouge ne sont pas utilisés actuellement et ne seront très certainement pas implémentés dans la prochaine version du serveur.
 Les classes/objet en gris ne sont pas utilisés actuellement MAIS seront très certainement implémentés dans la prochaine version du serveur.
+![](https://md.picasoft.net/uploads/upload_5883d25f7e2ec1550d56fc11e3afe50d.png)
 
 ```plantuml
 
