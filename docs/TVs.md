@@ -61,13 +61,3 @@ Chaque modèle peut être géré depuis le site web, il existe en effet un ongle
 * Média : on peut créer une nouvelle instance, consulter le contenu d'une instance déjà existante, faire varier l'attribut activate entre *true* et *false* ou modifier n'importe quel autre attribut (times, média, name).
 * URL : enfin, on peut créer, supprimer, ou modifier des links
 
-## URL
-
-## Inutile ?
-
-https://webtv.picasso-utc.fr/menu
-et donc le code dans views :
-```
-    51 def get_next_order_lines_for_tv(request)
-```
-
