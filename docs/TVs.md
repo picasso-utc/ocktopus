@@ -10,8 +10,8 @@ Gestion des télévisions et de leur affichage
     - les attributs : id{primary key}, link, lind_id, name
     - 2 instances le 01/10/2023
     - Exemple :
-    ``` {
-        {
+    ```json
+    {
         "id": 1,
         "link": {
             "id": 4,
@@ -21,12 +21,13 @@ Gestion des télévisions et de leur affichage
         "link_id": 4,
         "name": "Pic Bar"
     }
+    ```
 
 - Les liens :
     - les attributs : id {primary key}, url, name
     - Exemple :
-```    {
-        {
+```json 
+    {
         "id": 8,
         "url": "https://webtv.picasso-utc.fr/duelbrasseur",
         "name": "Duel Des brasseurs"
@@ -35,8 +36,8 @@ Gestion des télévisions et de leur affichage
 - Les médias :
     - les attributs : id {primary key}, media, name, type, activate, times
     - Exemple :
-```            {
-        {
+```json
+    {
         "id": 252,
         "media": "tv/RIPPOLAR.png",
         "name": "RIP POLAR",
