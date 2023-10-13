@@ -1,9 +1,3 @@
-
-TO DO :
-* comprendre les urls QRcode et Survey
-* Explique le webTvElo
-
-
 # Les TVs
 
 ## Les services
@@ -64,7 +58,7 @@ Explications :
 1. Pour le lien *defaut*, ce qui est affiché est en lien avec *les médias* (modèles 3). Parmi la liste de toutes les instances médias, seulement cette où l'attribut *activate* : true afficheront le contenu contenu dans l'*attribut* média. Si plusieurs instances sont activés, alors ce qui est affiché alterne entre les différents contenus, avec une alternance déterminé par l'attribut *times*.
 2. Pour le lien *menu*, il affiche les prochaines menus à servir de la manière suivant :
    ![](https://md.picasoft.net/uploads/upload_a60a8701fcad958433a2140b21a38c28.png)
-3. pour le lien *elo*
+3. pour le lien *elo*, il faut creuser ce qui se passe au niveau de elo pour comprendre (TODO)
 4. Pour *les autres* liens, c'est assez classique, c'est ce qui est contenu dans ce lien qui sera affiché sur la tv.
 
 ## Inutil(e)(isé)
