@@ -1,11 +1,3 @@
-TO DO :
-* Perms hallowen
-* Shotgun et astreintes
-* Goodies -> pq les goodies sont dans perm ??
-
-
-
-
 # Les perms
 
 
@@ -13,24 +5,31 @@ TO DO :
 ## Les services
 
 **Importante**
-* Notation des perms par les astreinteurs + affichage
 * Gérer le planning des perms du semestre
     * Gérer les perms
-        * En créer (leur nom, asso ou non, et le nom des responsables )
+        * En créer
         * En supprimer (si n'est pas associé à des créneaux)
     * Associer des perms à des créneaux
         * Ajouter, supprimer (si la perm n'a pas encore eu lieu)
     * Affichage de la liste des perms ainsi que du planning associé
+* Gérer les astreintes :
+    * Shotgun des atreintes
+    * Supprimer, ajouter des astreintes manuellement
 
 **Secondaire**
 * Envoie de mail automatisé
+* Notation des perms par les astreinteurs
+* La vente d'articles d'une Perm
 
-**Inutilisé**
-* Gérer les demandes de perms (voir requested Perms) -> à la place la team anim utilise aujourd'hui un couple google form/sheet
+**Inutil(e)(isé)**
+* Gérer les demandes de perms -> à la place la team anim utilise aujourd'hui un couple google form/sheet
 * La vente d'articles d'une Perm (dernière vente d'un *article* date de 2021)
+* Gérer les astreintes :
+    * Un onglet pour supprimer, ajouter des gens manuellement
 
 
-**Inutile**
+
+
 
 
 ## Les models
@@ -143,14 +142,14 @@ sur kraken/perm/model
 ```
 
 **Remarques** :
-* Ce n'est pas utilisé -> il faut essayer de comprend pourquoi (pas complétement implémenté ? pas pratique ? la team anim est au courant de cette fonctionalité ?)
+* Ce n'est pas utilisé -> il faut essayer de comprend pourquoi (pas complétement implémenté ? pas pratique ? la team anim est au courant de cette fonctionalité -> réponse : non.
 
 ---
 
 
 ### Les articles
 
-C'est liée au modèle menu
+Un article a un identifiant, un nom, correspond à un créneau et compose un menu. IL a un prix ainsi qu'un identifiant payut. On a aussi l'information du stock restant et du nombre de vente.
 
 ```    {
      {
@@ -169,7 +168,7 @@ C'est liée au modèle menu
     }
 ```
 ### Les menus
-
+Un menu est juste composé d'article
 
 ```{
     {
@@ -193,13 +192,100 @@ est lié aux TVs, plus précisment au lien : https://webtv.picasso-utc.fr/menu
 
 ![](https://md.picasoft.net/uploads/upload_49b2be093d21238dc866b1ba946a2139.png)
 
+---
+### Les astreintes
 
+Une astreinte correspond à un créneau, tenu par UN astreinteur (member), qui correspond à un certain type d'astreinte, et qui a différentes notes réalisés par l'astreinteur.
+
+Dans l'exemple suivant
+- On a une astreinte qui a un ID de 2798 qui permet de l'identifier.
+- On a le créneau qui est le soir, le 2023-10-23
+    - Dans ce créneau est aussi imbrique une perm (ici celle de MeetPic)
+- L'astreinteur est Noam Seuret
+- Et vu qu'il n'a pas encore noté la perm, toutes les notes sont à 0, et le commentaire est *null*.
+```{
+    {
+        "id": 2798,
+        "creneau": {
+            "id": 2914,
+            "perm": {
+                "id": 1512,
+                "creneaux": [
+                    "2023-10-13:S:2914",
+                    "2023-10-13:D:2913",
+                    "2023-10-13:M:2912"
+                ],
+                "nom": "MeetPIC",
+                "asso": false,
+                "nom_resp": "Lola CAIGNET",
+                "mail_resp": "lola.caignet@etu.utc.fr",
+                "nom_resp_2": "Alanna ACOSTA CHILELLI",
+                "mail_resp_2": "alanna.acosta",
+                "mail_asso": "",
+                "semestre": 24
+            },
+            "facturerecue_set": [],
+            "article_set": [],
+            "perm_id": 1512,
+            "date": "2023-10-13",
+            "creneau": "S",
+            "state": "N",
+            "montantTTCMaxAutorise": null
+        },
+        "creneau_id": 2914,
+        "member": {
+            "userright": {
+                "id": 168,
+                "login": "seuretno",
+                "right": "A",
+                "last_login": null,
+                "name": "Noam SEURET"
+            }
+        },
+        "member_id": 253,
+        "astreinte_type": "S2",
+        "note_deco": 0,
+        "note_orga": 0,
+        "note_anim": 0,
+        "note_menu": 0,
+        "commentaire": null
+    }
+```
+**Remarque** :
+- Il faut bien comprendre qu'un objet astreinte correspond à un créneau d'astreinte avec UN astreinteur. Il y a donc X objets astreintes pour un seul créneau astreinte
+- Les imbricrations semblent douteuses et très lourdes (à voir comment on peut optimiser ça avec Laravel)
+
+### Le shotgun (des astreintes)
+
+Les astreintes sont décidées par un shotgun. Il y a un onglet du site dédié à ça sur le site :
+
+![](https://md.picasoft.net/uploads/upload_b5d36c9ee1c7833397fa22748610e0e6.png)
+
+Pas une compréhension fine du modèle. J'imagine qu'il fut un temps ou quelqu'un devait lancer le shotgun avant que tout le monde puisse prendre sa place, mais ce n'est pas le cas aujourd'hui.
+```{
+class Shotgun(models.Model):
+    date = models.DateField(primary_key=True)
+    launched_by = models.ForeignKey(core_models.Member, on_delete=models.CASCADE)
+```
+Remarque :
+* bien pensé : une fois que quelqu'un a cliqué, on ne plus le remplacer contrairement à un google sheet.
+* PAS utilisé car le serveur ne supportait pas toutes les requêtes d'un coup
+* Pour modifier le shotgun, le seul moyen est de passer par l'onglet de gestion des astreintes
+
+#### Perm halloween :
+```
+class PermHalloween(models.Model):
+    article_id = models.IntegerField(default=0)
+    login = models.CharField(null=True, default=None, max_length=10)
+```
+Très peu d'informations sur ça mais n'a pas l'air important
 
 UML Perms
 ===
 Les classes/objet en rouge ne sont pas utilisés actuellement et ne seront très certainement pas implémentés dans la prochaine version du serveur
 
-![](https://md.picasoft.net/uploads/upload_c789ade4316e1557fa0c5dfc3536ff2f.png)
+![](https://md.picasoft.net/uploads/upload_2a4a1e7d39fc13c3ecb3a7bb3281d5bd.png)
+
 
 ```plantuml
 
@@ -229,10 +315,13 @@ class Menu #back:red;header:red
 
 }
 
+class Astreinte{
+
+}
+  
 class Perm{
 
 }
-    
 class RequestedPerm{
 
 }
@@ -243,6 +332,7 @@ class Creneaux{
 }
 
 Perm "0...1" o--o "0..3" Creneaux
+Creneaux "1" --o "0..3" Astreinte
 Article "1...*" o---o "0..*" Menu
 Creneaux "1" o--o "0...1" Menu
 Creneaux "1" o---o "0...*" Article
@@ -259,7 +349,7 @@ class webTvMenu #back:red;header:red
 {
 
 }
-    webTvMenu = liens: instance de <
+    webTvMenu .. liens: instance de >
 
 webTvMenu -  Menu 
  } 
