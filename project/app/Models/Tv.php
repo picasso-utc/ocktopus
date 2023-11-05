@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\belongsTo;
 
 class Tv extends Model
 {
+    protected $table = 'tv';
+
+    //protected $fillable = ['name', 'link_id'];
+
     use HasFactory;
-    public function link(): HasOne{
-        return $this->HasOne(Link::class);
+    public function link(): belongsTo{
+        return $this->belongsTo(Link::class);
     }
 }
