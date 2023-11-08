@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DefisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/getWinnerStatus/{login}', [DefisController::class, 'isPickedUp']);
+Route::post('/winner/select', [DefisController::class, 'getWinner']);
 
 Route::get('/', function () {
     return view('welcome');
