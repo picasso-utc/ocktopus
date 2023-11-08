@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DefisController;
+use App\Http\Controllers\GoodiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +14,8 @@ use App\Http\Controllers\DefisController;
 |
 */
 
-Route::get('/getWinnerStatus/{login}', [DefisController::class, 'isPickedUp']);
-Route::post('/winner/select', [DefisController::class, 'getWinner']);
+Route::get('/getWinnerStatus/{login}', [GoodiesController::class, 'isPickedUp']);
+Route::post('/winner/select', [GoodiesController::class, 'getWinner']);
 
 Route::get('/', function () {
     return view('welcome');

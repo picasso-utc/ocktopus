@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payutc;
 
-class DefisController extends Controller
+class GoodiesController extends Controller
 {
     public function getWinner()
     {
