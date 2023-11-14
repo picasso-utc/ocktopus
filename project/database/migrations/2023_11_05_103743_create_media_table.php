@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 50);
             $table->enum('media_type', ['Image', 'Video'])->default('Image');
-            $table->string('media')->nullable();//à retravailler
+            $table->string('media_path')->nullable();
             $table->boolean('activate')->default(false);
             $table->integer('times')->default(1);
             $table->timestamps();
