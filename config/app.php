@@ -59,6 +59,8 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'token_name' => env('TOKEN_COOKIE_NAME'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
