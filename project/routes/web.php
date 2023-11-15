@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiPayutcController;
+use App\Http\Controllers\GoodiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/payutc', function () {
+    return view('payutc');
 });
+
+Route::get('/get-goodies-winner', [GoodiesController::class, 'getWinner']);
