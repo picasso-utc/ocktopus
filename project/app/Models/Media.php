@@ -17,6 +17,7 @@ class Media extends Model
         'media_path',
         'activate',
         'times',
+        'duree',
     ];
 
     // Méthode pour stocker un média

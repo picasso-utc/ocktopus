@@ -21,36 +21,34 @@
     let mediaContainer = document.querySelector('.media-container');
     let img = mediaContainer.querySelector('img');
     let video = mediaContainer.querySelector('video');
-
+    console.log(medias)
     function showMedia() {
-        while (true) {
-            let media = medias[mediaIndex];
-            if (media.media_type === 'Image') {
-                img.src = media.media_path;
-                img.alt = media.name;
-                img.style.display = 'block';
-                video.style.display = 'none';
-            } else if (media.media_type === 'Video') {
-                video.querySelector('source').src = media.media_path;
-                img.style.display = 'none';
-                video.style.display = 'block';
-                video.load();
-            }
+        let media = medias[mediaIndex];
+        if (media.media_type === 'Image') {
 
-            mediaIndex++;
-
-            if (mediaIndex >= medias.length) {
-                mediaIndex = 0;
-            }
-            setTimeout(showMedia, media.times * (media.media_type === 'Image' ? 100 : (3 * 1000)));
-            //setTimeout(showMedia, media.times * 100);
-            break;
+            img.src = "{{ route('image', ['url' => '']) }}/" + media.media_path;
+            img.alt = media.name;
+            img.style.display = 'block';
+            video.style.display = 'none';
+        } else if (media.media_type === 'Video') {
+            video.querySelector('source').src = "{{ route('image', ['url' => '']) }}/" + media.media_path; img.style.display = 'none';
+            video.style.display = 'block';
+            video.load();
         }
+
+        mediaIndex++;
+
+        if (mediaIndex >= medias.length) {
+            mediaIndex = 0;
+
+        }
+        setTimeout(showMedia, media.times * (media.media_type === 'Image' ? 1000 : (media.duree * 1000))); //s'assurer que ça crée pas de fuite mémoire
+
     }
 
 
-
     showMedia();
+
 </script>
 </body>
 </html>
