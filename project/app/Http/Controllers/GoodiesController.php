@@ -17,8 +17,10 @@ class GoodiesController extends Controller
 
     public function getWinner()
     {
-        $response = $this->client->makePayutcRequest('GET', 'transactions');
-        $session = $this->client->getSession();
+        $response = $this->client->makePayutcRequest('GET', 'transactions', [
+            'created__gt' => "2023-11-15T07:15:00.000000Z",
+            'created__lt' => "2023-11-15T16:10:00.000000Z",
+        ]);
         dd($response);
     }
 }
