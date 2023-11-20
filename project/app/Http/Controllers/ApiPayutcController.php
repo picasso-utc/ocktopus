@@ -30,8 +30,8 @@ class ApiPayutcController extends Controller
 
             // Les en-têtes communs à toutes les requêtes sont configurés ici.
             'headers' => [
-                'Content-Type' => 'application/json', // Le type de contenu est défini à 'application/json'.
-                'Accept' => 'application/json',       // L'en-tête Accept est défini à 'application/json'.
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
             ],
         ]);
     }
