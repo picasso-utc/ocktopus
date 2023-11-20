@@ -24,6 +24,10 @@ class User extends Authenticatable
         'role',
     ];
 
+    protected $hidden = [
+        'uuid',
+    ];
+
     protected $casts = [
         'name' => 'string',
         'email' => 'string',

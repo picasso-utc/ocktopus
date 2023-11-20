@@ -15,7 +15,7 @@ enum MemberRole : string
 
     public function isMember(): bool
     {
-        return $this === self::Member;
+        return $this === self::Member || $this->isAdministrator();
     }
 
     public function title(): string

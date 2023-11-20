@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\MemberRole;
+use App\Models\User;
 use Closure;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -42,8 +44,41 @@ class Auth
         } catch (UnexpectedValueException) {
             return response()->json(['message'=>'Error having to do with JWT signature and claims','JWT_ERROR'=>true],401);
         }
-        //$resource Owner a les infos de l'utilisateur
-        dd($decoded_uuid);
+
+        $response = Http::withToken($token)->get('https://auth.assos.utc.fr/api/user/associations/current');
+        if($response->failed()){
+            return response()->json(['message'=>'Error while getting user infos','JWT_ERROR'=>true],401);
+        }
+        $userAssos=$response->json();
+
+        $adminStatus = MemberRole::None;
+        foreach ($userAssos as $asso) {
+            if ($asso['login'] == 'picasso') {
+                $adminStatus = MemberRole::Member;
+                if ($asso['user_role']['type'] == 'developer') {
+                    $adminStatus = MemberRole::Administrator;
+                }
+                break;
+            }
+        }
+
+        if ($adminStatus != MemberRole::None) {
+            $response = Http::withToken($token)->get('https://auth.assos.utc.fr/api/user/ginger');
+            if ($response->failed()) {
+                return response()->json(['message' => 'Error while getting user infos', 'JWT_ERROR' => true], 401);
+            }
+            $userInfos = $response->json();
+
+            $user = User::firstOrCreate(
+                [
+                    'uuid' => $decoded_uuid,
+                    'cas' => $userInfos['login'],
+                    'email' => $userInfos['mail'],
+                    'role' => $adminStatus,
+                ]
+            );
+        }
+
         return $next($request);
     }
 }
