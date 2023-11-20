@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/',function () {
     return view('welcome');
 });
+
+Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
+    return view('welcome');
+})->name("test");
+
+Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');

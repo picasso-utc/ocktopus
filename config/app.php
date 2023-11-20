@@ -59,6 +59,14 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'token_name' => env('TOKEN_COOKIE_NAME'),
+
+    'OAUTH_clientId' => env('OAUTH_CLIENT_ID'),
+    'OAUTH_clientSecret' => env('OAUTH_CLIENT_SECRET'),
+    'OAUTH_redirectUri' => env('APP_ENV')== 'prod' ? env('OAUTH_REDIRECT_URI'):'http://localhost:8000/auth',
+
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
