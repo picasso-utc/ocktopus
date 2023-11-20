@@ -11,9 +11,9 @@ class Connexion extends Controller
 {
     public function auth(Request $request){
         $provider = new \League\OAuth2\Client\Provider\GenericProvider([
-            "clientId" => "9a9d319d-1507-4bf9-9649-03f1f483df20",
-            "clientSecret" => "1c0ad6d93e2998c8de87f62bfdb4657acb8ed6e1de3e3d80f6a7b5350fcf03e6",
-            "redirectUri" => "http://localhost:8000/auth",
+            "clientId" => config('app.OAUTH_clientId'),
+            "clientSecret" => config('app.OAUTH_clientSecret'),
+            "redirectUri" => config('app.OAUTH_redirectUri'),
             "urlAuthorize" => "https://auth.assos.utc.fr/oauth/authorize",
             "urlAccessToken" => "https://auth.assos.utc.fr/oauth/token",
             "urlResourceOwnerDetails" => "https://auth.assos.utc.fr/api/user",

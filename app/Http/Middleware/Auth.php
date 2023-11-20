@@ -3,10 +3,16 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use League\OAuth2\Client\Token\AccessToken;
+use UnexpectedValueException;
 
 class Auth
 {
@@ -17,30 +23,27 @@ class Auth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $provider = new \League\OAuth2\Client\Provider\GenericProvider([
-            "clientId" => "9a9d319d-1507-4bf9-9649-03f1f483df20",
-            "clientSecret" => "1c0ad6d93e2998c8de87f62bfdb4657acb8ed6e1de3e3d80f6a7b5350fcf03e6",
-            "redirectUri" => "http://localhost:8000/auth",
-            "urlAuthorize" => "https://auth.assos.utc.fr/oauth/authorize",
-            "urlAccessToken" => "https://auth.assos.utc.fr/oauth/token",
-            "urlResourceOwnerDetails" => "https://auth.assos.utc.fr/api/user",
-            "scopes" => "users-infos read-assos read-memberships",
-            "baseUrl" => "https://auth.assos.utc.fr/api/user"
-        ]);
         $token = $request->cookie(config('app.token_name'));
         if($token==null){
             $cookie_route=cookie('route',$request->route()->getName(),10);
             return redirect()->route('auth_route')->withCookie($cookie_route);
         }
-        $access_token = new AccessToken(['access_token'=>$token]);
-        /* Il faut encore réussir a test pour la validité du token
-         * if($access_token->hasExpired()){
-            $cookie_route=cookie('route',$request->route()->getName(),10);
-            return redirect()->route('auth_route')->withCookie($cookie_route)->withoutCookie(config('app.token_name'));
+        try{
+            $public_key_path=storage_path('app/keys/public.key');
+            $public_key=openssl_get_publickey('file://' . $public_key_path);
+            $decoded_uuid = JWT::decode($token,new Key($public_key,'RS256'))->sub;
+        }catch(ExpiredException){
+            return response()->json(['message'=>'Json Web Token Expired','JWT_ERROR'=>true],401);
+        }catch(SignatureInvalidException){
+            return response()->json(['message'=>'Invalid Signature In Sent Json Web Token','JWT_ERROR'=>true],401);
+        }catch (LogicException) {
+            // errors having to do with environmental setup or malformed JWT Keys
+            return response()->json(['message'=>'Error having to do with environmental setup or malformed JWT Keys','JWT_ERROR'=>true],401);
+        } catch (UnexpectedValueException) {
+            return response()->json(['message'=>'Error having to do with JWT signature and claims','JWT_ERROR'=>true],401);
         }
-        */
-        $resourceOwner = $provider->getResourceOwner($access_token);
-        dd($resourceOwner);
+        //$resource Owner a les infos de l'utilisateur
+        dd($decoded_uuid);
         return $next($request);
     }
 }
