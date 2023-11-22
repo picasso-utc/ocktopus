@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MemberRole;
+use App\Models\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
@@ -14,9 +20,9 @@ class Connexion extends Controller
      * Handle the authentication process.
      *
      * @param Request $request
-     * @return RedirectResponse|Redirector
+     * @return mixed
      */
-    public function auth(Request $request): Redirector|RedirectResponse
+    public function auth(Request $request): mixed
     {
         $provider = new \League\OAuth2\Client\Provider\GenericProvider([
             "clientId" => config('app.OAUTH_clientId'),
@@ -45,6 +51,40 @@ class Connexion extends Controller
                 $accessToken = $provider->getAccessToken('authorization_code', [
                     'code' => $request->input('code'),
                 ]);
+
+                $userData = $provider->getResourceOwner($accessToken);
+
+                // Make a request to the authentication server to get user associations
+                $response = Http::withToken($accessToken)->get('https://auth.assos.utc.fr/api/user/associations/current');
+
+                if($response->failed()){
+                    return response()->json(['message'=>'Error while getting user infos','JWT_ERROR'=>true],401);
+                }
+
+                $userAssos = $response->json();
+
+                $adminStatus = MemberRole::None;
+                // Check if the user is a member or administrator of the picasso
+                foreach ($userAssos as $asso) {
+                    if ($asso['login'] == 'picasso') {
+                        $adminStatus = MemberRole::Member;
+                        if ($asso['user_role']['type'] == 'developer') {
+                            $adminStatus = MemberRole::Administrator;
+                        }
+                        break;
+                    }
+                }
+
+                // If the user is a member or administrator of 'picasso', proceed to fetch additional user information
+                if ($adminStatus != MemberRole::None) {
+                    User::firstOrCreate(
+                        ['uuid' => $accessToken->getToken()],
+                        [
+                            'email' => $userData->toArray()["email"],
+                            'role' => $adminStatus,
+                        ]
+                    );
+                }
 
                 // Create a cookie with the access token and set its expiration time to 1440 minutes (24 hours)
                 $cookie = cookie(config('app.token_name'), $accessToken, 1440);
