@@ -37,6 +37,7 @@ class Auth
             $public_key_path = storage_path('app/keys/public.key');
             $public_key = openssl_get_publickey('file://' . $public_key_path);
             $decoded_uuid = JWT::decode($token, new Key($public_key, 'RS256'))->sub;
+            dd($decoded_uuid);
         } catch (ExpiredException) {
             return response()->json(['message' => 'Json Web Token Expired', 'JWT_ERROR' => true], 401);
         } catch (SignatureInvalidException) {

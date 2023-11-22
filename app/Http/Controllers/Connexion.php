@@ -4,12 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\MemberRole;
 use App\Models\User;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -53,7 +48,6 @@ class Connexion extends Controller
                 ]);
 
                 $userData = $provider->getResourceOwner($accessToken);
-
                 // Make a request to the authentication server to get user associations
                 $response = Http::withToken($accessToken)->get('https://auth.assos.utc.fr/api/user/associations/current');
 
@@ -78,7 +72,7 @@ class Connexion extends Controller
                 // If the user is a member or administrator of 'picasso', proceed to fetch additional user information
                 if ($adminStatus != MemberRole::None) {
                     User::firstOrCreate(
-                        ['uuid' => $accessToken->getToken()],
+                        ['uuid' => $userData->toArray()["uuid"]],
                         [
                             'email' => $userData->toArray()["email"],
                             'role' => $adminStatus,
