@@ -53,7 +53,6 @@ class GingerClient
         $uri = $this->config['url'] . $path;
         $key = $this->config['key'];
 
-        // Add the API key as a parameter
         $parameters['key'] = $key;
 
         $response = Http::{$method}($uri, $parameters);
