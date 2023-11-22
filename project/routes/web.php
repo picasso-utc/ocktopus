@@ -18,10 +18,30 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/TV', [\App\Http\Controllers\MediaController::class, 'index'])->name('TV.index');
-Route::get('/TV/content', [\App\Http\Controllers\MediaController::class, 'content']);
-Route::get('/TV/create',[\App\Http\Controllers\MediaController::class, 'create'])->name('media.create');
+//**************************************************************************************************//
+//*********************************Gestion des TVs*************************************************//
+//*************************************************************************************************//
+
+
+// ------------------------------------------------------------------------------------------------- //
+
+// -----------------------------------Gestion des Médias------------------------------------------- //
+
+Route::get('/TV/content', [\App\Http\Controllers\MediaController::class, 'content'])->name('TV.content');
+Route::get('/TV/medias/', [\App\Http\Controllers\MediaController::class, 'medias'])->name('TV.medias');
+
+Route::get('/TV/medias/create',[\App\Http\Controllers\MediaController::class, 'create'])->name('media.create');
 Route::post('/TV/store',[\App\Http\Controllers\MediaController::class, 'store'])->name('media.store');
+
+Route::get('/TV/medias/edit/{media}',[\App\Http\Controllers\MediaController::class, 'edit'])->name('media.edit');
+Route::put('/TV/medias/{media}',[\App\Http\Controllers\MediaController::class, 'update'])->name('media.update');
+Route::delete('/TV/medias/{media}',[\App\Http\Controllers\MediaController::class, 'destroy'])->name('media.destroy');
+
+// ------------------------------------------------------------------------------------------------- //
+
+// -----------------------------------Gestion des Liens------------------------------------------- //
+
+//Route::get('/TV/medias', [\App\Http\Controllers\LinkController::class, 'liens'])->name('TV.liens');
 
 
 

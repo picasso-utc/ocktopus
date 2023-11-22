@@ -6,21 +6,35 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ajouter des médias</title>
     <script>
-        async function getVideoDuration(file) { //obtenir la durée d'un fichier
+        // A COMPRENDRE CAR RECUP SUR INTERNET MEME SI JE COMPREND LES GRANDES LES LIGNES
+        async function getVideoDuration(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    const media = new Audio(reader.result);
-                    media.onloadedmetadata = () => resolve(media.duration);
+                    const blob = new Blob([reader.result], { type: file.type });
+                    const video = document.createElement('video');
+
+                    video.onloadedmetadata = () => {
+                        window.URL.revokeObjectURL(video.src);
+                        resolve(video.duration);
+                    };
+
+                    video.onerror = (error) => {
+                        window.URL.revokeObjectURL(video.src);
+                        reject(error);
+                    };
+
+                    video.src = window.URL.createObjectURL(blob);
                 };
-                reader.readAsDataURL(file);
+
+                reader.readAsArrayBuffer(file);
                 reader.onerror = (error) => reject(error);
             });
         }
 
-        async function handleChange(e) { //Déclenche la recherche de duree  à partir du moment où un fichier est chargé
+        async function handleChange(e) {
             const duration = await getVideoDuration(e.target.files[0]);
-            document.getElementById('duree').value = Math.round(duration);
+            document.getElementById('duree').value = duration;
         }
     </script>
 </head>
@@ -48,7 +62,7 @@
 
     <div id="duration_input" style="display: none;">
         <label for="duree">Durée (en secondes) :</label>
-        <input type="number" name="duree" id="duree" readonly>
+        <input type="number"  step="0.01"  name="duree" id="duree" readonly>
     </div>
 
     <button type="submit">Ajouter le média</button>

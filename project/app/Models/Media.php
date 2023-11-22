@@ -20,12 +20,4 @@ class Media extends Model
         'duree',
     ];
 
-    // Méthode pour stocker un média
-    public function storeMedia($file)
-    {
-        $path = $file->store('media');
-        $this->media_path = $path;
-        $this->save();
-    }
-
 }
