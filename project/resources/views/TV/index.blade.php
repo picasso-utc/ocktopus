@@ -5,50 +5,13 @@
     <title>TV</title>
 </head>
 <body>
-
-<div class="media-container" style="display: flex; justify-content: center; align-items: center; flex: 1 1 0%; height: 100vh; background: rgb(0, 0, 0); position: absolute; inset: 0px;">
-    <img src="{{ isset($medias[0]) && $medias[0]->media_type === 'Image' ? $medias[0]->media_path : '' }}" alt="{{ isset($medias[0]) ? $medias[0]->name : '' }}" style="max-width: 100vw; max-height: 100vh;
-     @if (isset($medias[0]) && $medias[0]->media_type === 'Video') display: none; @endif">
-    <video controls width="100%" height="auto" @if (!(isset($medias[0]) && $medias[0]->media_type === 'Video')) style="display: none;" @endif autoplay loop="{{ $medias[0]->times }}">
-        <source src="{{ isset($medias[0]) && $medias[0]->media_type === 'Video' ? $medias[0]->media_path : '' }}" type="video/mp4" style="max-width: 100vw; max-height: 100vh;">
-        Votre navigateur ne prend pas en charge la vidéo.
-    </video>
-</div>
-
-<script>
-    let medias = @json($medias);
-    let mediaIndex = 0;
-    let mediaContainer = document.querySelector('.media-container');
-    let img = mediaContainer.querySelector('img');
-    let video = mediaContainer.querySelector('video');
-    console.log(medias)
-    function showMedia() {
-        let media = medias[mediaIndex];
-        if (media.media_type === 'Image') {
-
-            img.src = "{{ route('image', ['url' => '']) }}/" + media.media_path;
-            img.alt = media.name;
-            img.style.display = 'block';
-            video.style.display = 'none';
-        } else if (media.media_type === 'Video') {
-            video.querySelector('source').src = "{{ route('image', ['url' => '']) }}/" + media.media_path; img.style.display = 'none';
-            video.style.display = 'block';
-            video.load();
-        }
-
-        mediaIndex++;
-
-        if (mediaIndex >= medias.length) {
-            mediaIndex = 0;
-
-        }
-        setTimeout(showMedia, media.times * (media.media_type === 'Image' ? 1000 : (media.duree * 1000))); //s'assurer que ça crée pas de fuite mémoire
-
-    }
-
-
-    showMedia();
-
-</script>
+<h1>Gestion des TVs, des liens et des médias</h1>
+<p>
+    <a href="{{route('TV.tvs')}}">Gestion des TVs</a>
+    <br>
+    <a href="{{route('TV.medias')}}">Gestion des medias</a>
+    <br>
+    <a href="{{route('TV.links')}}">Gestion des liens</a>
+</p>
 </body>
 </html>
