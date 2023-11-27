@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class FactureRecue extends Model
 {
     use HasFactory;
+
+    protected $table ='facture_recues';
     protected $fillable = [
         'tva', 'prix', 'perm_id', 'etat', 'nom_entreprise', 'date',
         'date_created', 'date_paiement', 'date_remboursement', 'moyen_paiement',
