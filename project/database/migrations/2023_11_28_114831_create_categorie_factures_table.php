@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorie_facture_recues', function (Blueprint $table) {
+        Schema::create('categorie_factures', function (Blueprint $table) {
             $table->id();
             $table->string('nom', 255);
             $table->string('code', 1)->unique();
+            $table->bigInteger('parent_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('parent_id')
+                ->references('id')
+                ->on('categorie_facture')
+                ->onDelete('cascade')
+                ->nullable();
         });
     }
 
@@ -24,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorie_facture_recues');
+        Schema::dropIfExists('categorie_factures');
     }
 };
