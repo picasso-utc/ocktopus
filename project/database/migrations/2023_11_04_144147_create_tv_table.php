@@ -14,13 +14,13 @@ return new class extends Migration
     {
         Schema::create('tv', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 50);
             $table->foreignIdFor(model: Link::class, column: 'link_id')
                 ->nullable()
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('set null');
-            $table->timestamps(); //par default
+            $table->timestamps();
         });
     }
 
