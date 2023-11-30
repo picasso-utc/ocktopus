@@ -16,10 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 50);
             $table->foreignIdFor(model: Link::class, column: 'link_id')
-                ->nullable()
-                ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+                ->nullable();
             $table->timestamps();
         });
     }
