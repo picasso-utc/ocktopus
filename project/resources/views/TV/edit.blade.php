@@ -9,7 +9,7 @@
 
 <body>
 
-    <form action="{{route('tv.update', $tv)}}"  method ="POST">
+    <form action="{{route('TV.update', $tv)}}"  method ="POST">
         @csrf
         @method('PUT')
         <label for="selected_link">Choisir un lien :</label>

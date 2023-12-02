@@ -9,13 +9,14 @@
 </head>
 <body>
 <p>
+    <a href="{{route('TV.create')}}">ajouter une TV</a>
 </p>
 <br>
 @foreach($tvs as $tv)
     <p>
         {{$tv->name}} : <a href="{{ route('TV.show', $tv) }}">Visualiser</a>    </p>
     <p>
-        <a href="{{route('tv.edit', $tv) }}">Editer</a>
+        <a href="{{route('TV.edit', $tv) }}">Editer</a>
 
     </p>
     <br>

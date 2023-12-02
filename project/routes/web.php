@@ -55,8 +55,10 @@ Route::delete('/TV/links/{link}',[\App\Http\Controllers\LinkController::class, '
 // -----------------------------------Gestion des TVs------------------------------------------- //
 
 Route::get('/TV/tvs', [\App\Http\Controllers\TvController::class, 'TVs'])->name('TV.tvs');
-Route::get('/TV/edit/{tv}',[\App\Http\Controllers\TvController::class, 'edit'])->name('tv.edit');
-Route::put('/TV/update/{tv}',[\App\Http\Controllers\TvController::class, 'update'])->name('tv.update');
+Route::get('/TV/create', [\App\Http\Controllers\TvController::class, 'create'])->name('TV.create');
+Route::post('/TV/store', [\App\Http\Controllers\TvController::class, 'store'])->name('TV.store');
+Route::get('/TV/edit/{tv}',[\App\Http\Controllers\TvController::class, 'edit'])->name('TV.edit');
+Route::put('/TV/update/{tv}',[\App\Http\Controllers\TvController::class, 'update'])->name('TV.update');
 Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show'])->name('TV.show');
 
 // ------------------------------------------------------------------------------------------------- //

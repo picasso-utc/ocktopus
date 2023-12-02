@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use App\Enums\MediaType;
 
 class Media extends Model
 {
@@ -15,9 +15,12 @@ class Media extends Model
         'name',
         'media_type',
         'media_path',
-        'activate',
+        'activated',
         'times',
         'duree',
+    ];
+    protected $enums = [
+        'media_type' => MediaType::class,
     ];
 
 }
