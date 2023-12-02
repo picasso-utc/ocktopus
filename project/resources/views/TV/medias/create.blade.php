@@ -6,19 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ajouter des médias</title>
     <script>
-        // A COMPRENDRE CAR RECUP SUR INTERNET MEME SI JE COMPREND LES GRANDES LES LIGNES
+        // Fonction asynchrone pour obtenir la durée d'une vidéo à partir d'un fichier
         async function getVideoDuration(file) {
             return new Promise((resolve, reject) => {
+                // Utilisation de FileReader pour lire le fichier vidéo
                 const reader = new FileReader();
                 reader.onload = () => {
+                    // Création d'un blob ((Binary Large Object) à partir des données lues
                     const blob = new Blob([reader.result], { type: file.type });
                     const video = document.createElement('video');
 
+                    // Lorsque les métadonnées de la vidéo sont chargées
                     video.onloadedmetadata = () => {
+                        // Libération de l'URL de l'objet vidéo
                         window.URL.revokeObjectURL(video.src);
+                        // Résolution de la promesse avec la durée de la vidéo
                         resolve(video.duration);
                     };
-
+                    //gestion des erreur
                     video.onerror = (error) => {
                         window.URL.revokeObjectURL(video.src);
                         reject(error);
