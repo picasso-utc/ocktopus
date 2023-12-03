@@ -7,7 +7,7 @@
 <body>
 @if(isset($medias[0]))
     <div class="media-container" style="display: flex; justify-content: center; align-items: center; flex: 1 1 0%; height: 100vh; background: rgb(0, 0, 0); position: absolute; inset: 0px;">
-        <img src="{{ isset($medias[0]) && $medias[0]->media_type === 'Image' ? $medias[0]->media_path : '' }}" alt="{{ isset($medias[0]) ? $medias[0]->name : '' }}" style="max-width: 100vw; max-height: 100vh;
+        <img src="{{isset($medias[0]) && $medias[0]->media_type === 'Image' ? $medias[0]->media_path : '' }}" alt="{{ isset($medias[0]) ? $medias[0]->name : '' }}" style="max-width: 100vw; max-height: 100vh;
      @if (isset($medias[0]) && $medias[0]->media_type === 'Video') display: none; @endif">
         <video controls width="100%" height="auto" @if (!(isset($medias[0]) && $medias[0]->media_type === 'Video')) style="display: none;" @endif autoplay loop="{{ $medias[0]->times }}">
             <source src="{{ isset($medias[0]) && $medias[0]->media_type === 'Video' ? $medias[0]->media_path : '' }}" type="video/mp4" style="max-width: 100vw; max-height: 100vh;">

@@ -63,7 +63,7 @@ class TvController extends Controller
         $tv->save();
         return to_route('TV.tvs');
     }
-    public function edit(Request $request, Tv $tv){
+    public function edit(Tv $tv){
         /*
          * retourne la vue pour modifier la TV
          */
