@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GoodiesWinner;
 use App\Http\Controllers\ApiPayutcController;
 use Illuminate\Support\Facades\Http;
 
@@ -15,11 +14,27 @@ class GoodiesController extends Controller
         $this->client = $client;
     }
 
-    public function getWinner()
+    public function createTop()
     {
+        $dateString = "2023-11-15T07:15:00.000000Z";
+        $date = new DateTime($dateString);
+
+        $month = $date->format('m');
+        $year = $date->format('y');
+
+        if ($month >= 1 && $month <= 2) {
+            $year--;
+        }
+
+        if ($month >= 3 && $month <= 8) {
+            $dateStart->setDate($year, 3, 1)
+        } else {
+            $dateStart->setDate($year, 9, 1)
+        }
+
         $response = $this->client->makePayutcRequest('GET', 'transactions', [
-            'created__gt' => "2023-11-15T07:15:00.000000Z",
-            'created__lt' => "2023-11-15T16:10:00.000000Z",
+            'created__gt' => $dateStart,
+            'created__lt' => $date,
         ]);
         $responseData = $response->getContent();
         $jsonData = json_decode($responseData, true);
