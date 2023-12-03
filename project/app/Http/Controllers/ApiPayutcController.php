@@ -62,8 +62,6 @@ class ApiPayutcController extends Controller
                 // Construction des paramètres de requête en fusionnant les options avec les valeurs par défaut
                 $query = array_merge([
                     'sessionid' => $session_id,
-                    'offset' => $currentPage*500,
-                    'limit' => 500,
                 ], $options);
 
                 // Configuration de la requête
@@ -95,7 +93,7 @@ class ApiPayutcController extends Controller
                 }
 
             // Continue tant que le nombre d'éléments dans la réponse est égal au nombre attendu par page
-            } while ($currentPage != 2);
+            } while ($currentPage != 1);
 
             // Retour d'une réponse JSON avec l'ensemble des données
             return response()->json($allData);
