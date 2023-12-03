@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiPayutcController;
+use App\Http\Controllers\GoodiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +26,9 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
+
+Route::get('/payutc', function () {
+    return view('payutc');
+});
+
+Route::get('/get-goodies-winner', [GoodiesController::class, 'getWinner']);
