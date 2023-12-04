@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoodiesWinner;
-use App\Http\Controllers\ApiPayutcController;
+use App\Http\Controllers\ApiPayutcClient;
 use Illuminate\Support\Facades\Http;
 
 class GoodiesController extends Controller
 {
-    private ApiPayutcController $client;
+    private ApiPayutcClient $client;
 
-    public function __construct(ApiPayutcController $client)
+    public function __construct(ApiPayutcClient $client)
     {
         $this->client = $client;
     }

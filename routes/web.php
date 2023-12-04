@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ApiPayutcController;
 use App\Http\Controllers\GoodiesController;
+use App\Http\Controllers\TopController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +27,6 @@ Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_
 
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
 
-Route::get('/payutc', function () {
-    return view('payutc');
-});
-
 Route::get('/get-goodies-winner', [GoodiesController::class, 'getWinner']);
+
+Route::get('/get-top', [TopController::class, 'getTop']);

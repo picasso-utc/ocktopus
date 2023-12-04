@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 
-class ApiPayutcController extends Controller
+class ApiPayutcClient extends Controller
 {
     public function __construct()
     {

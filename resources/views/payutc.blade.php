@@ -30,7 +30,6 @@
         })
         .catch(error => {
             console.error('Erreur lors de la requête Payutc :', error);
-            // Display an error message to the user
             document.getElementById('payutcResponse').innerText = 'Erreur lors de la requête Payutc.';
         });
 });
