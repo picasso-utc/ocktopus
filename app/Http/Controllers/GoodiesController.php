@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoodiesWinner;
-use App\Http\Controllers\ApiPayutcClient;
+use App\Services\ApiPayutcClient;
 use Illuminate\Support\Facades\Http;
 
 class GoodiesController extends Controller

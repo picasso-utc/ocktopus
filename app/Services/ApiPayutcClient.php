@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 
-class ApiPayutcClient extends Controller
+class ApiPayutcClient
 {
     public function __construct()
     {

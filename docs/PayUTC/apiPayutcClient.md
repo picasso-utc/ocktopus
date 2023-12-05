@@ -6,7 +6,7 @@ Le service ApiPayutc permet d'interagir avec l'API Payutc de weez pour obtenir d
 Le service nécessite l'initialisation avec les informations APP_KEY, SYSTEM_ID, PASSWORD, LOGIN, FUNDATION_ID, API_URL. Ces informations sont récupérées à partir des variables d'environnement. Assurez-vous que ces variables d'environnement sont définies dans votre configuration (fichier .env).
 
 ```php
-use App\Http\Controllers\ApiPayutcClient;
+use App\Services\ApiPayutcClient;
 
 // Initialisation du service GingerClient
 
@@ -60,7 +60,7 @@ $session_id = $this->getSession();
 Voici comment vous pouvez utiliser le service GingerClient dans un contrôleur Laravel.
 
 ```php
-use App\Http\Controllers\ApiPayutcClient;
+use App\Services\ApiPayutcClient;
 
 class GoodiesController extends Controller
 {

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\ApiPayutcClient;
+use App\Services\ApiPayutcClient;
 use Illuminate\Support\Facades\Http;
 use DateTime;
 
