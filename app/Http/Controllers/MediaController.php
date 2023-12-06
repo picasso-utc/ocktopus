@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
-use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -54,7 +53,6 @@ class MediaController extends Controller
                 'file',
                 'mimes:' . ($request->input('media_type') === 'Video' ? 'mp4' : 'jpeg,png'),
             ],
-            'duree' => 'required_if:media_type,Video',
         ]);
 
         $media = new Media([
@@ -68,10 +66,7 @@ class MediaController extends Controller
         $mediaPath = $request->file('media_path')->store('TV', 'public');
         $media->media_path = $mediaPath;
 
-        // met à jour la durée si le média est de type "Vidéo"
-        if ($request->media_type === 'Video') {
-            $media->duree = $request->duree;
-        }
+
 
         $media->save();
         return to_route('TV.medias');
@@ -106,9 +101,7 @@ class MediaController extends Controller
             $media->update([
                 'media_path' => $newMediaPath,
             ]);
-            if ($media->media_type === 'Video') { //si on a changé de média et que l'on a affaire une vidéo
-                $media->update(['duree' => $request->duree]);
-            }
+
         }
         $media->update([
             'name'=>$request->name,

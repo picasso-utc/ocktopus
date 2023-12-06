@@ -17,10 +17,7 @@ class Media extends Model
         'media_path',
         'activated',
         'times',
-        'duree',
     ];
-    protected $enums = [
-        'media_type' => MediaType::class,
-    ];
+
 
 }

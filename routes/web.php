@@ -80,3 +80,11 @@ Route::prefix('/image')->group(function () {
         return response()->json(['message' => 'Image not found'], 404);
     })->name('image');
 });
+
+
+
+Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
+    return view('welcome');
+})->name("test");
+Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
+Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
