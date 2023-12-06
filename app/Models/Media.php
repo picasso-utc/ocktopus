@@ -19,5 +19,7 @@ class Media extends Model
         'times',
     ];
 
-
+    protected $casts = [
+        'media_type' => MediaType::class,
+    ];
 }
