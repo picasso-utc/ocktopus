@@ -28,19 +28,23 @@
     let video = mediaContainer.querySelector('video');
     let times=0;
     video.addEventListener('loadedmetadata', () => {
-        console.log("Video metadata loaded. Duration:", video.duration);
+        // video.play va déclencher à la fin de la video le listener ended
         video.play();
     })
     video.addEventListener('ended', async () => {
+        //à chaque fois que la vidéo a terminé on décremente
         if(times>1){
             times--
+            //et si c'est il faut encore jouer la vidéo, alors on la recharge
             video.load();
         }
         else{
+            //sinon on passe au média suivant
             mediaIndex++;
             if (mediaIndex >= medias.length) {
                 mediaIndex = 0;
             }
+            //et on relance la fonction showMedia
             showMedia()
             //gerer prochain media
         };
@@ -59,7 +63,9 @@
             video.querySelector('source').src = "{{ route('image', ['url' => '']) }}/" + media.media_path;
             img.style.display = 'none';
             video.style.display = 'block';
+            //on initialise la variable times avec le nombre de fois que doit être joué la vidéo
             times = media.times;
+            //video.load déclenche le listener loadedmetadata
             video.load();
         }
 

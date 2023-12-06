@@ -83,11 +83,10 @@ class LinkController extends Controller
     /**
      * Détruit le lien.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Link  $link
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request, Link $link)
+    public function destroy(Link $link)
     {
         $link->delete();
         return to_route('TV.links');
