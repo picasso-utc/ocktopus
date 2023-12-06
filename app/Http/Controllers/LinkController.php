@@ -8,66 +8,88 @@ use Illuminate\Http\Request;
 
 class LinkController extends Controller
 {
+    /**
+     * Retourne une vue avec tous les liens, afin de pouvoir les visualiser, les éditer ou encore les supprimer.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function links()
     {
-        /*
-        * Retourne une vue avec tous les liens, afin de pouvoir les visualiser, les éditer ou encore les supprimer
-        */
         $links = Link::all();
         return view('TV.links.links', compact('links'));
     }
 
-    public function create(){
-        /*
-         * Retourne la vue qui est un formulaire pour la création d'un lien
-         */
-        return view('TV.links.create' );
+    /**
+     * Retourne la vue qui est un formulaire pour la création d'un lien.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create()
+    {
+        return view('TV.links.create');
     }
 
+    /**
+     * Enregistre la création d'un média à partir d'une requête reçue.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
-        /*
-         * Enregistre la création d'un média à partir d'une requête recue
-         */
         $request->validate([
             'name' => 'required|string|max:50',
             'url' => 'required|string|max:300'
         ]);
+
         $link = new Link([
             'name' => $request->name,
             'url' => $request->url,
         ]);
+
         $link->save();
         return to_route('TV.links');
     }
 
-    public function edit(Link $link){
-        /*
-         * retourne la vue pour modifier le lien
-         */
+    /**
+     * Retourne la vue pour modifier le lien.
+     *
+     * @param  \App\Models\Link  $link
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(Link $link)
+    {
         return view('TV.links.edit', [
-                'link' => $link
-            ]
-        );
+            'link' => $link
+        ]);
     }
 
-    public function update(Request $request,Link $link){
-        /*
-        * Modifie le lien à partir d'une requête recue
-        */
+    /**
+     * Modifie le lien à partir d'une requête reçue.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Link  $link
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, Link $link)
+    {
         $link->update([
-            'name'=> $request->name,
-            'url'=> $request->url,
+            'name' => $request->name,
+            'url' => $request->url,
         ]);
         return to_route('TV.links');
     }
 
-    public function destroy(Request $request,Link $link){
-        /*
-         * Détruit le lien
-         */
+    /**
+     * Détruit le lien.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Link  $link
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Request $request, Link $link)
+    {
         $link->delete();
         return to_route('TV.links');
     }
 }
-

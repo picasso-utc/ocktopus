@@ -10,82 +10,107 @@ use Illuminate\Http\Request;
 class TvController extends Controller
 {
 
+    /**
+     * Affiche la vue pour naviguer entre la gestion des médias, TVs et liens.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
-        /*
-         * Retourne la vue pour naviguer entre gestion des médias, TVs et liens
-         */
         return view('TV.index');
     }
+
+    /**
+     * Affiche une vue avec tous les TVs pour visualisation et édition.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function tvs()
     {
-        /*
-         * Retourne une vue avec tous les TVs, afin de pouvoir les visualiser, les éditer
-         */
         $tvs = Tv::all();
         return view('TV.tvs', compact('tvs'));
     }
-    public function show(Tv $tv){
-        /*
-         * Retourne ce qu'affiche une TV
-         */
-        //on récupère le lien qu'a pour attribut la TV
-        $link = Link::where('id', $tv->link_id)->get();
-        return view('TV.display', [
-                'link' => $link
-            ]
-        );
-    }
-    public function create(){
-        /*
-         * Retourne la vue qui est un formulaire pour la création d'une TV
-         */
-        $links = Link::all();
 
-        return view('TV.create' ,[
+    /**
+     * Affiche ce qu'affiche une TV en récupérant le lien attribué à la TV.
+     *
+     * @param Tv $tv
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show(Tv $tv)
+    {
+        $link = Link::find($tv->link_id);
+        return view('TV.display', [
+            'link' => $link
+        ]);
+    }
+
+    /**
+     * Affiche le formulaire pour la création d'une TV avec la liste des liens disponibles.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create()
+    {
+        $links = Link::all();
+        return view('TV.create', [
             'links' => $links
         ]);
     }
 
+    /**
+     * Enregistre la création d'un média à partir d'une requête reçue.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
-        /*
-         * Enregistre la création d'un média à partir d'une requête recue
-         */
         $request->validate([
             'name' => 'required|string|max:50',
             'selected_link' => 'required|integer'
         ]);
-        $tv = new tv([
+
+        $tv = new Tv([
             'name' => $request->name,
             'link_id' => $request->selected_link,
         ]);
+
         $tv->save();
-        return to_route('TV.tvs');
+
+        return redirect()->route('TV.tvs');
     }
-    public function edit(Tv $tv){
-        /*
-         * retourne la vue pour modifier la TV
-         */
+
+    /**
+     * Affiche la vue pour modifier la TV avec la liste des liens disponibles.
+     *
+     * @param Tv $tv
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(Tv $tv)
+    {
         $links = Link::all();
         return view('TV.edit', [
-                'tv' => $tv,
-                'links'=> $links
-            ]
-        );
+            'tv' => $tv,
+            'links' => $links
+        ]);
     }
 
-
+    /**
+     * Met à jour la TV avec le lien sélectionné.
+     *
+     * @param Request $request
+     * @param Tv $tv
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, Tv $tv)
     {
         $request->validate([
             'selected_link' => 'required|integer',
         ]);
 
-        // Utiliser la relation pour mettre à jour link_id
         $tv->link()->associate($request->selected_link)->save();
 
         return redirect()->route('TV.tvs');
     }
-
 }
