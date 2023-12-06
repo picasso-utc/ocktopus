@@ -28,7 +28,7 @@ class GoodiesController extends Controller
         while (count($winners) < 20) {
             $randomIndex = rand(0, $length - 1);
             $walletId = $jsonData[$randomIndex]['rows'][0]['payments'][0]['wallet_id'];
-
+            #$users = User::all()->where("role",MemberRole::MEMBER)
             if (!in_array($walletId, $winners)) {
                 $winners[] = $walletId;
             }
