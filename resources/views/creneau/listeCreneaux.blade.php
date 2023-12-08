@@ -24,12 +24,35 @@
 </form>
 
 @if(isset($creneaux) && count($creneaux) > 0)
-    <h2>Créneaux pour la journée sélectionnée :</h2>
-    <ul>
-        @foreach($creneaux as $creneau)
-            <li>{{ $creneau->creneau }} - {{ $creneau->date }}</li>
+    <h2>Créneaux pour les journées sélectionnées :</h2>
+
+
+
+    @foreach($creneaux->groupBy(function($date) {
+    return Carbon\Carbon::parse($date->date)->format('W');
+}) as $week => $creneauxWeek)
+        <p>Semaine {{ $week }}</p>
+        @foreach($creneauxWeek->groupBy('date') as $date => $creneauxDate)
+               Date: {{ $date }}
+               <br>
+            @foreach($creneauxDate as $creneau)
+                {{$creneau->creneau}}
+                <form action="{{ route('creneau.associate-perm',  $creneau)}}" method="post">
+                    @csrf
+                    <select name="perm_id">
+                        @foreach($perms as $perm)
+                            <option value="{{ $perm->id }}" {{ $creneau->perm_id == $perm->id ? 'selected' : '' }}>
+                                {{ $perm->nom }} - {{ $perm->theme }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit">Associer</button>
+                </form>
+            @endforeach
         @endforeach
-    </ul>
+    @endforeach
+
+
 @else
     <p>Aucun créneau trouvé pour la journée sélectionnée.</p>
 @endif

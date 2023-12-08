@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Perm;
 use Illuminate\Http\Request;
 use App\Models\Creneau;
 use Carbon\Carbon;
@@ -56,7 +57,21 @@ class CreneauController extends Controller
 
         // Récupérer les créneaux entre la date de début et la date de fin
         $creneaux = Creneau::whereBetween('date', [$startDate, $endDate])->get();
+        $perms = Perm::all();
+        return view('creneau.listeCreneaux', ['creneaux' => $creneaux, 'perms'=>$perms]);
+    }
 
-        return view('creneau.listeCreneaux', ['creneaux' => $creneaux]);
+    public function associatePerm(Request $request, Creneau $creneau)
+    {
+        // Validez la requête
+        $request->validate([
+            'perm_id' => 'required|exists:perms,id',
+        ]);
+
+        // Associez la perm au créneau
+        $creneau->perm_id = $request->input('perm_id');
+        $creneau->save();
+
+        return redirect(route('creneau.listeCreneaux')); //améliorer pour pas avoir à refaire à chaque fois
     }
 }
