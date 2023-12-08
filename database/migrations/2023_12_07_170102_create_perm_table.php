@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('theme', 255);
             $table->text('description')->nullable();
             $table->text('periode')->nullable();
+            $table->text('membres')->nullable();
             $table->integer('ambiance')->default(0);
             $table->boolean('asso')->default(true);
             $table->string('nom_resp', 255)->nullable();
@@ -39,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('perm');
+        Schema::dropIfExists('perms');
     }
 };

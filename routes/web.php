@@ -24,3 +24,11 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
+
+
+Route::get('/perm', [\App\Http\Controllers\PermController::class, 'index'])->name('perm.index');
+Route::get('/perm/perms', [\App\Http\Controllers\PermController::class, 'perms'])->name('perm.perms');
+
+Route::get('/perm/create', [\App\Http\Controllers\PermController::class, 'create'])->name('perm.create');
+Route::post('/perm/store', [\App\Http\Controllers\PermController::class, 'store'])->name('perm.store');
+Route::delete('/perm/delete/{perm}',[\App\Http\Controllers\PermController::class, 'destroy'])->name('perm.destroy');
