@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Creneau extends Model
 {
-
+    protected $table = 'creneau';
     protected $fillable = ['date', 'creneau', 'state'];
 
     public function perm()
     {
         return $this->belongsTo(Perm::class);
     }
+
+
 }
