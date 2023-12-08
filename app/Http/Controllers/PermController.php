@@ -9,20 +9,30 @@ use Illuminate\View\View;
 
 class PermController extends Controller
 {
+
+    public function index() : View
+    {
+        return view('perm.index');
+    }
     /**
      * Affiche la liste des perms.
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index() : View
-    {
-        return view('perm.index');
-    }
-
     public function perms() : View
     {
-        $perms = Perm::all();
+        $perms = Perm::where('validated', 1)->get();
         return view('perm.perms', compact('perms'));
+    }
+    /**
+     * Affiche la liste des perms demandés et pas encore validés
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function requested() : View
+    {
+        $perms = Perm::where('validated', 0)->get();
+        return view('perm.requestedPerm', compact('perms'));
     }
 
 
@@ -31,7 +41,7 @@ class PermController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create() : view
     {
         return view('perms.create');
     }
@@ -70,6 +80,19 @@ class PermController extends Controller
     {
         $perm->delete();
         return redirect()->route('perm.perms')->with('success', 'La perm a été supprimée avec succès.');
+    }
+
+
+    /**
+     * Valide une perm spécifique.
+     *
+     * @param  \App\Models\Perm  $perm
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function validatePerm(Perm $perm)
+    {
+        $perm->update(['validated' => true]);
+        return redirect()->route('perm.requested')->with('success', 'La perm a été validée avec succès.');
     }
 
 }

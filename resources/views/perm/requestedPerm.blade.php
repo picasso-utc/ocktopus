@@ -21,6 +21,9 @@
                 <th>Nom</th>
                 <th>Thème</th>
                 <th>Description</th>
+                <th>Période</th>
+                <th>Membres</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
@@ -29,6 +32,21 @@
                     <td>{{ $perm->nom }}</td>
                     <td>{{ $perm->theme }}</td>
                     <td>{{ $perm->description }}</td>
+                    <td>{{ $perm->periode }}</td>
+                    <td>{{ $perm->membres }}</td>
+                    <!-- Ajoutez d'autres colonnes selon les attributs de votre modèle Perm -->
+                    <td>
+                        <form action="{{ route('perm.destroy', $perm->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"  onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette Perm ?')">Supprimer</button>
+                        </form>
+                        <form action="{{ route('perm.validate', $perm->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            <button type="submit">Valider</button>
+                        </form>
+
+                    </td>
                 </tr>
             @endforeach
             </tbody>
