@@ -37,15 +37,17 @@
                <br>
             @foreach($creneauxDate as $creneau)
                 {{$creneau->creneau}}
-                <form action="{{ route('creneau.associate-perm',  $creneau)}}" method="post">
+                <form action="{{ route('creneau.associate-perm',  $creneau, )}}" method="post">
                     @csrf
                     <select name="perm_id">
+                        <option value="" selected></option>
                         @foreach($perms as $perm)
                             <option value="{{ $perm->id }}" {{ $creneau->perm_id == $perm->id ? 'selected' : '' }}>
                                 {{ $perm->nom }} - {{ $perm->theme }}
                             </option>
                         @endforeach
                     </select>
+
                     <button type="submit">Associer</button>
                 </form>
             @endforeach
