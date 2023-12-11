@@ -87,4 +87,5 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
     return view('welcome');
 })->name("test");
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
+Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
