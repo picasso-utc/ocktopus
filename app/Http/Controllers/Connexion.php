@@ -95,4 +95,16 @@ class Connexion extends Controller
             }
         }
     }
+
+    /**
+     * Logs out the user from Ocktopus.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function logout(Request $request): mixed
+    {
+        $cookie = cookie(config('app.token_name'), null, -1);
+        return redirect('https://auth.assos.utc.fr/logout')->withCookie($cookie);
+    }
 }
