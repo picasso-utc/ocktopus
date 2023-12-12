@@ -11,18 +11,6 @@
 
 <h1>Liste des créneaux</h1>
 
-<form action="{{ route('creneau.listeCreneaux') }}" method="GET">
-    @csrf
-
-    <label for="start_date">Date de début :</label>
-    <input type="date" id="start_date" name="start_date" required>
-
-    <label for="end_date">Date de fin :</label>
-    <input type="date" id="end_date" name="end_date" required>
-
-    <button type="submit">Afficher les créneaux</button>
-</form>
-
 @if(isset($creneaux) && count($creneaux) > 0)
     <h2>Créneaux pour les journées sélectionnées :</h2>
 
