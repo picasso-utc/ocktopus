@@ -14,14 +14,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('creneaus', function (Blueprint $table) {
+        Schema::create('creneau', function (Blueprint $table) {
             $table->id();
             $table->foreignId('perm_id')->nullable()
                 ->constrained()->onDelete('cascade');
             $table->date('date');
             $table->enum('creneau', ['M','D','S']);
-            $table->enum('state', ['T','N'])->default('N');
             $table->timestamps();
+
+            $table->unique(['date', 'creneau']);
         });
     }
 
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('creneaus');
+        Schema::dropIfExists('creneau');
     }
 };
