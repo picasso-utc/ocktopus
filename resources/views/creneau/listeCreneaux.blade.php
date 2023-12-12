@@ -47,7 +47,6 @@
                             </option>
                         @endforeach
                     </select>
-
                     <button type="submit">Associer</button>
                 </form>
             @endforeach

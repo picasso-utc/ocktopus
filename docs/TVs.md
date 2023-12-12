@@ -1,87 +1,273 @@
-# Les TVs
+# Les TVs - Documentation Ocktopus
 
-## Les services
+## Les services :
+* **Générale** : gestion de l'affichage des TVs du PIC
+* **Précisement** :
+    * Gérer les *liens* affichés par chacune des *TVs*
+    * Pouvoir créer, modifier, supprimer les liens disponibles pour les TVs
+    * Pouvoir créer, modifier, supprimer, activer et désactiver les *médias* contenu dans le lien par défault
 
-Gestion des télévisions et de leur affichage
+## Fonctionnement général :
+On a deux TVs, une au bar et une au salon qui vont être représenter comme deux instances du modèles TV.Ces TVs ont pour attribut un lien, et c'est ce que comporte ce lien (une video, un sondage, le contenu média par défault) qu'affiche la TV. On a donc l'existence de liens qui sont disponibles pour être affiché par les TVs, le lien le plus important est le lien content, ou lien par défault qui affiche les médias activés et qui sont stockés. On a donc aussi un modèle media, qui est soit une image soit une video, dont on peut décider si il est activé ou non, et de son temps d'affichage dans le cas échéant
 
-## Models
 
-- Les tvs
-  - les attributs : id{primary key}, link, lind_id, name
-  - 2 instances le 01/10/2023
-  - Exemple :
-    ``` {
-        {
-        "id": 1,
-        "link": {
-            "id": 4,
-            "url": "https://webtv.picasso-utc.fr/content",
-            "name": "Défault"
-        },
-        "link_id": 4,
-        "name": "Pic Bar"
-    }
 
-- Les liens :
-  - les attributs : id {primary key}, url, name
-  - Exemple :
-```    {
-        {
-        "id": 8,
-        "url": "https://webtv.picasso-utc.fr/duelbrasseur",
-        "name": "Duel Des brasseurs"
-    }
-```    
-- Les médias :
-  - les attributs : id {primary key}, media, name, type, activate, times
-  - Exemple :
-```            {
-        {
-        "id": 252,
-        "media": "tv/RIPPOLAR.png",
-        "name": "RIP POLAR",
-        "media_type": "I",
-        "activate": false,
-        "times": 90
-    }
+## Les TVs
+
+### Le modèle
+Les *TVs* ont pour attribut un ID comme tout modèle, mais aussi un nom (ex : 'bar Salon'), et ont un lien qui est une clef étrangère de *link*. L'attribut link_id servira ainsi a obtenir le lien que doit afficher la TV concerné.
+
+
+```php=     
+Schema::create('tv', function (Blueprint $table) {
+    $table->id();
+    $table->string('name', 50);
+    $table->foreignIdFor(model: Link::class, column: 'link_id')
+        ->nullable();
+    $table->timestamps();
+});
 ```
+### Les Méthodes
 
-## Le fonctionnement :
+Empty
 
-Il y a deux tv (premier model), une au niveau du bar, une dans la salle principale. Chacune pointe vers un lien (deuxième model). Voici les principaux :
-1. default (https://webtv.picasso-utc.fr/content)
-2. Menu ("https://webtv.picasso-utc.fr/menu")
-3. Elo ("https://webtv.picasso-utc.fr/elo")
-4. Les autres (exemple : https://webtv.picasso-utc.fr/duelbrasseur)
+### Le controller
 
-Explications :
-1. Pour le lien *defaut*, ce qui est affiché est en lien avec *les médias* (modèles 3). Parmi la liste de toutes les instances médias, seulement cette où l'attribut *activate* : true afficheront le contenu contenu dans l'*attribut* média. Si plusieurs instances sont activés, alors ce qui est affiché alterne entre les différents contenus, avec une alternance déterminé par l'attribut *times*.
-2. Pour le lien *menu*, il affiche les prochaines menus à servir de la manière suivant :
-   ![](https://md.picasoft.net/uploads/upload_a60a8701fcad958433a2140b21a38c28.png)
-3. pour le lien *elo*, il faut creuser ce qui se passe au niveau de elo pour comprendre (TODO)
-4. Pour *les autres* liens, c'est assez classique, c'est ce qui est contenu dans ce lien qui sera affiché sur la tv.
+1. **`tvs()`**
+   le controller *tvs* renvoie une vue avec tous les TVs, afin de pouvoir les visualiser, les éditer, en créer ect.
 
-## Inutil(e)(isé)
+*Retour :*
+- Une instance de la classe View.
 
-L'instance webtv/elo est aujourd'hui inutilisé mais nous souhaitons la rendre de nouveau opérationel
-https://webtv.picasso-utc.fr/elo
+2. **`show(Tv $tv)`**
+   le controller *show*  recoit une TV en argumant et retourne une vue qui affiche le contenue de la TV concerné
+   *Paramètre(s) :*
+- une instance du modèle TV
 
-L'instance webtv/menu est aujourd'hui inutilisé et ne sera certainement pas implémenté dans la nouvelle version
-https://webtv.picasso-utc.fr/menu
+*Retour :*
+- Une instance de la classe View.
+
+3. **`create()`**
+   le controller *create* retourne la vue pour la création d'une TV
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de création.
+
+4. **`store(Request $request)`**
+   le controller *store* enregistre la création d'un média à partir d'une requête recue
+   *Paramètre(s)* :
+- request : Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaires à la création d'une TV (name et id d'un lien)
+
+5. **```edit(TV $tv)```**
+   le controller *edit* retourne la vue pour modifier la TV reçu en paramètre
+   *Paramètre(s)* :
+- une instance du modèle TV
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de modification.
+
+6. **```update(Request $request, TV $tv)```**
+   le controller *update* enregistre les modifications de la TV reçu en paramètre à partir d'une requête reçue en paramètre
+
+*Paramètre(s)* :
+- une instance du modèle TV
+- request : Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaires à la modification d'une TV (name et id d'un lien)
 
 
-## Lien avec le site du Pic'asso:
-Chaque modèle peut être géré depuis le site web, il existe en effet un onglet gestion des tv. Dans cet onglet, il y a 3 sous-onglets, chacun permettant de gérer un des trois modèles.
-* Configuration : pour chacune des deux télévisions, on peut changer l'attribut link
-* Média : on peut créer une nouvelle instance, consulter le contenu d'une instance déjà existante, faire varier l'attribut activate entre *true* et *false* ou modifier n'importe quel autre attribut (times, média, name).
-* URL : enfin, on peut créer, supprimer, ou modifier des links
+### Les views
 
-UML
-===
+* tvs.blade.php : affiche TV par TV et propose d'éditer,de créer
+* create.blade.php : un formulaire pour créer une TV
+* edit.blade.php : un formulaire pour éditer une TV, seulement le lien, pas le nom
+* display.blade.php : cette vue recoit un lien correspondant à l'attribut de la TV, et affiche le contenue de l'URL dans iframe plein écran
 
-Les classes/objet en rouge ne sont pas utilisés actuellement et ne seront très certainement pas implémentés dans la prochaine version du serveur.
-Les classes/objet en gris ne sont pas utilisés actuellement MAIS seront très certainement implémentés dans la prochaine version du serveur.
-![](https://md.picasoft.net/uploads/upload_5883d25f7e2ec1550d56fc11e3afe50d.png)
+
+## Les links
+
+### Le modèle
+Les *Liens* ont id, un nom et un url.
+
+```php= 
+Schema::create('link', function (Blueprint $table) {
+    $table->id();
+    $table->string('name', 50);
+    $table->string('url', 300);
+    $table->timestamps();
+});
+```
+### Les méthodes
+
+Empty
+
+### Le controller
+1. **```links()```**
+
+Le contrôleur links retourne une vue avec tous les liens, afin de pouvoir les visualiser, les éditer, ou encore les supprimer.
+
+*Retour :*
+- Une instance de la classe View représentant la vue.
+
+**```2. create()```**
+
+Le contrôleur create retourne la vue qui est un formulaire pour la création d'un lien.
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de création.
+
+3. **```store(Request $request)```**
+
+Le contrôleur store enregistre la création d'un lien à partir d'une requête reçue.
+
+*Paramètre(s) :*
+- request : Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaires à la création d'un lien
+
+*Retour :*
+- Une instance de la classe RedirectResponse redirigeant vers la route correspondante.
+
+4. **```edit(Link $link)```**
+
+Le contrôleur edit retourne la vue pour modifier le lien.
+
+*Paramètre(s) :*
+- Une instance du modèle Link représentant le lien à modifier.
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de modification.
+
+5. **```update(Request $request, Link $link)```**
+
+Le contrôleur update modifie le lien à partir d'une requête reçue.
+
+*Paramètre(s) :*
+* Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaure pour la modification d'un lien (name et url)
+* Une instance du modèle Link représentant le lien à modifier.
+
+
+6. **```destroy(Request $request, Link $link)```**
+
+Le contrôleur destroy détruit le lien.
+
+*Paramètre(s) :*
+- Une instance du modèle Link représentant le lien à détruire.
+
+### Les views
+* links.blade.php : affiche lien par lien et propose d'éditer,de créer, de supprimer
+* link/create.blade.php : un formulaire pour créer un lien
+* link/edit.blade.php : un formulaire pour éditer un lien
+
+
+
+## Les médias
+
+### Le modèle
+Les *medias* ont un nom, ont un type qui doit être soit une image soit une vidéo, un chemin d'accès au stockage du média, un état d'activation qui détermine si le média doit être affiché, un times qui représente soit le nombre de seconde que doit être affiché une image, soit le nombre de fois que doit être joué une vidéo avant de laisser place au prochain média activé.
+
+```php=
+Schema::create('media', function (Blueprint $table) {
+    $table->id();
+    $table->string('name', 50);
+    $table->enum('media_type', ['Image', 'Video'])->default('Image');
+    $table->string('media_path');
+    $table->boolean('activated')->default(0);
+    $table->integer('times')->default(1);
+    $table->timestamps();
+});
+```
+### Les méthodes
+Empty
+
+### Le controller
+
+
+
+1. **```medias()```**
+
+Le contrôleur medias retourne une vue avec tous les médias, afin de pouvoir les visualiser, les éditer, ou encore les supprimer.
+
+*Retour :*
+- Une instance de la classe View représentant la vue avec la liste de tous les médias.
+
+2. **```create()```**
+
+Le contrôleur create retourne la vue qui est un formulaire pour la création d'un média.
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de création.
+
+3. **```store(Request $request)```**
+
+Le contrôleur store enregistre la création d'un média à partir d'une requête reçue.
+
+
+*Paramètre(s) :*
+- Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaires à la création d'un média
+
+
+
+4. **```edit(Media $media)```**
+
+Le contrôleur edit retourne la vue pour modifier le média.
+
+*Paramètre(s) :*
+- Une instance du modèle Media représentant le média à modifier.
+
+*Retour :*
+- Une instance de la classe View représentant la vue du formulaire de modification.
+
+5. **```update(Request $request, Media $media)```**
+
+Le contrôleur update modifie le média à partir d'une requête reçue.
+
+*Paramètre(s) :*
+- Une instance de la classe Request contenant les données de la requête HTTP. Ici contient les informations nécessaires à la modification d'un média
+- Une instance du modèle Media représentant le média à modifier.
+
+
+6. **```destroy(Media $media)```**
+
+Le contrôleur destroy détruit le média en supprimant d'abord le fichier correspondant.
+
+
+*Paramètre(s) :*
+- Une instance du modèle Media représentant le média à détruire.
+
+### les Views
+
+* medias.blade.php : affiche media par media et propose d'éditer,de créer, de supprimer
+* medias/create.blade.php : un formulaire pour créer un media
+* medias/edit.blade.php : un formulaire pour éditer un media
+
+
+### instance particière : content.blade.php ->lien par default
+
+Ce lien récupère tous les médias activés :
+``` php=  
+$medias = Media::where('activated', 1)->get();
+return view('TV.content', compact('medias'));  
+```
+et les affiche un par un en boucle (en fonction de l'attribut ```times```)
+
+Voici une explication de la logique :
+- Notre fichier html a une balise `video` et une balise `image`.
+- On a une variable mediaIndex qui va nous permettre de passer d'un média au prochain
+    - est initialisé à 0 puis incrémenter à chaque tour jusqu'à revenir à 0
+
+A chaque itération
+- Si le média actuel est une image
+    - on cache la balise video et on affiche la balise image en mettant à jour la source
+    -  on lance son affichage à traver ```showMedia``` qu'on ```setTimeOut``` pour une durée de media.times * 1000 (pour conversion en secondes)
+-  Si le média actuel est une vidéo
+    - on cache la balise image et on affiche la balise video html en mettant à jour la source
+    - se déclence video.load
+        -    L'événement `loadedmetadata` est écouté. La vidéo est joué
+        -    L'événement `ended` est écouté. Cet événement est déclenché lorsque la lecture de la vidéo est terminée.
+             -    Vérifie si la vidéo doit être encore lue plus d'une fois.
+             -    Si oui, décrémente la variable times et recharge la vidéo avec video.load();.
+             -     Sinon, passe au média suivant
+
+
+
+## UML
 
 ```plantuml
 
@@ -100,17 +286,13 @@ skinparam class {
   BackgroundColor MyBackgroundColor
   BorderColor MyBorderColor
 }
-skinparam object {
-  BackgroundColor White
-  BorderColor Black
-  FontColor Red
-}
+
 
 
 package TVs {
 
     class liens{
-
+        
         }
     class TVs{
 
@@ -120,42 +302,24 @@ package TVs {
      class medias{
          
     }
-
-interface webTvMenu #back:red;header:red
-{
-
-}
     
-interface webTvElo #back:red;header:red
-{
-
-}
-    webTvMenu == liens: instance de <
-    webTvContent = liens: instance de <
-    webTvElo = liens: instance de <
-    medias "0..*" --o "0..1" webTvContent
-    liens "1" --o "0...2" TVs
-    }
-
-package Perm{
-    
-    class Menu #back:red;header:red 
+    interface webTvContent 
     {
 
+    }
+    
+    webTvContent . liens: instance de >
+    medias "0..*" -o "0..1" webTvContent
+    liens "1" - "0...2" TVs
+    
     }    
 }
 
-Menu - webTvMenu
-
-package Elo{
-    
-    class elo #back:grey;header:grey {
-        
-    }
-    
-}
-
-elo -- webTvElo
 
 @enduml
+
+```
+
+
+
 
