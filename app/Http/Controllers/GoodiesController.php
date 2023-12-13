@@ -3,18 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoodiesWinner;
-use App\Services\ApiPayutcClient;
+use App\Services\PayUtcClient;
 use Illuminate\Support\Facades\Http;
 
 class GoodiesController extends Controller
 {
-    private ApiPayutcClient $client;
+    private PayUtcClient $client;
 
-    public function __construct(ApiPayutcClient $client)
+    /**
+     * @param PayUtcClient $client
+     */
+    public function __construct(PayUtcClient $client)
     {
         $this->client = $client;
     }
 
+    /**
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getWinner()
     {
         $response = $this->client->makePayutcRequest('GET', 'transactions', [

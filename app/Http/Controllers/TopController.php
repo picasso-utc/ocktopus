@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ApiPayutcClient;
+use App\Services\PayUtcClient;
 use Illuminate\Support\Facades\Http;
 use DateTime;
 
 class TopController extends Controller
 {
-    private ApiPayutcClient $client;
+    private PayUtcClient $client;
 
-    public function __construct(ApiPayutcClient $client)
+    /**
+     * @param PayUtcClient $client
+     */
+    public function __construct(PayUtcClient $client)
     {
         $this->client = $client;
     }
 
+    /**
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getTop()
     {
         $dateString = "2023-11-15T07:15:00.000000Z";
@@ -58,5 +65,5 @@ class TopController extends Controller
             }
         }
         dd($dictionary);
-        }
+    }
 }
