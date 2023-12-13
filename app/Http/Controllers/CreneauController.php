@@ -127,17 +127,21 @@ class CreneauController extends Controller
 
     public function associatePerm(Request $request, Creneau $creneau)
     {
-        // Validez la requête
         $request->validate([
             'perm_id' => 'required|exists:perms,id',
         ]);
+        $perm = Perm::find($request->input('perm_id'));
+        // Vérifiez si la validation du nombre de créneaux est respectée
+        if ($perm && $perm->validateCreneauCount()) {
+            // Associez le créneau à la perm
+            $creneau->perm_id = $perm->id;
+            $creneau->save();
 
-        // Associez la perm au créneau
-        $creneau->perm_id = $request->input('perm_id');
-        $creneau->save();
 
-        return redirect(route('creneau.listeCreneaux')); //améliorer pour pas avoir à refaire à chaque fois
+            return redirect(route('creneau.listeCreneauxSemester'))->with('success', 'Créneau associé avec succès.');
+        } else {
+            return redirect(route('creneau.listeCreneauxSemester'))->with('error', 'Impossible d\'associer plus de trois créneaux à cette perm.');
+        }
     }
-
 
 }
