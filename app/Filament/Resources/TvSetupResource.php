@@ -55,6 +55,9 @@ class TvSetupResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('Show')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn (Tv $tv) => route('TV.show', $tv->id)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
