@@ -11,35 +11,21 @@
 
 <h1>Liste des créneaux</h1>
 
-<form action="{{ route('creneau.listeCreneaux') }}" method="GET">
-    @csrf
-
-    <label for="start_date">Date de début :</label>
-    <input type="date" id="start_date" name="start_date" required>
-
-    <label for="end_date">Date de fin :</label>
-    <input type="date" id="end_date" name="end_date" required>
-
-    <button type="submit">Afficher les créneaux</button>
-</form>
-
 @if(isset($creneaux) && count($creneaux) > 0)
     <h2>Créneaux pour les journées sélectionnées :</h2>
-
-
 
     @foreach($creneaux->groupBy(function($date) {
     return Carbon\Carbon::parse($date->date)->format('W');
 }) as $week => $creneauxWeek)
         <p>Semaine {{ $week }}</p>
         @foreach($creneauxWeek->groupBy('date') as $date => $creneauxDate)
-               Date: {{ $date }}
-               <br>
+            Date: {{ $date }}
+            <br>
             @foreach($creneauxDate as $creneau)
                 {{$creneau->creneau}}
-                <form action="{{ route('creneau.associate-perm',  $creneau, )}}" method="post">
+                <form action="{{ route('creneau.associate-perm',  $creneau)}}" method="post" class="{{ Carbon\Carbon::parse($creneau->date)->isPast() ? 'disabled-form' : '' }}">
                     @csrf
-                    <select name="perm_id">
+                    <select name="perm_id" class="perm-select">
                         <option value="" selected></option>
                         @foreach($perms as $perm)
                             <option value="{{ $perm->id }}" {{ $creneau->perm_id == $perm->id ? 'selected' : '' }}>
@@ -47,12 +33,26 @@
                             </option>
                         @endforeach
                     </select>
-                    <button type="submit">Associer</button>
+                    <button type="submit" class="associate-btn" {{ Carbon\Carbon::parse($creneau->date)->isPast() ? 'disabled' : '' }}>Associer</button>
                 </form>
             @endforeach
         @endforeach
     @endforeach
 
+    <script>
+        // JavaScript pour désactiver les formulaires associés aux créneaux passés
+        document.addEventListener("DOMContentLoaded", function () {
+            var disabledForms = document.querySelectorAll('.disabled-form');
+
+            disabledForms.forEach(function (form) {
+                var select = form.querySelector('.perm-select');
+                var button = form.querySelector('.associate-btn');
+
+                select.disabled = true;
+                button.disabled = true;
+            });
+        });
+    </script>
 
 @else
     <p>Aucun créneau trouvé pour la journée sélectionnée.</p>
