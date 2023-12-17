@@ -2,8 +2,6 @@
 
 namespace App\Filament\Fields;
 
-require_once __DIR__ . '../../../helpers.php';
-
 use App\Enums\MemberRole;
 use Filament\Forms\Components\Select;
 
