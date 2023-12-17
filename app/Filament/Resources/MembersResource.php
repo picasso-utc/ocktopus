@@ -6,7 +6,6 @@ use App\Enums\MemberRole;
 use App\Filament\Fields\UserRoleSelect;
 use App\Filament\Resources\MembersResource\Pages;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -16,7 +15,11 @@ class MembersResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'General';
+
+    protected static ?string $navigationLabel = 'Gestion des membres';
 
     public static function form(Form $form): Form
     {
@@ -36,10 +39,19 @@ class MembersResource extends Resource
                 Tables\Columns\TextColumn::make('role')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => MemberRole::tryFrom($state->value)->title())
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color(fn ($state) => match ($state->value) {
+                        MemberRole::Administrator->value => 'danger',
+                        MemberRole::Member->value => 'warning',
+                        MemberRole::None->value => 'gray',
+                    })
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('role')
+                    ->options(enum_pluck(MemberRole::class))
+                    ->label('Rôle')
+                    ->placeholder('Tous les rôles')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
