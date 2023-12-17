@@ -28,7 +28,7 @@
 </head>
 <body>
 <div>
-    <iframe title="main" src="{{$link[0]->url}}"></iframe>
+    <iframe title="main" src="{{$link->url}}"></iframe>
 </div>
 </body>
 </html>
