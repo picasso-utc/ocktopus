@@ -32,9 +32,7 @@ class MediaResource extends Resource
                     ->required(),
                 MediaTypeSelect::make('media_type'),
                 Forms\Components\TextInput::make('times')
-                    ->label('Nombre de répétition')
-                    ->numeric()
-                    ->placeholder(function (Forms\Get $get) {
+                    ->label(function (Forms\Get $get) {
                         $type = $get('media_type');
                         if ($type == MediaType::Video->value) {
                             return 'Nombre de répétitions de la vidéo';
@@ -44,6 +42,8 @@ class MediaResource extends Resource
                             return '';
                         }
                     })
+                    ->numeric()
+                    ->default(1)
                     ->minValue(1),
                 Forms\Components\FileUpload::make('media_path')
                     ->label('Média')
