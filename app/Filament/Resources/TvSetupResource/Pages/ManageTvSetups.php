@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\TVResource\Pages;
+namespace App\Filament\Resources\TvSetupResource\Pages;
 
-use App\Filament\Resources\TVResource;
+use App\Filament\Resources\TvSetupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
-class ManageTVS extends ManageRecords
+class ManageTvSetups extends ManageRecords
 {
-    protected static string $resource = TVResource::class;
+    protected static string $resource = TvSetupResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -2,27 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TVLinkResource\Pages;
-use App\Filament\Resources\TVLinkResource\RelationManagers;
-use App\Models\Link;
+use App\Filament\Fields\LinkSelect;
+use App\Filament\Resources\TvSetupResource\Pages;
+use App\Filament\Resources\TvSetupResource\RelationManagers;
+use App\Models\Tv;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class TVLinkResource extends Resource
+class TvSetupResource extends Resource
 {
-    protected static ?string $model = Link::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-link';
-
+    protected static ?string $model = Tv::class;
+    protected static ?string $navigationIcon = 'heroicon-o-tv';
     protected static ?string $navigationGroup = 'Gestion des télés';
-
-    protected static ?string $navigationLabel = 'Liens télés';
+    protected static ?string $navigationLabel = 'Télés';
 
     public static function form(Form $form): Form
     {
@@ -31,9 +26,8 @@ class TVLinkResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(50),
-                Forms\Components\TextInput::make('url')
-                    ->required()
-                    ->url(),
+                LinkSelect::make('link_id')
+                    ->required(),
             ]);
     }
 
@@ -43,12 +37,17 @@ class TVLinkResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('url')
+                    ->sortable()
+                    ->label('Nom de la TV'),
+                Tables\Columns\TextColumn::make('link.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nom du lien'),
+                Tables\Columns\TextColumn::make('link.url')
                     ->formatStateUsing(function ($state) {
                         return substr($state, 0, 50);
                     })
-
+                    ->label('URL'),
             ])
             ->filters([
                 //
@@ -64,12 +63,10 @@ class TVLinkResource extends Resource
             ]);
     }
 
-
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageTVLinks::route('/'),
+            'index' => Pages\ManageTvSetups::route('/'),
         ];
     }
 }
