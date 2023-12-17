@@ -43,9 +43,10 @@ class TvSetupResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('Nom du lien'),
-                Tables\Columns\TextColumn::make('link.url')
+                Tables\Columns\TextColumn::make('id')
                     ->formatStateUsing(function ($state) {
-                        return substr($state, 0, 50);
+                        $app_url = config('app.url');
+                        return "$app_url//:8000/TV/$state";
                     })
                     ->label('URL'),
             ])
