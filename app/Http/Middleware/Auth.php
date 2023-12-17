@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -37,7 +38,20 @@ class Auth
             $public_key_path = storage_path('app/keys/public.key');
             $public_key = openssl_get_publickey('file://' . $public_key_path);
             $decoded_uuid = JWT::decode($token, new Key($public_key, 'RS256'))->sub;
-            dd($decoded_uuid);
+
+            if ($decoded_uuid == null) {
+                return redirect()->route('auth_route')->withCookie(cookie('route', $request->route()->getName(), 10));
+            }
+
+            $user = User::where('uuid', $decoded_uuid)->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found', 'JWT_ERROR' => true], 404);
+            }
+
+            // Set the user as the authenticated user
+            auth()->setUser($user);
+
         } catch (ExpiredException) {
             return response()->json(['message' => 'Json Web Token Expired', 'JWT_ERROR' => true], 401);
         } catch (SignatureInvalidException) {

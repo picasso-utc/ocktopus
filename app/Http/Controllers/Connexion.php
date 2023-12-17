@@ -62,7 +62,7 @@ class Connexion extends Controller
                 foreach ($userAssos as $asso) {
                     if ($asso['login'] == 'picasso') {
                         $adminStatus = MemberRole::Member;
-                        if ($asso['user_role']['type'] == 'developer') {
+                        if ($asso['user_role']['type'] == 'developer' || $asso['user_role']['type'] == 'president') {
                             $adminStatus = MemberRole::Administrator;
                         }
                         break;
@@ -94,5 +94,17 @@ class Connexion extends Controller
                 dd($e->getMessage());
             }
         }
+    }
+
+    /**
+     * Logs out the user from Ocktopus.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function logout(Request $request): mixed
+    {
+        $cookie = cookie(config('app.token_name'), null, -1);
+        return redirect('https://auth.assos.utc.fr/logout')->withCookie($cookie);
     }
 }
