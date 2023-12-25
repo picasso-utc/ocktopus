@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
 use App\Filament\Resources\TVLinkResource\Pages;
 use App\Filament\Resources\TVLinkResource\RelationManagers;
@@ -10,9 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TVLinkResource extends Resource
 {
@@ -69,7 +66,7 @@ class TVLinkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageTVLinks::route('/'),
+            'index' => \App\Filament\Admin\Resources\TVLinkResource\Pages\ManageTVLinks::route('/'),
         ];
     }
 }

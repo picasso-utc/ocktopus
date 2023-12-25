@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\MediaResource\Pages;
+namespace App\Filament\Admin\Resources\MediaResource\Pages;
 
-use App\Filament\Resources\MediaResource;
+use App\Filament\Admin\Resources\MediaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

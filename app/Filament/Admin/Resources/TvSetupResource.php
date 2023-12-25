@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
 use App\Filament\Fields\LinkSelect;
 use App\Filament\Resources\TvSetupResource\Pages;
@@ -70,7 +70,7 @@ class TvSetupResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageTvSetups::route('/'),
+            'index' => \App\Filament\Admin\Resources\TvSetupResource\Pages\ManageTvSetups::route('/'),
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use Closure;
+use Filament\Facades\Filament;
+use Filament\Models\Contracts\FilamentUser;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -60,6 +62,15 @@ class Auth
         } catch (UnexpectedValueException) {
             return response()->json(['message' => 'Error having to do with JWT signature and claims', 'JWT_ERROR' => true], 401);
         }
+
+        $panel = Filament::getCurrentPanel();
+
+        abort_if(
+            $user instanceof FilamentUser ?
+                (! $user->canAccessPanel($panel)) :
+                (config('app.env') !== 'local'),
+            403,
+        );
 
         // Continue with the request
         return $next($request);

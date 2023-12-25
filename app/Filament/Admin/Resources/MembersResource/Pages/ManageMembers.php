@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\MembersResource\Pages;
+namespace App\Filament\Admin\Resources\MembersResource\Pages;
 
-use App\Filament\Resources\MembersResource;
-use Filament\Actions;
+use App\Filament\Admin\Resources\MembersResource;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageMembers extends ManageRecords
