@@ -74,6 +74,26 @@ class CreneauController extends Controller
         return redirect(route('creneau.listeCreneaux'));
     }
 
+    public function creneauxOfSemester($request){
+
+        $semestre = $request->input('semestre');
+        $currentYear = Carbon::now()->year;
+        // Définir les dates de début et de fin du semestre
+        if ($semestre === 'automne') {
+            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
+            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
+            $semesterEnd->addYear();// 30 janvier
+        } elseif ($semestre === 'printemps') {
+            $semesterStart = Carbon::createFromDate($currentYear, 2, 1);   // 1er février
+            $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet
+        } else {
+            // Gérer le cas où le semestre n'est pas défini correctement
+            return redirect()->back()->with('error', 'Semestre non valide');
+        }
+        $creneaux = Creneau::whereBetween('date', [$semesterStart, $semesterEnd])->get();
+        return $creneaux;
+    }
+
 
     public function listeCreneaux($startDate, $endDate)
     {
@@ -90,7 +110,7 @@ class CreneauController extends Controller
         $currentYear = Carbon::now()->year;
 
         // Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        $currentSemester = $this->getSemester($currentDate);
+        $currentSemester = self::getSemester($currentDate);
         if ($currentSemester === 'automne') {
             $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
             $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
@@ -136,7 +156,6 @@ class CreneauController extends Controller
             // Associez le créneau à la perm
             $creneau->perm_id = $perm->id;
             $creneau->save();
-
 
             return redirect(route('creneau.listeCreneauxSemester'))->with('success', 'Créneau associé avec succès.');
         } else {

@@ -112,3 +112,4 @@ Route::post('creneau/associatePerm/{creneau}', [\App\Http\Controllers\CreneauCon
 
 Route::get('creneau/select-semestre', [\App\Http\Controllers\CreneauController::class, 'semesterSelection'])->name('creneau.select-semestre');
 Route::post('creneau/create-creneaux-for-semester', [\App\Http\Controllers\CreneauController::class, 'createCreneauxForSemestre'])->name('creneau.create-creneaux-for-semester');
+
