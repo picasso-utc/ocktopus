@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
 use App\Enums\MemberRole;
 use App\Filament\Fields\UserRoleSelect;
@@ -67,7 +67,7 @@ class MembersResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMembers::route('/'),
+            'index' => \App\Filament\Admin\Resources\MembersResource\Pages\ManageMembers::route('/'),
         ];
     }
 }

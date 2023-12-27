@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\TVLinkResource\Pages;
+namespace App\Filament\Admin\Resources\TVLinkResource\Pages;
 
-use App\Filament\Resources\TVLinkResource;
+use App\Filament\Admin\Resources\TVLinkResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

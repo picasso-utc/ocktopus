@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\TvSetupResource\Pages;
+namespace App\Filament\Admin\Resources\TvSetupResource\Pages;
 
-use App\Filament\Resources\TvSetupResource;
+use App\Filament\Admin\Resources\TvSetupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

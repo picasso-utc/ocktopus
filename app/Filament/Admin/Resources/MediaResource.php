@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
 use App\Enums\MediaType;
 use App\Filament\Fields\MediaTypeSelect;
@@ -100,7 +100,7 @@ class MediaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMedia::route('/'),
+            'index' => \App\Filament\Admin\Resources\MediaResource\Pages\ManageMedia::route('/'),
         ];
     }
 }
