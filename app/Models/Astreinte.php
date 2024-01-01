@@ -20,7 +20,7 @@ class Astreinte extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(User::class);
     }
 
     public function creneau()

@@ -66,8 +66,11 @@ class ListCreneaus extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
         ];
+    }
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return 5;
     }
 
 

@@ -35,6 +35,7 @@ class CreneauResource extends Resource
 
     public static ?string $pluralLabel = "Creneaux"; // Modifiez cette ligne
 
+
     protected static function getSemester($date)
     {
         if (($date->month >= 8 && $date->month <= 12) || ($date->month >= 1 && $date->month <= 1)) {
@@ -112,10 +113,19 @@ class CreneauResource extends Resource
                 Tables\Columns\SelectColumn::make('perm_id')
                     ->label('Perm')
                     ->options(function () {
-                        // Récupérez la liste des perms et préparez-la pour la liste déroulante
-                        return Perm::pluck('nom', 'id');
+                        $perms = Perm::withCount('creneaux')->get();
+                        $filteredPerms = $perms->filter(function ($perm) {
+                            return $perm->creneaux_count < 3;
+                        });
+                        $sortedPerms = $filteredPerms->sortBy('creneaux_count');
+                        return $sortedPerms->pluck('nom', 'id')->toArray();
                     })
-                    ->searchable()
+                    ->placeholder(function ($record) {
+                        // Récupérez la perm associée au modèle Creneau actuel
+                        $associatedPerm = $record->perm;
+                        // Retournez le nom de la perm comme texte de placeholder
+                        return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
+                    })                    ->searchable()
                     ->sortable(),
             ])
             ->filters([
@@ -136,11 +146,11 @@ class CreneauResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
+                //Tables\Actions\DissociateAction::make('perm')
+                ])
             ->bulkActions([
+
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
