@@ -1,27 +1,22 @@
 <?php
 
 namespace App\Models\Treso;
+use App\Models\Treso\CategorieFacture;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CategoriePrix extends Model
+class MontantCategorie extends Model
 {
     use HasFactory;
 
-    protected $table = 'categorie_prix';
+    protected $table = 'montant_categorie';
     protected $fillable = ['categorie_id', 'prix', 'facture_id'];
 
     // Ajoutez une relation avec CategorieFactureRecue
     public function categorie()
     {
-        return $this->belongsTo(CategorieFactureRecue::class, 'categorie_id');
-    }
-
-    // Ajoutez une relation avec FactureRecue
-    public function facture()
-    {
-        return $this->belongsTo(FactureRecue::class, 'facture_id');
+        return $this->belongsTo(CategorieFacture::class, 'categorie_id');
     }
 
     // Définissez la contrainte unique sur les colonnes 'categorie_id' et 'facture_id'
