@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoodiesController;
+use App\Http\Controllers\TodayConsumptionController;
 use App\Http\Controllers\TopController;
 
 /*
@@ -29,4 +30,6 @@ Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUs
 
 Route::get('/get-goodies-winner', [GoodiesController::class, 'getWinner']);
 
-Route::get('/get-top', [TopController::class, 'getTop']);
+Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+
+Route::get('/get-top/{productName}', [TopController::class, 'getTop']);

@@ -17,7 +17,7 @@ class ApiPayutcClient
         // On crée une nouvelle instance de la classe Client de Guzzle.
         $this->client = new Client([
             // L'URL de base pour les requêtes de l'API est récupérée à partir de la variable d'environnement API_URL.
-            'base_uri' => env('API_URL'),
+            'base_url' => env('API_URL'),
 
             // Les paramètres de requête communs à toutes les requêtes sont configurés ici.
             'query' => [

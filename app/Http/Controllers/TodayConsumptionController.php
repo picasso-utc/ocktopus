@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GoodiesWinner;
 use App\Services\ApiPayutcClient;
 use Illuminate\Support\Facades\Http;
-use DateTime;
 
-class TopController extends Controller
+class TodayConsumptionController extends Controller
 {
     private ApiPayutcClient $client;
 
@@ -15,15 +15,17 @@ class TopController extends Controller
         $this->client = $client;
     }
 
-    public function getTop($productName)
+
+    public function getTodayConsumption($productName)
     {
         $accumulatedData = [];
-        $dateStart = (new DateTime("2023-12-17"))->format('Y-m-d\TH:i:s.u\Z');
-        $dateEnd = (new DateTime())->format('Y-m-d\TH:i:s.u\Z');
+        $dateStart = date('Y-m-d\TH:i:s.u\Z');
+        $dateEnd = date('Y-m-d\TH:i:s.u\Z', strtotime('today'));
         $response = $this->client->makePayutcRequest('GET', 'transactions', [
             'created__gt' => $dateStart,
             'created__lt' => $dateEnd,
         ]);
+        dd($dateStart);
         $responseData = $response->getContent();
         $jsonData = json_decode($responseData, true);
         $length = count($jsonData);
@@ -40,24 +42,15 @@ class TopController extends Controller
         }
         $accumulatedData = array_merge($accumulatedData, $jsonData);
         $length = count($accumulatedData);
-        $winners = [];
-        $dictionary = array();
+        $value = 0;
         for ($i = 0; $i < $length; $i++) {
             for ($j = 0; $j < count($accumulatedData[$i]["rows"]); $j++){
                 if ($accumulatedData[$i]["rows"][$j]["item_name"] == $productName){
-                    $walletId = $accumulatedData[$i]["rows"][$j]["payments"][0]["wallet_id"];
-                    if (!in_array($walletId, $winners)) {
-                        $winners[] = $walletId;
-                    }
-                    $value = $accumulatedData[$i]["rows"][$j]["payments"][0]["quantity"];
-
-                    if (array_key_exists($winners, $dictionary)){
-                        $dictionary[$winners] += $value;
-                    }
-                    $dictionary[$winners] = $value;
+                    $value2 = $accumulatedData[$i]["rows"][$j]["payments"][0]["quantity"];
+                    $value += $value2;
                 }
             }
         }
-        dd($dictionary);
-        }
+        dd($value);
+    }
 }
