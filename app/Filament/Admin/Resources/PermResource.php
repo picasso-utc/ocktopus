@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\PermResource\Pages;
-use App\Filament\Resources\PermResource\RelationManagers;
+use App\Filament\Admin\Resources\PermResource\Pages;
+use App\Filament\Admin\Resources\PermResource\RelationManagers;
 use App\Models\Perm;
 use Filament\Forms;
 use Filament\Forms\Form;

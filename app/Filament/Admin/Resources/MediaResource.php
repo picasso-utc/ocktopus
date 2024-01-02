@@ -4,8 +4,8 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\MediaType;
 use App\Filament\Fields\MediaTypeSelect;
-use App\Filament\Resources\MediaResource\Pages;
-use App\Filament\Resources\MediaResource\RelationManagers;
+use App\Filament\Admin\Resources\MediaResource\Pages;
+use App\Filament\Admin\Resources\MediaResource\RelationManagers;
 use App\Models\Media;
 use Filament\Forms;
 use Filament\Forms\Form;

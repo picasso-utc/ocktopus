@@ -17,7 +17,7 @@ class GoodiesResource extends Resource
 {
     protected static ?string $model = Goodies::class;
     protected static ?string $label = 'Goodies';
-    protected static ?string $navigationGroup = 'Général';
+    protected static ?string $navigationGroup = 'General';
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
 

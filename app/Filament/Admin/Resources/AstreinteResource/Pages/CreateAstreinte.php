@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\AstreinteResource\Pages;
+namespace App\Filament\Admin\Resources\AstreinteResource\Pages;
 
-use App\Filament\Resources\AstreinteResource;
+use App\Filament\Admin\Resources\AstreinteResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\CreneauResource\Pages;
-use App\Filament\Resources\CreneauResource\RelationManagers;
+use App\Filament\Admin\Resources\CreneauResource\Pages;
+use App\Filament\Admin\Resources\CreneauResource\RelationManagers;
 use App\Models\Creneau;
 use App\Models\Perm;
 use Carbon\Carbon;
@@ -24,7 +24,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
-use App\Filament\Actions\DissociateCategoryAction;
 
 
 class CreneauResource extends Resource

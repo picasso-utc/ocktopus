@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PermResource\Pages;
+namespace App\Filament\Admin\Resources\PermResource\Pages;
 
-use App\Filament\Resources\PermResource;
+use App\Filament\Admin\Resources\PermResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;

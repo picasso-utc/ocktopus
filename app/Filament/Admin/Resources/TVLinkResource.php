@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\TVLinkResource\Pages;
-use App\Filament\Resources\TVLinkResource\RelationManagers;
+use App\Filament\Admin\Resources\TVLinkResource\Pages;
+use App\Filament\Admin\Resources\TVLinkResource\RelationManagers;
 use App\Models\Link;
 use Filament\Forms;
 use Filament\Forms\Form;

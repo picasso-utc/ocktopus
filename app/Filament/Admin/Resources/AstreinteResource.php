@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\AstreinteResource\Pages;
-use App\Filament\Resources\AstreinteResource\RelationManagers;
+use App\Filament\Admin\Resources\AstreinteResource\Pages;
+use App\Filament\Admin\Resources\AstreinteResource\RelationManagers;
 use App\Http\Middleware\Auth;
 use App\Models\Astreinte;
 use Filament\Forms;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\CreneauResource\Pages;
+namespace App\Filament\Admin\Resources\CreneauResource\Pages;
 
-use App\Filament\Resources\CreneauResource;
+use App\Filament\Admin\Resources\CreneauResource;
 use App\Models\Creneau;
 use Carbon\Carbon;
 use Filament\Actions;
