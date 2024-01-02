@@ -37,6 +37,8 @@ class PermResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\CheckboxColumn::make('validated')
+                    ->label('Validation'),
                 Tables\Columns\TextColumn::make('nom')
                     ->label('Nom')
                     ->searchable()
@@ -52,8 +54,6 @@ class PermResource extends Resource
                 Tables\Columns\TextColumn::make('periode')
                     ->label('Periode')
                     ->sortable(),
-                Tables\Columns\CheckboxColumn::make('validated')
-                    ->label('Validation'),
                 Tables\Columns\TextColumn::make('creneaux_count')->counts("creneaux")
                     ->label('Nombre de créneaux')
                     ->sortable(),

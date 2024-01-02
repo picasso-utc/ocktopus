@@ -55,15 +55,19 @@ class CreneauController extends Controller
 
         $semestre = $request->input('semestre');
         $currentYear = Carbon::now()->year;
+        $currentDay = Carbon::now();
         // Définir les dates de début et de fin du semestre
         if ($semestre === 'automne') {
             $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-            $semesterEnd->addYear();// 30 janvier
+            $semesterEnd = Carbon::createFromDate($currentYear, 1, 16);
+            if ($currentDay->month>=1)
+                $semesterStart->subYear();
+            else $semesterEnd->addYear();
         } elseif ($semestre === 'printemps') {
             $semesterStart = Carbon::createFromDate($currentYear, 2, 1);   // 1er février
             $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet
-        } else {
+        }
+        else {
             // Gérer le cas où le semestre n'est pas défini correctement
             return redirect()->back()->with('error', 'Semestre non valide');
         }
@@ -78,11 +82,14 @@ class CreneauController extends Controller
 
         $semestre = $request->input('semestre');
         $currentYear = Carbon::now()->year;
+        $currentDay = Carbon::now();
         // Définir les dates de début et de fin du semestre
         if ($semestre === 'automne') {
             $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-            $semesterEnd->addYear();// 30 janvier
+            $semesterEnd = Carbon::createFromDate($currentYear, 1, 16);
+            if ($currentDay->month>=1)
+                $semesterStart->subYear();
+            else $semesterEnd->addYear();
         } elseif ($semestre === 'printemps') {
             $semesterStart = Carbon::createFromDate($currentYear, 2, 1);   // 1er février
             $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet

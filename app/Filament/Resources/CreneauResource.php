@@ -35,17 +35,6 @@ class CreneauResource extends Resource
 
     public static ?string $pluralLabel = "Creneaux"; // Modifiez cette ligne
 
-
-    protected static function getSemester($date)
-    {
-        if (($date->month >= 8 && $date->month <= 12) || ($date->month >= 1 && $date->month <= 1)) {
-            return 'automne';
-        } elseif ($date->month >= 2 && $date->month <= 7) {
-            return 'printemps';
-        }
-        return 'inconnu';
-    }
-
     protected static function getStartSemester()
     {
         $currentDate = now(); // Obtenez la date actuelle
@@ -53,10 +42,14 @@ class CreneauResource extends Resource
         $semesterStart = null; // Définir des valeurs par défaut
 
 // Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        $currentSemester = self::getSemester($currentDate);
-        if ($currentSemester === 'automne') {
+        if ($currentDate->month >= 7 && $currentDate->day>=15) {
             $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
-        } elseif ($currentSemester === 'printemps') {
+        }
+        elseif ($currentDate->month >= 1 && $currentDate->day <= 20) {
+            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);
+            $semesterStart->subYear();//retirer une aneee
+        }// 15 août
+        else {
             $semesterStart =  Carbon::createFromDate($currentYear, 2, 1);   // 1er février
         }
         return $semesterStart;
@@ -68,12 +61,14 @@ class CreneauResource extends Resource
         $semesterEnd = null; // Définir des valeurs par défaut
 
 // Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        $currentSemester = self::getSemester($currentDate);
-        if ($currentSemester === 'automne') {
+        if ($currentDate->month >= 7 && $currentDate->day>=15) {
             $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
             $semesterEnd->addYear();// 30 janvier
                     }
-        elseif ($currentSemester === 'printemps') {
+        elseif ($currentDate->month >= 1 && $currentDate->day <= 20){
+            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
+        }
+        else  {
             $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet
         }
         return $semesterEnd;
@@ -100,8 +95,7 @@ class CreneauResource extends Resource
     {
         return $table
             ->groups([
-                Group::make('date')
-                    ->date(),
+                Group::make('date'),
             ])
             ->defaultGroup('date')
             ->columns([
@@ -113,7 +107,7 @@ class CreneauResource extends Resource
                 Tables\Columns\SelectColumn::make('perm_id')
                     ->label('Perm')
                     ->options(function () {
-                        $perms = Perm::withCount('creneaux')->get();
+                        $perms = Perm::withCount('creneaux')->where('validated', true)  ->get();
                         $filteredPerms = $perms->filter(function ($perm) {
                             return $perm->creneaux_count < 3;
                         });
@@ -121,9 +115,7 @@ class CreneauResource extends Resource
                         return $sortedPerms->pluck('nom', 'id')->toArray();
                     })
                     ->placeholder(function ($record) {
-                        // Récupérez la perm associée au modèle Creneau actuel
                         $associatedPerm = $record->perm;
-                        // Retournez le nom de la perm comme texte de placeholder
                         return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
                     })                    ->searchable()
                     ->sortable(),
@@ -133,17 +125,11 @@ class CreneauResource extends Resource
                     ->options(Perm::pluck('nom', 'id'))
                     ->label('Par perm')
                     ->placeholder('Toutes les perms'),
-                Filter::make('Semestre')
-                    ->default(true)
-                    ->query(function (Builder $query): Builder {
-                        return $query
-                            ->when(
-                                now()->between(self::getStartSemester(), self::getEndSemester()),
-                                fn (Builder $query): Builder => $query
-                                    ->whereDate('date', '>=', self::getStartSemester())
-                                    ->whereDate('date', '<=', self::getEndSemester()),
-                               );
-                    })
+                Filter::make('Libre')
+                    ->label('Libre')
+                    ->query(function (Builder $query) {
+                        $query->where('perm_id', null);
+                    }),
             ])
             ->actions([
                 //Tables\Actions\DissociateAction::make('perm')

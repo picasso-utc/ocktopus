@@ -48,7 +48,6 @@ class TVLinkResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return substr($state, 0, 50);
                     })
-
             ])
             ->filters([
                 //

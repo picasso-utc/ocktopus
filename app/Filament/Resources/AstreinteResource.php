@@ -21,13 +21,12 @@ class AstreinteResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestion des perms';
 
-    protected static ?string $navigationLabel = 'Astreinte';
+    protected static ?string $navigationLabel = 'Notation';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-
             ]);
     }
 
@@ -35,13 +34,17 @@ class AstreinteResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('creneau.perm.nom')
+                    ->label('Perm'),
+                Tables\Columns\TextColumn::make('creneau.date')->date()
+                    ->label('Date'),
+                Tables\Columns\TextColumn::make('astreinte_type')
+                    ->label('type'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -61,7 +64,7 @@ class AstreinteResource extends Resource
     {
         return [
             'index' => Pages\ListAstreintes::route('/'),
-            'create' => Pages\CreateAstreinte::route('/create'),
+            'test' => Pages\CreateAstreinte::route('/create'),
             'edit' => Pages\EditAstreinte::route('/{record}/edit'),
         ];
     }
