@@ -16,8 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class GoodiesResource extends Resource
 {
     protected static ?string $model = Goodies::class;
+    protected static ?string $label = 'Goodies';
+    protected static ?string $navigationGroup = 'Général';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-gift';
 
     public static function form(Form $form): Form
     {
@@ -46,7 +48,8 @@ class GoodiesResource extends Resource
             ])
             ->bulkActions([
                 //
-            ]);
+            ])
+            ->paginated([20]);
     }
 
     public static function getPages(): array
