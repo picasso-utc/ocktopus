@@ -13,13 +13,13 @@ class PayUtcClient
         // On crée une nouvelle instance de la classe Client de Guzzle.
         $this->client = new Client([
             // L'URL de base pour les requêtes de l'API est récupérée à partir de la variable d'environnement API_URL.
-            'base_url' => env('API_URL'),
+            'base_url' => env('PAYUTC_API_URL'),
 
             // Les paramètres de requête communs à toutes les requêtes sont configurés ici.
             'query' => [
-                'system_id' => env('SYSTEM_ID'),
-                'app_key' => env('APP_KEY'),
-                'fundation_id' => env('FUNDATION_ID'),
+                'system_id' => env('PAYUTC_SYSTEM_ID'),
+                'app_key' => env('PAYUTC_APP_KEY'),
+                'fundation_id' => env('PAYUTC_FUNDATION_ID'),
                 'event_id' => 1,                      // L'ID de l'événement est fixé à 1 (c'est l'id du picasso).
                 'status' => "V",                      // Le statut est fixé à "V" comme validate.
             ],
@@ -122,8 +122,8 @@ class PayUtcClient
             // Requête pour obtenir une session auprès de l'API Payutc
             $res = $this->client->request('POST', 'https://api.nemopay.net/services/WEBSALE/login2', [
                 'body' => json_encode([
-                    'password' => env('PASSWORD'),
-                    'login' => env('LOGIN'),
+                    'password' => env('PAYUTC_PASSWORD'),
+                    'login' => env('PAYUTC_LOGIN'),
                 ]),
                 'headers' => [
                     'Content-Type' => 'application/json',
