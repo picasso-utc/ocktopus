@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ApiPayutcClient;
+use App\Services\PayUtcClient;
 use Illuminate\Support\Facades\Http;
 use DateTime;
 
 class TopController extends Controller
 {
-    private ApiPayutcClient $client;
+    private PayUtcClient $client;
 
-    public function __construct(ApiPayutcClient $client)
+    /**
+     * @param PayUtcClient $client
+     */
+    public function __construct(PayUtcClient $client)
     {
         $this->client = $client;
     }
@@ -59,5 +62,5 @@ class TopController extends Controller
             }
         }
         dd($dictionary);
-        }
+    }
 }

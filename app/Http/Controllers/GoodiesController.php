@@ -3,26 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoodiesWinner;
-use App\Services\ApiPayutcClient;
+use App\Services\PayUtcClient;
 use Illuminate\Support\Facades\Http;
 use DateTime;
 
 class GoodiesController extends Controller
 {
-    private ApiPayutcClient $payutc_client;
+    private PayUtcClient $client;
 
-    public function __construct(ApiPayutcClient $payutc_client)
+    /**
+     * @param PayUtcClient $client
+     */
+    public function __construct(PayUtcClient $client)
     {
-        $this->payutc_client = $payutc_client;
+        $this->client = $client;
     }
 
-
+    /**
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getWinner()
     {
         $accumulatedData = [];
         $dateStart = (new DateTime("2023-12-10"))->format('Y-m-d\TH:i:s.u\Z');
         $dateEnd = (new DateTime("2023-12-16"))->format('Y-m-d\TH:i:s.u\Z');
-        $response = $this->payutc_client->makePayutcRequest('GET', 'transactions', [
+        $response = $this->client->makePayutcRequest('GET', 'transactions', [
             'created__gt' => $dateStart,
             'created__lt' => $dateEnd,
         ]);
@@ -31,7 +37,7 @@ class GoodiesController extends Controller
         $dateStart = $jsonData[$length-1]['created'];
         while ($length > 499) {
             $accumulatedData = array_merge($accumulatedData, $jsonData);
-            $response = $this->payutc_client->makePayutcRequest('GET', 'transactions', [
+            $response = $this->client->makePayutcRequest('GET', 'transactions', [
                 'created__gt' => $dateStart,
                 'created__lt' => $dateEnd,
             ]);

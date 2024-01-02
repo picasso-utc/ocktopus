@@ -6,14 +6,10 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 
-class ApiPayutcClient
+class PayUtcClient
 {
     public function __construct()
     {
-        /*
-        Le constructeur de la classe est utilisé pour initialiser l'objet client Guzzle.
-        */
-
         // On crée une nouvelle instance de la classe Client de Guzzle.
         $this->client = new Client([
             // L'URL de base pour les requêtes de l'API est récupérée à partir de la variable d'environnement API_URL.
@@ -36,14 +32,16 @@ class ApiPayutcClient
         ]);
     }
 
+    /**
+     * Fonction générale qui permet de faire une requête a l'API dont la doc est présente ici :
+     * https://docapi.weezevent.com/openapi.html?weezpay
+     * @param $method
+     * @param $endpoint
+     * @param $options
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function makePayutcRequest($method, $endpoint, $options = [])
-    /*
-    Fonction générale qui permet de faire une requête a l'API dont la doc est présente ici :
-    https://docapi.weezevent.com/openapi.html?weezpay
-    $method représente la méthode (exemple : GET, POST etc)
-    $endpoint représente la fin de l'URL de la requête juste après l'organisation_id (exemple : transactions, users etc)
-    $option est une liste de
-    */
     {
         try {
             // Obtention de l'ID de session
@@ -109,11 +107,12 @@ class ApiPayutcClient
         }
     }
 
+    /**
+     * Fonction qui requête à l'ancienne API l'id de session pour utiliser cet id dans la nouvelle api
+     * documentation ici : https://apidoc.nemopay.net/Base_Service/#loginApp
+     * @return string
+     */
     public function getSession(): string
-    /*
-    Fonction qui requête à l'ancienne API l'id de session pour utiliser cet id dans la nouvelle api
-    documentation ici : https://apidoc.nemopay.net/Base_Service/#loginApp
-    */
     {
         // Durée de validité de la session en secondes (30 minutes)
         $sessionTime = 30 * 60;
