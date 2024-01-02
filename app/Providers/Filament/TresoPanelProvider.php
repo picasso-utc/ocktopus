@@ -19,27 +19,26 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class TresoPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('admin')
-            ->path('admin')
-            ->brandName("Pic'Asso - BackOffice")
+            ->id('treso')
+            ->path('treso')
+            ->brandName("Pic'Asso - Trésorerie")
             ->colors([
                 'primary' => Color::Blue,
                 'danger' => Color::Red,
                 'success' => Color::Green,
                 'warning' => Color::Yellow,
             ])
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->discoverResources(in: app_path('Filament/Treso/Resources'), for: 'App\\Filament\\Treso\\Resources')
+            ->discoverPages(in: app_path('Filament/Treso/Pages'), for: 'App\\Filament\\Treso\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Treso/Widgets'), for: 'App\\Filament\\Treso\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
