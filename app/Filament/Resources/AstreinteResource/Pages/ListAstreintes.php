@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ListAstreintes extends ListRecords
 {
@@ -24,7 +25,7 @@ class ListAstreintes extends ListRecords
         return [
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('member_id', '=', 2); // A modifier
+                    $query->where('member_id', '=', Auth::user()->id); // A modifier
                 })
         ];
     }

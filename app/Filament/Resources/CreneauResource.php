@@ -7,8 +7,10 @@ use App\Filament\Resources\CreneauResource\RelationManagers;
 use App\Models\Creneau;
 use App\Models\Perm;
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,6 +24,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
+use App\Filament\Actions\DissociateCategoryAction;
 
 
 class CreneauResource extends Resource
@@ -34,6 +37,12 @@ class CreneauResource extends Resource
     protected static ?string $navigationLabel = 'Planning';
 
     public static ?string $pluralLabel = "Creneaux"; // Modifiez cette ligne
+
+    public static function dissociatePerm(Creneau $creneau)
+    {
+        // Dissocier la perm associée au créneau spécifique
+        $creneau->update(['perm_id' => null]);
+    }
 
     protected static function getStartSemester()
     {
@@ -95,7 +104,8 @@ class CreneauResource extends Resource
     {
         return $table
             ->groups([
-                Group::make('date'),
+                Group::make('date')->date()
+                ->collapsible()
             ])
             ->defaultGroup('date')
             ->columns([
@@ -117,7 +127,8 @@ class CreneauResource extends Resource
                     ->placeholder(function ($record) {
                         $associatedPerm = $record->perm;
                         return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
-                    })                    ->searchable()
+                    })
+                    ->searchable()
                     ->sortable(),
             ])
             ->filters([
@@ -132,10 +143,8 @@ class CreneauResource extends Resource
                     }),
             ])
             ->actions([
-                //Tables\Actions\DissociateAction::make('perm')
                 ])
             ->bulkActions([
-
                 Tables\Actions\BulkActionGroup::make([
                 ]),
             ]);

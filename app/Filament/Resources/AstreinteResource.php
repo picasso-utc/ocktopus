@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AstreinteResource\Pages;
 use App\Filament\Resources\AstreinteResource\RelationManagers;
+use App\Http\Middleware\Auth;
 use App\Models\Astreinte;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class AstreinteResource extends Resource
 {
