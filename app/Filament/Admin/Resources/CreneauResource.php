@@ -100,7 +100,7 @@ class CreneauResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('dissociate')
-                    ->label('Libre')
+                    ->label('Libérer')
                     ->button()
                     //->icon('heroicon-o-x-mark')
                     ->action(fn($record) => self::dissociatePerm($record)),
