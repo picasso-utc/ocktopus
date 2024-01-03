@@ -65,27 +65,27 @@ class CreneauResource extends Resource
             ])
             ->defaultGroup('date')
             ->columns([
-                Tables\Columns\TextColumn::make('creneau')
-                    ->label('creneau'),
-                Tables\Columns\TextColumn::make('week_number')
-                    ->label('Numéro de semaine')
-                    ->sortable(),
-                Tables\Columns\SelectColumn::make('perm_id')
-                    ->label('Perm')
-                    ->options(function () {
-                        $perms = Perm::withCount('creneaux')->where('validated', true)  ->get();
-                        $filteredPerms = $perms->filter(function ($perm) {
-                            return $perm->creneaux_count < 3;
-                        });
-                        $sortedPerms = $filteredPerms->sortBy('creneaux_count');
-                        return $sortedPerms->pluck('nom', 'id')->toArray();
-                    })
-                    ->placeholder(function ($record) {
-                        $associatedPerm = $record->perm;
-                        return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
-                    })
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('creneau')
+                        ->label('creneau'),
+                    Tables\Columns\TextColumn::make('week_number')
+                        ->label('Numéro de semaine')
+                        ->sortable(),
+                    Tables\Columns\SelectColumn::make('perm_id')
+                        ->label('Perm')
+                        ->options(function () {
+                            $perms = Perm::withCount('creneaux')->where('validated', true)  ->get();
+                            $filteredPerms = $perms->filter(function ($perm) {
+                                return $perm->creneaux_count < 3;
+                            });
+                            $sortedPerms = $filteredPerms->sortBy('creneaux_count');
+                            return $sortedPerms->pluck('nom', 'id')->toArray();
+                        })
+                        ->placeholder(function ($record) {
+                            $associatedPerm = $record->perm;
+                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
+                        }),
+                ])
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('perm_id')
@@ -108,7 +108,15 @@ class CreneauResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                 ]),
-            ]);
+            ])
+            ->contentGrid([
+                'sm' => 3,
+                'md' => 3,
+                'lg' => 3,
+                'xl' => 3,
+                '2xl' => 3,
+            ])
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array
