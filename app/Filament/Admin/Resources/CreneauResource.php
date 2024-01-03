@@ -30,10 +30,10 @@ class CreneauResource extends Resource
 
     public static ?string $pluralLabel = "Creneaux"; // Modifiez cette ligne
 
-    public static function dissociatePerm(Creneau $creneau)
+    public static function dissociatePerm($record)
     {
-        // Dissocier la perm associée au créneau spécifique
-        $creneau->update(['perm_id' => null]);
+        // Dissocier la perm associée du créneau spécifique
+        Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
     }
 
 
@@ -99,6 +99,11 @@ class CreneauResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('dissociate')
+                    ->label('Libre')
+                    ->button()
+                    //->icon('heroicon-o-x-mark')
+                    ->action(fn($record) => self::dissociatePerm($record)),
                 ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

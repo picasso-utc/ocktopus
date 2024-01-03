@@ -10,9 +10,11 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Models\Creneau;
 
 
 
@@ -28,8 +30,27 @@ class SemestreResource extends Resource
 
         $startDate = Carbon::parse($record->startOfSemestre);
         $endDate = Carbon::parse($record->endOfSemestre);
-        $creneauController = new CreneauController();
-        $creneauController->createCreneaux($startDate, $endDate);
+
+        $existingCreneau = Creneau::where('date','=', $startDate)->first();
+
+        if (!$existingCreneau) {
+            // Si aucun créneau n'existe pour cette date, créez les créneaux
+            $creneauController = new CreneauController();
+            $creneauController->createCreneaux($startDate, $endDate);
+            Notification::make()
+                ->title('Les créneaux ont bien été crées')
+                ->success()
+                ->send();
+        } else {
+            // Sinon, vous pouvez faire quelque chose, comme afficher un message ou ne rien faire.
+            // Vous pouvez également ajouter une logique supplémentaire ici.
+            // Par exemple, mise à jour de l'existant, etc.
+            // Pour l'exemple, affichons un message.
+            Notification::make()
+                ->title('Les créneaux existent déjà')
+                ->info()
+                ->send();
+        }
     }
 
     public static function handleMakeActif($record)
@@ -68,10 +89,13 @@ class SemestreResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('CreateCreneaux')
                     ->label('Créer des créneaux')
+                    ->button()
                     ->action(fn($record) => self::handleCreateSemestre($record)),
                 Tables\Actions\Action::make('MakeActif')
                     ->label('Rendre actif')
+                    ->button()
                     ->action(fn($record) => self::handleMakeActif($record))
+
             ])
 
             ->bulkActions([

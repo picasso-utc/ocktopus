@@ -18,6 +18,15 @@ class ListCreneaus extends ListRecords
 {
     protected static string $resource = CreneauResource::class;
 
+    protected static function getStateSemester(){
+        $semestre = Semestre::where('activated', true)->first();
+
+        if ($semestre) {
+            return $semestre->state;
+        }
+        return "nope";
+    }
+
     protected static function getStartSemester()
     {
         $semestre = Semestre::where('activated', true)->first();
@@ -68,7 +77,7 @@ class ListCreneaus extends ListRecords
     {
         return [
 
-            'semestre' => Tab::make('Planning')
+            'semestre' => Tab::make(self::getStateSemester())
                 ->modifyQueryUsing(fn (Builder $query) => $query->when(
                     now()->between(self::getStartSemester(), self::getEndSemester()),
                     fn (Builder $query): Builder => $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])                )
@@ -78,14 +87,7 @@ class ListCreneaus extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-//            Actions\CreateAction::make('createCreneaux')
-//                ->label('Créer Créneaux')
-//                ->render(fn () => $this->createCreneaux(now(), now()->addDays(7))),
         ];
-    }
-    public function getHeaderWidgetsColumns(): int | array
-    {
-        return 5;
     }
 
 
