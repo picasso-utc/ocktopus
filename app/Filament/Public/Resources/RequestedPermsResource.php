@@ -13,24 +13,17 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RequestedPermsResource extends Resource
 {
+    use Tables\Concerns\InteractsWithTable;
+
     protected static ?string $model = Perm::class;
     protected static ?string $navigationGroup = 'Permanences';
     protected static ?string $label = 'Demandes de permanences';
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-
-    private static function mailToName(?string $mail): string
-    {
-        if ($mail == null) {
-            return '';
-        }
-        $name = explode('@', $mail)[0];
-        $name = str_replace('.', ' ', $name);
-        return ucwords($name);
-    }
 
     public static function form(Form $form): Form
     {
@@ -51,7 +44,7 @@ class RequestedPermsResource extends Resource
                     ->required()
                     ->placeholder('Nom du responsable de la permanence')
                     ->label('Nom du responsable')
-                    ->default(static::mailToName(auth()->user()?->email))
+                    ->default(mailToName(auth()->user()?->email))
                     ->columnSpan(3),
                 Forms\Components\TextInput::make('mail_resp')
                     ->required()
@@ -107,7 +100,6 @@ class RequestedPermsResource extends Resource
             ->columns(6);
     }
 
-
     public static function table(Table $table): Table
     {
         return $table
@@ -124,12 +116,7 @@ class RequestedPermsResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('yours')
-                    ->label('Vos demandes')
-                    ->query(function (Builder $query) {
-                        $query->where('mail_resp', Filament::auth()->user()->email);
-                    })
-                    ->default(true),
+                //
             ])
             ->actions([
                 //
