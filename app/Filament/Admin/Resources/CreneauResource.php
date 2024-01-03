@@ -10,20 +10,13 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Indicator;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
+
 
 
 class CreneauResource extends Resource
@@ -43,44 +36,8 @@ class CreneauResource extends Resource
         $creneau->update(['perm_id' => null]);
     }
 
-    protected static function getStartSemester()
-    {
-        $currentDate = now(); // Obtenez la date actuelle
-        $currentYear = Carbon::now()->year;
-        $semesterStart = null; // Définir des valeurs par défaut
 
-// Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        if ($currentDate->month >= 7 && $currentDate->day>=15) {
-            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
-        }
-        elseif ($currentDate->month >= 1 && $currentDate->day <= 20) {
-            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);
-            $semesterStart->subYear();//retirer une aneee
-        }// 15 août
-        else {
-            $semesterStart =  Carbon::createFromDate($currentYear, 2, 1);   // 1er février
-        }
-        return $semesterStart;
-    }
-    protected static function getEndSemester()
-    {
-        $currentDate = now(); // Obtenez la date actuelle
-        $currentYear = Carbon::now()->year;
-        $semesterEnd = null; // Définir des valeurs par défaut
 
-// Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        if ($currentDate->month >= 7 && $currentDate->day>=15) {
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-            $semesterEnd->addYear();// 30 janvier
-                    }
-        elseif ($currentDate->month >= 1 && $currentDate->day <= 20){
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-        }
-        else  {
-            $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet
-        }
-        return $semesterEnd;
-    }
 
     protected static function booted() // MARCHE PAS
     {

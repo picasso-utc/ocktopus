@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('semestre', function (Blueprint $table) {
+        Schema::create('semestres', function (Blueprint $table) {
             $table->id();
+            $table->string('state', 3)->unique();
+            $table->date('startOfSemestre')->unique();
+            $table->date('endOfSemestre')->unique();
+            $table->boolean('activated')->default(0);
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('semestre');
+        Schema::dropIfExists('semestres');
     }
 };

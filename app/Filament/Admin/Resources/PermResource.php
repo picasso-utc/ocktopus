@@ -37,7 +37,7 @@ class PermResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\CheckboxColumn::make('validated')
+                Tables\Columns\ToggleColumn::make('validated')
                     ->label('Validation'),
                 Tables\Columns\TextColumn::make('nom')
                     ->label('Nom')
@@ -66,9 +66,7 @@ class PermResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 

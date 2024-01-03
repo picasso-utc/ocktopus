@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Semestre;
 
 
 
@@ -19,41 +20,26 @@ class ListCreneaus extends ListRecords
 
     protected static function getStartSemester()
     {
-        $currentDate = now(); // Obtenez la date actuelle
-        $currentYear = Carbon::now()->year;
-        $semesterStart = null; // Définir des valeurs par défaut
+        $semestre = Semestre::where('activated', true)->first();
 
-// Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        if ($currentDate->month >= 7 && $currentDate->day>=15) {
-            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);  // 15 août
+        if ($semestre) {
+            return $semestre->startOfSemestre;
         }
-        elseif ($currentDate->month >= 1 && $currentDate->day <= 20) {
-            $semesterStart = Carbon::createFromDate($currentYear, 8, 15);
-            $semesterStart->subYear();//retirer une aneee
-        }// 15 août
-        else {
-            $semesterStart =  Carbon::createFromDate($currentYear, 2, 1);   // 1er février
-        }
-        return $semesterStart;
+
+        // Si aucun semestre activé n'est trouvé, vous pouvez renvoyer une date par défaut ou gérer cela selon vos besoins.
+        return now(); // Date par défaut, ajustez selon vos besoins.
     }
     protected static function getEndSemester()
     {
-        $currentDate = now(); // Obtenez la date actuelle
-        $currentYear = Carbon::now()->year;
-        $semesterEnd = null; // Définir des valeurs par défaut
+        $semestre = Semestre::where('activated', true)->first();
 
-// Déterminez si la date actuelle est dans le semestre d'automne ou de printemps
-        if ($currentDate->month >= 7 && $currentDate->day>=15) {
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-            $semesterEnd->addYear();// 30 janvier
+        if ($semestre) {
+            return $semestre->endOfSemestre;
         }
-        elseif ($currentDate->month >= 1 && $currentDate->day <= 20){
-            $semesterEnd = Carbon::createFromDate($currentYear, 1, 30);
-        }
-        else  {
-            $semesterEnd = Carbon::createFromDate($currentYear, 7, 10);    // 10 juillet
-        }
-        return $semesterEnd;
+
+        // Si aucun semestre activé n'est trouvé, vous pouvez renvoyer une date par défaut ou gérer cela selon vos besoins.
+        return now()->addMonth(6); // Date par défaut, ajustez selon vos besoins.
+
     }
 
     protected function createCreneau(Carbon $date, string $creneau)
@@ -81,13 +67,11 @@ class ListCreneaus extends ListRecords
         public function getTabs(): array
     {
         return [
+
             'semestre' => Tab::make('Planning')
                 ->modifyQueryUsing(fn (Builder $query) => $query->when(
                     now()->between(self::getStartSemester(), self::getEndSemester()),
-                    fn (Builder $query): Builder => $query
-                        ->whereDate('date', '>=', self::getStartSemester())
-                        ->whereDate('date', '<=', self::getEndSemester()),
-                )
+                    fn (Builder $query): Builder => $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])                )
                 )
         ];
     }

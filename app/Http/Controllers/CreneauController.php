@@ -47,8 +47,6 @@ class CreneauController extends Controller
                 $this->createCreneau($date, 'S');
             }
         }
-
-        redirect(route('creneau.listeCreneaux'));
     }
     public function createCreneauxForSemestre(Request $request)
     {
