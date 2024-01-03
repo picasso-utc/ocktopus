@@ -8,3 +8,15 @@ if (!function_exists('enum_pluck')) {
             ->toArray();
     }
 }
+
+if (!function_exists('mailToName')) {
+    function mailToName(?string $mail): string
+    {
+        if ($mail == null) {
+            return '';
+        }
+        $name = explode('@', $mail)[0];
+        $name = str_replace('.', ' ', $name);
+        return ucwords($name);
+    }
+}

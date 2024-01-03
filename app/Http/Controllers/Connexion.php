@@ -70,16 +70,20 @@ class Connexion extends Controller
                     }
                 }
 
-                // If the user is a member or administrator of 'picasso', proceed to fetch additional user information
+                // Create a new user with the retrieved data
+                $user = new User();
+                $user->uuid = $userData->toArray()["uuid"];
+                $user->email = $userData->toArray()["email"];
+                $user->role = $adminStatus;
                 if ($adminStatus != MemberRole::None) {
-                    User::firstOrCreate(
-                        ['uuid' => $userData->toArray()["uuid"]],
-                        [
-                            'email' => $userData->toArray()["email"],
-                            'role' => $adminStatus,
-                        ]
-                    );
+                    // If the user is a member or administrator of the picasso, save it to the database
+                    if (User::where('uuid', $user->uuid)->doesntExist()) {
+                        $user->save();
+                    } else {
+                        $user->update();
+                    }
                 }
+                session(['user' => $user]);
 
                 // Create a cookie with the access token and set its expiration time to 1440 minutes (24 hours)
                 $cookie = cookie(config('app.token_name'), $accessToken, 1440);
