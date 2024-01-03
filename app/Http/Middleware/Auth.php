@@ -51,7 +51,6 @@ class Auth
 
             // Set the user as the authenticated user
             auth()->setUser($user);
-
         } catch (ExpiredException) {
             return response()->json(['message' => 'Json Web Token Expired', 'JWT_ERROR' => true], 401);
         } catch (SignatureInvalidException) {

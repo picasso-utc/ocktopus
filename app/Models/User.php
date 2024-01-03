@@ -28,9 +28,6 @@ class User extends Authenticatable implements FilamentUser, HasName
         'role',
     ];
 
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-
     protected $casts = [
         'name' => 'string',
         'email' => 'string',

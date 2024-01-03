@@ -110,6 +110,7 @@ class Connexion extends Controller
     public function logout(Request $request): mixed
     {
         $cookie = cookie(config('app.token_name'), null, -1);
+        $request->session()->forget('user');
         return redirect('https://auth.assos.utc.fr/logout')->withCookie($cookie);
     }
 }

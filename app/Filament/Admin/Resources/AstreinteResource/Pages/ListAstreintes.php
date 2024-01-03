@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\AstreinteResource\Pages;
 
 use App\Filament\Admin\Resources\AstreinteResource;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +26,7 @@ class ListAstreintes extends ListRecords
         return [
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('member_id', '=', Auth::user()->id); // A modifier
+                    $query->where('member_id', Filament::auth()->id());
                 })
         ];
     }
