@@ -62,11 +62,17 @@ class RequestedPermsResource extends Resource
                     ->placeholder('Adresse mail du sous-responsable')
                     ->label('Adresse mail du sous-responsable')
                     ->columnSpan(3),
+                Forms\Components\RichEditor::make('description')
+                    ->required()
+                    ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'unorderedList', 'undo', 'redo'])
+                    ->placeholder('Description de la permanence')
+                    ->label('Description')
+                    ->columnSpan(6),
                 Forms\Components\Toggle::make('asso')
                     ->required()
                     ->label('Géré par une asso ?')
                     ->inline(false)
-                    ->columnSpan(2)
+                    ->columnSpan(1)
                     ->reactive(),
                 Forms\Components\TextInput::make('mail_asso')
                     ->required(function (Forms\Get $get) {
@@ -78,12 +84,14 @@ class RequestedPermsResource extends Resource
                     ->disabled(function (Forms\Get $get) {
                         return !$get('asso');
                     }),
-                Forms\Components\RichEditor::make('description')
+                Forms\Components\TextInput::make('ambiance')
                     ->required()
-                    ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'unorderedList', 'undo', 'redo'])
-                    ->placeholder('Description de la permanence')
-                    ->label('Description')
-                    ->columnSpan(6),
+                    ->label('Ambiance de la perm')
+                    ->placeholder('Entre 1 et 5')
+                    ->integer()
+                    ->minValue(1)
+                    ->maxValue(5)
+                    ->columnSpan(1),
                 Forms\Components\TextInput::make('periode')
                     ->required()
                     ->placeholder('Période souhaitée pour la permanence')
