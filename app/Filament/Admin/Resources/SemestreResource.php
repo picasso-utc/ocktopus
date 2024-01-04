@@ -34,7 +34,6 @@ class SemestreResource extends Resource
         $existingCreneau = Creneau::where('date','=', $startDate)->first();
 
         if (!$existingCreneau) {
-            // Si aucun créneau n'existe pour cette date, créez les créneaux
             $creneauController = new CreneauController();
             $creneauController->createCreneaux($startDate, $endDate);
             Notification::make()
@@ -42,10 +41,6 @@ class SemestreResource extends Resource
                 ->success()
                 ->send();
         } else {
-            // Sinon, vous pouvez faire quelque chose, comme afficher un message ou ne rien faire.
-            // Vous pouvez également ajouter une logique supplémentaire ici.
-            // Par exemple, mise à jour de l'existant, etc.
-            // Pour l'exemple, affichons un message.
             Notification::make()
                 ->title('Les créneaux existent déjà')
                 ->info()

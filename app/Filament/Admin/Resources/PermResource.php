@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\PermResource\Pages;
 use App\Filament\Admin\Resources\PermResource\RelationManagers;
 use App\Models\Perm;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -133,7 +134,8 @@ class PermResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+
             ])
             ->bulkActions([
 

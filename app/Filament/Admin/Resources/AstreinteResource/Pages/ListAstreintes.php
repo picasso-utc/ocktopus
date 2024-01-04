@@ -26,7 +26,7 @@ class ListAstreintes extends ListRecords
         return [
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('member_id', '=', 2); //Problème
+                    $query->where('member_id', '=', 1); //Problem Filament::auth()->id()
                 })
         ];
     }
