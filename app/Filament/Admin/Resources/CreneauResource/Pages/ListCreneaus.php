@@ -76,12 +76,10 @@ class ListCreneaus extends ListRecords
         public function getTabs(): array
     {
         return [
-
             'semestre' => Tab::make(self::getStateSemester())
-                ->modifyQueryUsing(fn (Builder $query) => $query->when(
-                    now()->between(self::getStartSemester(), self::getEndSemester()),
-                    fn (Builder $query): Builder => $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])                )
-                )
+                ->modifyQueryUsing(function (Builder $query) {
+                    return $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]);
+                })
         ];
     }
     protected function getHeaderActions(): array

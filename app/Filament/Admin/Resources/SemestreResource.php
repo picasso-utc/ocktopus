@@ -72,14 +72,9 @@ class SemestreResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->contentGrid([
-                'md' => 2,
-                'lg' => 2,
-                '2xl' => 2,
-                'sm' => 2,
-            ])
             ->columns([
-                Tables\Columns\BooleanColumn::make("activated")
+                Tables\Columns\IconColumn::make("activated")
+                    ->boolean()
                     ->label("Actif"),
                 Tables\Columns\TextColumn::make("state")
                 ->label("Etat"),
@@ -95,12 +90,10 @@ class SemestreResource extends Resource
                 Tables\Actions\Action::make('CreateCreneaux')
                     ->label('Créer des créneaux')
                     ->button()
-                    //->visible(fn (): bool => auth()->user()->hasRole('Admin'))//tester
                     ->action(fn($record) => self::handleCreateSemestre($record)),
                 Tables\Actions\Action::make('MakeActif')
                     ->label('Rendre actif')
                     ->button()
-                    //->visible(fn (): bool => auth()->user()->hasRole('Admin'))//tester
                     ->action(fn($record) => self::handleMakeActif($record))
 
             ])

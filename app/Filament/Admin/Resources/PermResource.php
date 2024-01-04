@@ -114,7 +114,8 @@ class PermResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('theme')
                     ->label('Thème'),
-                Tables\Columns\BooleanColumn::make('asso')
+                Tables\Columns\IconColumn::make('asso')
+                    ->boolean()
                     ->label('Asso')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ambiance')

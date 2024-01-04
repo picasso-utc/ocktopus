@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('astreintes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id');
-            $table->foreignId('creneau_id')->constrained('creneaux')->onDelete('cascade');
+            $table->foreignId('creneau_id');
             $table->enum('astreinte_type', AstreinteType::choices());
             $table->integer('note_deco')->default(0);
             $table->integer('note_orga')->default(0);
