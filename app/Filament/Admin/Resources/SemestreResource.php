@@ -57,7 +57,6 @@ class SemestreResource extends Resource
     {
         // Désactiver tous les autres semestres
         Semestre::where('id', '<>', $record->id)->update(['activated' => false]);
-
         // Activer le semestre actuel
         Semestre::where('id','=',$record->id)->update(['activated'=>true]);
     }
@@ -73,6 +72,12 @@ class SemestreResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'md' => 2,
+                'lg' => 2,
+                '2xl' => 2,
+                'sm' => 2,
+            ])
             ->columns([
                 Tables\Columns\BooleanColumn::make("activated")
                     ->label("Actif"),
@@ -90,10 +95,12 @@ class SemestreResource extends Resource
                 Tables\Actions\Action::make('CreateCreneaux')
                     ->label('Créer des créneaux')
                     ->button()
+                    //->visible(fn (): bool => auth()->user()->hasRole('Admin'))//tester
                     ->action(fn($record) => self::handleCreateSemestre($record)),
                 Tables\Actions\Action::make('MakeActif')
                     ->label('Rendre actif')
                     ->button()
+                    //->visible(fn (): bool => auth()->user()->hasRole('Admin'))//tester
                     ->action(fn($record) => self::handleMakeActif($record))
 
             ])
