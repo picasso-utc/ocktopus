@@ -62,7 +62,8 @@ class CreneauResource extends Resource
         return $table
             ->groups([
                 Group::make('date')->date()
-                ->collapsible()
+                ->collapsible(),
+                Group::make('creneau')
             ])
             ->defaultGroup('date')
             ->columns([
@@ -72,23 +73,6 @@ class CreneauResource extends Resource
                     Tables\Columns\TextColumn::make('week_number')
                         ->label('Numéro de semaine')
                         ->sortable(),
-                    //Tables\Columns\TextColumn::make('astreintes_count')->counts('astreintes'),
-                    Tables\Columns\SelectColumn::make("")
-                        ->options(function ($record) {
-                            $membresDuCreneau = Astreinte::where('creneau_id', $record->id)
-                                ->pluck('member_id')
-                                ->unique()
-                                ->toArray();
-
-                            $emailsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email');
-
-                            $options = $emailsMembres->mapWithKeys(function ($email, $membreId) {
-                                return [$membreId => mailToName($email)];
-                            })->toArray();
-
-                            return $options;
-                    })
-                    ->placeholder('Les astreinteurs'),
                     Tables\Columns\SelectColumn::make('perm_id')
                         ->label('Perm')
                         ->options(function () {
@@ -102,7 +86,21 @@ class CreneauResource extends Resource
                             $associatedPerm = $record->perm;
                             return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
                         }),
-                    //ViewColumn::make('status')->view('tables/columns/creneau-astreinteur.blade.php')
+                    Tables\Columns\TextColumn::make('creneau')
+                        ->formatStateUsing(function ($state, Creneau $creneau) {
+                            $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
+                                ->pluck('member_id')
+                                ->unique()
+                                ->toArray();
+
+                            $emailsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
+                                ->map(function ($email) {
+                                    return mailToName($email);
+                                });
+
+                            // Join les emails avec une virgule pour les afficher tous
+                            return $emailsMembres->implode(', ');
+                        }),
                 ])
             ])
             ->filters([
@@ -132,7 +130,7 @@ class CreneauResource extends Resource
                     ->color(fn($record) => self::determineNotificationColor2($record))
                     ->action(fn($record) => self::handleshotgun2($record)),
                     //->disabled(true), -> à creuser pour etre encore mieux
-                Tables\Actions\ViewAction::make()
+                //Tables\Actions\ViewAction::make()
                 ])
 
             ->bulkActions([
@@ -180,7 +178,8 @@ class CreneauResource extends Resource
                 ->where('member_id', 1) //A changer Filament::auth()->id()
                 ->where('astreinte_type', $astreinteType)
                 ->first();
-            if ($astreinteType=="Soir 1"){$existingAstreinte = Astreinte::where('creneau_id', $record->id)
+            if ($astreinteType=="Soir 1"){
+                $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                     ->first() !=null;
             }
             else {
@@ -230,6 +229,9 @@ class CreneauResource extends Resource
                     ->where('member_id', 1) //A changer Filament::auth()->id()
                     ->where('astreinte_type', $astreinteType)
                     ->first();
+                $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
+                    ->where('member_id', 1) //A changer Filament::auth()->id()
+                    ->first();
             }
             else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
@@ -239,7 +241,7 @@ class CreneauResource extends Resource
                     ->where('astreinte_type', $astreinteType)//A changer Filament::auth()->id()
                     ->first();
             }
-            if (!$existingAstreinte && !$astreinteUser) {
+            if (!$existingAstreinte && !$astreinteUser && !$astreinteUserOther) {
                 $astreinte = new Astreinte([
                     'member_id' => 1, // À CHANGER Filament::auth()->id()
                     'creneau_id' => $record->id,
@@ -255,6 +257,12 @@ class CreneauResource extends Resource
                         ->where('astreinte_type', $astreinteType)
                         ->first()
                         ->delete();
+                }
+                elseif ($astreinteUserOther){
+                    Notification::make()
+                        ->title('Vous avez déjà une perm du soir')
+                        ->color('danger')
+                        ->send();
                 }
                 elseif ($existingAstreinte) {
                 Notification::make()
@@ -307,3 +315,5 @@ class CreneauResource extends Resource
 
     }
 }
+
+
