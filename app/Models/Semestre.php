@@ -16,4 +16,9 @@ class Semestre extends Model
         'actif'
     ];
 
+    public function perms()
+    {
+        return $this->hasMany(Perm::class);
+    }
+
 }

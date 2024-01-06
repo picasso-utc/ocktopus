@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Models\Semestre;
 use App\Tables\Columns\CreneauAstreinteur;
 use App\Filament\Admin\Resources\CreneauResource\Pages;
 use App\Filament\Admin\Resources\CreneauResource\RelationManagers;
@@ -26,28 +27,54 @@ use Filament\Tables\Grouping\Group;
 use Illuminate\View\View;
 use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
-
+/**
+ * Resource for managing schedule slots (Créneaux).
+ */
 class CreneauResource extends Resource
 {
+    /**
+     * The Eloquent model associated with this resource.
+     *
+     * @var string|null
+     */
     protected static ?string $model = Creneau::class;
+
+
+    /**
+     * The icon to be used in the navigation menu.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
+    /**
+     * The navigation group under which this resource should be displayed.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationGroup = 'Gestion des perms';
 
+    /**
+     * The label to be used in the navigation menu.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationLabel = 'Planning';
 
+    /**
+     * The plural label for the resource.
+     *
+     * @var string|null
+     */
     public static ?string $pluralLabel = "Planning"; // Modifiez cette ligne
 
 
-    public static function dissociatePerm($record)
-    {
-        // Dissocier la perm associée du créneau spécifique
-        Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
-    }
-
-
-
-
+    /**
+     * Define the form structure for creating and editing slots. -> UNUSED
+     *
+     * @param Form $form
+     * @return Form
+     */
     public static function form(Form $form): Form
     {
         return $form
@@ -56,6 +83,12 @@ class CreneauResource extends Resource
             ]);
     }
 
+    /**
+     * Define the table structure for listing and managing slots.
+     *
+     * @param Table $table
+     * @return Table
+     */
     public static function table(Table $table): Table
     {
 
@@ -76,9 +109,10 @@ class CreneauResource extends Resource
                     Tables\Columns\SelectColumn::make('perm_id')
                         ->label('Perm')
                         ->options(function () {
-                            $perms = Perm::withCount('creneaux')->where('validated', true)  ->get();
+                            $semestreActifId = Semestre::where('activated', true)->value('id');
+                            $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre',$semestreActifId)->get();
                             $filteredPerms = $perms->filter(function ($perm) {
-                                return $perm->creneaux_count <= 3;
+                                return $perm->creneaux_count < 3;
                             });
                             return $filteredPerms->pluck('nom', 'id')->toArray();
                         })
@@ -122,12 +156,12 @@ class CreneauResource extends Resource
                 Tables\Actions\Action::make('shotgun1')
                      ->label('shotgun 1')
                         ->button()
-                        ->color(fn($record) => self::determineNotificationColor1($record))
+                        ->color(fn($record) => self::determineColor1($record))
                         ->action(fn($record) => self::handleshotgun1($record)),
                 Tables\Actions\Action::make('shotgun2')
                     ->label('shotgun 2')
                     ->button()
-                    ->color(fn($record) => self::determineNotificationColor2($record))
+                    ->color(fn($record) => self::determineColor2($record))
                     ->action(fn($record) => self::handleshotgun2($record)),
                     //->disabled(true), -> à creuser pour etre encore mieux
                 //Tables\Actions\ViewAction::make()
@@ -147,6 +181,11 @@ class CreneauResource extends Resource
             ->recordUrl(null);
     }
 
+/**
+* Get the relations associated with the resource. -> UNUSED
+*
+* @return array
+*/
     public static function getRelations(): array
     {
         return [
@@ -154,6 +193,12 @@ class CreneauResource extends Resource
         ];
     }
 
+
+    /**
+     * Get the pages associated with the resource.
+     *
+     * @return array
+     */
     public static function getPages(): array
     {
         return [
@@ -163,6 +208,29 @@ class CreneauResource extends Resource
         ];
     }
 
+
+    /*****************
+     * auxiliaries Functions
+     ****************/
+
+    /**
+     * Dissociate the associated permission from a specific slot.
+     *
+     * @param mixed $record
+     * @return void
+     */
+    public static function dissociatePerm($record)
+    {
+        // Dissocier la perm associée du créneau spécifique
+        Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
+    }
+
+    /**
+     * Handle the "shotgun 1" action for a slot.
+     *
+     * @param mixed $record
+     * @return void
+     */
     private static function handleshotgun1($record)
     {
         $astreinteType = null;
@@ -198,7 +266,7 @@ class CreneauResource extends Resource
             }
             else {
                 if ($astreinteUser) Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', 1) //A changer Filament::auth()->id()
+                    ->where('member_id', 1) //A changer
                     ->where('astreinte_type', $astreinteType)
                     ->first()
                     ->delete();
@@ -210,9 +278,17 @@ class CreneauResource extends Resource
         }
     }
 
-        private static function handleshotgun2($record)
+    /**
+     * Handle the "shotgun 2" action for a slot.
+     *
+     * @param mixed $record
+     * @return void
+     */
+
+    private static function handleshotgun2($record)
     {
         $astreinteType=null;
+        $astreinteUserOther=null;
         if ($record->creneau=="M") {
             $astreinteType = "Matin 2";
         }
@@ -274,7 +350,13 @@ class CreneauResource extends Resource
             }
         }
 
-    private static function determineNotificationColor1($record)
+    /**
+     * Determine the color for "shotgun 1" action.
+     *
+     * @param mixed $record
+     * @return string|null
+     */
+    private static function determineColor1($record)
     {
         if ($record->creneau == "M") {
             $astreinteType = "Matin 1";
@@ -295,7 +377,13 @@ class CreneauResource extends Resource
 
     }
 
-    private static function determineNotificationColor2($record)
+    /**
+     * Determine the color for "shotgun 2" action.
+     *
+     * @param mixed $record
+     * @return string|null
+     */
+    private static function determineColor2($record)
     {
         if ($record->creneau == "M") {
             $astreinteType = "Matin 2";

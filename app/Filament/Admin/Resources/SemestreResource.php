@@ -25,37 +25,13 @@ class SemestreResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
     protected static ?string $navigationGroup = 'General';
 
-    protected static function handleCreateSemestre($record)
-    {
-
-        $startDate = Carbon::parse($record->startOfSemestre);
-        $endDate = Carbon::parse($record->endOfSemestre);
-
-        $existingCreneau = Creneau::where('date','=', $startDate)->first();
-
-        if (!$existingCreneau) {
-            $creneauController = new CreneauController();
-            $creneauController->createCreneaux($startDate, $endDate);
-            Notification::make()
-                ->title('Les créneaux ont bien été crées')
-                ->success()
-                ->send();
-        } else {
-            Notification::make()
-                ->title('Les créneaux existent déjà')
-                ->info()
-                ->send();
-        }
-    }
-
-    public static function handleMakeActif($record)
-    {
-        // Désactiver tous les autres semestres
-        Semestre::where('id', '<>', $record->id)->update(['activated' => false]);
-        // Activer le semestre actuel
-        Semestre::where('id','=',$record->id)->update(['activated'=>true]);
-    }
-
+        /**
+     * Define the form for creating and updating semesters.
+     *
+     * @param Form $form The Filament form instance.
+     *
+     * @return Form The modified form.
+     */
     public static function form(Form $form): Form
     {
         return $form
@@ -64,6 +40,13 @@ class SemestreResource extends Resource
             ]);
     }
 
+    /**
+     * Define the table columns and configuration for displaying semesters.
+     *
+     * @param Table $table The Filament table instance.
+     *
+     * @return Table The modified table.
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -97,6 +80,11 @@ class SemestreResource extends Resource
             ]);
     }
 
+    /**
+     * Get the relations associated with this resource.
+     *
+     * @return array An array of relation configurations.
+     */
     public static function getRelations(): array
     {
         return [
@@ -104,6 +92,11 @@ class SemestreResource extends Resource
         ];
     }
 
+    /**
+     * Get the pages associated with this resource.
+     *
+     * @return array An array of page configurations.
+     */
     public static function getPages(): array
     {
         return [
@@ -112,4 +105,55 @@ class SemestreResource extends Resource
             'edit' => Pages\EditSemestre::route('/{record}/edit'),
         ];
     }
+
+
+    /*****************
+     * auxiliaries Functions
+     ****************/
+
+    /**
+     * Handle the creation of creneaux for the given semestre.
+     *
+     * @param mixed $record
+     * @return void
+     */
+    protected static function handleCreateSemestre($record)
+    {
+
+        $startDate = Carbon::parse($record->startOfSemestre);
+        $endDate = Carbon::parse($record->endOfSemestre);
+
+        $existingCreneau = Creneau::where('date','=', $startDate)->first();
+
+        if (!$existingCreneau) {
+            $creneauController = new CreneauController();
+            $creneauController->createCreneaux($startDate, $endDate);
+            Notification::make()
+                ->title('Les créneaux ont bien été crées')
+                ->success()
+                ->send();
+        } else {
+            Notification::make()
+                ->title('Les créneaux existent déjà')
+                ->info()
+                ->send();
+        }
+    }
+
+    /**
+     * Make the specified semestre active and deactivate others.
+     *
+     * @param mixed $record
+     * @return void
+     */
+    public static function handleMakeActif($record) : void
+    {
+        // Désactiver tous les autres semestres
+        Semestre::where('id', '<>', $record->id)->update(['activated' => false]);
+        // Activer le semestre actuel
+        Semestre::where('id','=',$record->id)->update(['activated'=>true]);
+    }
+
+
+
 }

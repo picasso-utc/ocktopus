@@ -15,11 +15,31 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Support\Number;
 
+/**
+ * Edit record page for AstreinteResource.
+ */
 class EditAstreinte extends EditRecord
 {
+    /**
+     * The associated resource class for this page.
+     *
+     * @var string
+     */
     protected static string $resource = AstreinteResource::class;
 
+    /**
+     * The title for the edit record page.
+     *
+     * @var string|null
+     */
     protected static ?string $title = "Notation des perms";
+
+    /**
+     * Define the form structure for the "Matin" type.
+     *
+     * @param Form $form
+     * @return Form
+     */
     protected function formMatin(Form $form): Form
     {
         return $form
@@ -36,10 +56,14 @@ class EditAstreinte extends EditRecord
 
             Textarea::make('commentaire')
                 ->label('Commentaire')
-            // Add other fields specific to Type1
         ]);
     }
-
+    /**
+     * Define the form structure for the "Midi" type.
+     *
+     * @param Form $form
+     * @return Form
+     */
     protected function formMidi(Form $form): Form
     {
         return $form
@@ -63,9 +87,15 @@ class EditAstreinte extends EditRecord
                     ->required(),
                 Textarea::make('commentaire')
                     ->label('Commentaire')
-                // Add other fields specific to Type1
             ]);
     }
+
+    /**
+     * Define the form structure for the "Soir" type.
+     *
+     * @param Form $form
+     * @return Form
+     */
     protected function formSoir(Form $form): Form
     {
         return $form
@@ -107,9 +137,15 @@ class EditAstreinte extends EditRecord
                     ->required(),
                 Textarea::make('commentaire')
                     ->label('Commentaire')
-                // Add other fields specific to Type1
             ]);
     }
+
+    /**
+     * Define the form structure based on the Astreinte type.
+     *
+     * @param Form $form
+     * @return Form
+     */
     public function form(Form $form): Form
     {
         $astreinteType = $this->record->astreinte_type;
@@ -129,7 +165,6 @@ class EditAstreinte extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
         ];
     }
 }

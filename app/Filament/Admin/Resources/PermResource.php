@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\PermResource\Pages;
 use App\Filament\Admin\Resources\PermResource\RelationManagers;
 use App\Models\Perm;
+use App\Models\Semestre;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -28,6 +29,7 @@ class PermResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nom')
@@ -97,6 +99,8 @@ class PermResource extends Resource
                     ->separator(' - ')
                     ->splitKeys(['Enter', ',', 'Tab'])
                     ->columnSpan(3),
+                Forms\Components\Hidden::make('semestre')->default($semestreActif->id),
+
             ])
             ->columns(6);
     }
