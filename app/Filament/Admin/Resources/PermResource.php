@@ -87,6 +87,14 @@ class PermResource extends Resource
                     ->placeholder('Description de la permanence')
                     ->label('Description')
                     ->columnSpan(6),
+                Forms\Components\TextInput::make('ambiance')
+                    ->required()
+                    ->label('Ambiance de la perm')
+                    ->placeholder('Entre 1 et 5')
+                    ->integer()
+                    ->minValue(1)
+                    ->maxValue(5)
+                    ->columnSpan(1),
                 Forms\Components\TextInput::make('periode')
                     ->required()
                     ->placeholder('Période souhaitée pour la permanence')

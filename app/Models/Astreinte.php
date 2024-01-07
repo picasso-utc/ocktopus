@@ -33,17 +33,15 @@ class Astreinte extends Model
     public function getPointsAttribute()
     {
         switch ($this->astreinte_type) {
-            case AstreinteType::M1:
-            case AstreinteType::M2:
-            case AstreinteType::D1:
-            case AstreinteType::D2:
-            case AstreinteType::A:
+            case 'Matin 1':
+            case 'Matin 1':
+            case 'Déjeuner 1':
+            case 'Déjeuner 2':
+            case 'Autre':
                 return 1; // 1 point pour le matin et midi
-            case AstreinteType::S1:
+            case 'Soir 1':
                 return 2.5; // 2.5 points pour le soir_1
-            case AstreinteType::S2:
-            case AstreinteType::S3:
-            case AstreinteType::S4:
+            case 'Soir 2':
                 return 2; // 2 points pour les autres soirs
             default:
                 return 0; // ou une valeur par défaut

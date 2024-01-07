@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreignId('member_id');
             $table->foreignId('creneau_id');
             $table->enum('astreinte_type', AstreinteType::choices());
-            $table->integer('note_deco')->default(0);
-            $table->integer('note_orga')->default(0);
-            $table->integer('note_anim')->default(0);
-            $table->integer('note_menu')->default(0);
+            $table->integer('note_deco')->nullable();
+            $table->integer('note_orga')->nullable();
+            $table->integer('note_anim')->nullable();
+            $table->integer('note_menu')->nullable();
             $table->string('commentaire')->nullable();
             $table->timestamps();
         });

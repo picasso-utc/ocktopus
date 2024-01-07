@@ -92,6 +92,7 @@ class CreneauResource extends Resource
     public static function table(Table $table): Table
     {
 
+
         return $table
             ->groups([
                 Group::make('date')->date()
@@ -103,11 +104,11 @@ class CreneauResource extends Resource
                 Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('creneau')
                         ->label('creneau'),
-                    Tables\Columns\TextColumn::make('week_number')
-                        ->label('Numéro de semaine')
-                        ->sortable(),
+                    Tables\Columns\TextColumn::make('perm.nom')
+                        ->label('Perm associée')
+                        ->badge(),
                     Tables\Columns\SelectColumn::make('perm_id')
-                        ->label('Perm')
+                        ->label('Associer une perm')
                         ->options(function () {
                             $semestreActifId = Semestre::where('activated', true)->value('id');
                             $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre',$semestreActifId)->get();
@@ -116,9 +117,13 @@ class CreneauResource extends Resource
                             });
                             return $filteredPerms->pluck('nom', 'id')->toArray();
                         })
-                        ->placeholder(function ($record) {
-                            $associatedPerm = $record->perm;
-                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
+                        ->placeholder("Choisir une perm")
+                        //(function ($record) {
+//                            $associatedPerm = $record->perm;
+//                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
+//                        })
+                        ->hidden(function (Creneau $creneau){
+                            return $creneau->perm_id;
                         }),
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
@@ -127,13 +132,13 @@ class CreneauResource extends Resource
                                 ->unique()
                                 ->toArray();
 
-                            $emailsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
+                            $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
                                 ->map(function ($email) {
                                     return mailToName($email);
                                 });
 
                             // Join les emails avec une virgule pour les afficher tous
-                            return $emailsMembres->implode(', ');
+                            return "Astreinteurs : " . $nomsMembres->implode(', ');
                         }),
                 ])
             ])
@@ -154,17 +159,24 @@ class CreneauResource extends Resource
                     ->label('Libérer')
                     ->action(fn($record) => self::dissociatePerm($record)),
                 Tables\Actions\Action::make('shotgun1')
-                     ->label('shotgun 1')
+                    ->label(fn($record) => match($record->creneau) {
+                        'M' => '9h30-10h',
+                        'D' => '11h45-13h',
+                        'S' => '17h30-23h',
+                    })
                         ->button()
                         ->color(fn($record) => self::determineColor1($record))
                         ->action(fn($record) => self::handleshotgun1($record)),
                 Tables\Actions\Action::make('shotgun2')
-                    ->label('shotgun 2')
+                    ->label(fn($record) => match($record->creneau) {
+                        'M' => '10h-12h',
+                        'D' => '13h-14h30',
+                        'S' => '18h30-23h',
+                    })
                     ->button()
                     ->color(fn($record) => self::determineColor2($record))
                     ->action(fn($record) => self::handleshotgun2($record)),
                     //->disabled(true), -> à creuser pour etre encore mieux
-                //Tables\Actions\ViewAction::make()
                 ])
 
             ->bulkActions([
