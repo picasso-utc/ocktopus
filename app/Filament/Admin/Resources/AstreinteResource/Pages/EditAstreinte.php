@@ -47,10 +47,10 @@ class EditAstreinte extends EditRecord
             Radio::make('note_orga')
                 ->label('Note Organisation')
                 ->options([
-                    '3' => 'Nickel, avec un ménage de qualité',
-                    '2' => 'Rien à redire',
-                    '1' => 'Améliorable mais ça va',
-                    '0' => 'Bof, iels auraient pu faire des efforts',
+                    '4' => 'Nickel, avec un ménage de qualité',
+                    '3' => 'Rien à redire',
+                    '2' => 'Améliorable mais ça va',
+                    '1' => 'Bof, iels auraient pu faire des efforts',
                 ])
                 ->required(),
 
@@ -71,18 +71,18 @@ class EditAstreinte extends EditRecord
                 Radio::make('note_menu')
                     ->label('Note Menu')
                     ->options([
-                        '3' => 'Gastro',
-                        '2' => 'Pas mal',
-                        '1' => 'Satisfaisant',
-                        '0' => 'Horrible',
+                        '4' => 'Gastro',
+                        '3' => 'Pas mal',
+                        '2' => 'Satisfaisant',
+                        '1' => 'Horrible',
                     ]),
                 Radio::make('note_orga')
                     ->label('Note Organisation')
                     ->options([
-                        '3' => 'Nickel, avec un ménage de qualité',
-                        '2' => 'Rien à redire',
-                        '1' => 'Améliorable mais ça va',
-                        '0' => 'Bof, iels auraient pu faire des efforts',
+                        '4' => 'Nickel, avec un ménage de qualité',
+                        '3' => 'Rien à redire',
+                        '2' => 'Améliorable mais ça va',
+                        '1' => 'Bof, iels auraient pu faire des efforts',
                     ])
                     ->required(),
                 Textarea::make('commentaire')
@@ -103,10 +103,10 @@ class EditAstreinte extends EditRecord
                 Radio::make('note_menu')
                     ->label('Note Menu')
                     ->options([
-                        '3' => 'Gastro',
-                        '2' => 'Pas mal',
-                        '1' => 'Satisfaisant',
-                        '0' => 'Horrible',
+                        '4' => 'Gastro',
+                        '3' => 'Pas mal',
+                        '2' => 'Satisfaisant',
+                        '1' => 'Horrible',
                     ]),
                 Radio::make('note_deco')
                     ->label('Note Décoration')
@@ -120,19 +120,19 @@ class EditAstreinte extends EditRecord
                 Radio::make('note_anim')
                     ->label('Note Animation et ambiance')
                     ->options([
-                        '3' => 'Dancing de folie et anims de qualité',
-                        '2' => 'Des efforts avec des anims',
-                        '1' => 'Un soir lambda',
-                        '0' => 'Bof, iels auraient pu faire des efforts',
+                        '4' => 'Dancing de folie et anims de qualité',
+                        '3' => 'Des efforts avec des anims',
+                        '2' => 'Un soir lambda',
+                        '1' => 'Bof, iels auraient pu faire des efforts',
                     ])
                     ->required(),
                 Radio::make('note_orga')
                     ->label('Note Organisation')
                     ->options([
-                        '3' => 'Nckel, avec un ménage de qualité',
-                        '2' => 'Rien à redire',
-                        '1' => 'Améliorable mais ça va',
-                        '0' => 'Bof, iels auraient pu faire des efforts',
+                        '4' => 'Nickel, avec un ménage de qualité',
+                        '3' => 'Rien à redire',
+                        '2' => 'Améliorable mais ça va',
+                        '1' => 'Bof, iels auraient pu faire des efforts',
                     ])
                     ->required(),
                 Textarea::make('commentaire')

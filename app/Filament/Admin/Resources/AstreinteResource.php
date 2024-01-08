@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function Webmozart\Assert\Tests\StaticAnalysis\notNull;
 
 
 class AstreinteResource extends Resource
@@ -36,6 +37,9 @@ class AstreinteResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('note_orga')
+                    ->label('Notée')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('creneau.perm.nom')
                     ->label('Perm'),
                 Tables\Columns\TextColumn::make('creneau.date')->date()
