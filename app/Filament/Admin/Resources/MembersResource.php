@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\MemberRole;
 use App\Filament\Fields\UserRoleSelect;
-use App\Filament\Resources\MembersResource\Pages;
+use App\Filament\Admin\Resources\MembersResource\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

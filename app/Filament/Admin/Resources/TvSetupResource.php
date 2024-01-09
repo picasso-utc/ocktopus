@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Fields\LinkSelect;
-use App\Filament\Resources\TvSetupResource\Pages;
-use App\Filament\Resources\TvSetupResource\RelationManagers;
+use App\Filament\Admin\Resources\TvSetupResource\Pages;
+use App\Filament\Admin\Resources\TvSetupResource\RelationManagers;
 use App\Models\Tv;
 use Filament\Forms;
 use Filament\Forms\Form;
