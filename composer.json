@@ -11,6 +11,8 @@
         "php": "^8.1",
         "ext-intl": "*",
         "ext-openssl": "*",
+        "barryvdh/laravel-dompdf": "^2.0",
+        "blade-ui-kit/blade-heroicons": "^2.2",
         "doctrine/dbal": "^3.7",
         "filament/filament": "^3.1",
         "firebase/php-jwt": "^6.10",
@@ -21,7 +23,8 @@
         "laravel/tinker": "^2.8",
         "league/flysystem": "^3.19",
         "league/oauth2-client": "^2.7",
-        "pbmedia/laravel-ffmpeg": "^8.3"
+        "pbmedia/laravel-ffmpeg": "^8.3",
+        "ryangjchandler/blade-tabler-icons": "^2.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

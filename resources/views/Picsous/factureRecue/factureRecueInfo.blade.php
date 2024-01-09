@@ -13,6 +13,15 @@
     <form action="{{route('Picsous.facturerecue.edit', $factureRecue)}}">
         <button type="submit">Editer</button>
     </form>
+    <br>
+
+    <a href="{{$factureRecue->pdf_path}}">exemple</a>
+
+    <iframe src="{{$factureRecue->pdf_path}}" width="100%" height="500px"> </iframe>
+
+    <br>    <br>
+
+
     <form action="{{route('Picsous.facturerecue.destroy', $factureRecue)}}"  method ="POST">
         @csrf
         @method('DELETE')
@@ -33,7 +42,7 @@
         </tr>
 
             <tr>
-                <td>{{$factureRecue->nom_entreprise}}</td>
+                <td>{{$factureRecue->destinataire}}</td>
                 <td>{{date('M d, Y', strtotime($factureRecue->created_at))}}</td>
                 <td>{{$factureRecue->prix}} €</td>
                 <td>{{$factureRecue->tva}} €</td>

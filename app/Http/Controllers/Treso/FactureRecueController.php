@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Treso;
 
 use App\Http\Controllers\Controller;
-use App\Models\Treso\FactureRecue;
+use App\Http\Controllers\ShowPdfController;
 use App\Models\Treso\CategorieFacture;
+use App\Models\Treso\FactureRecue;
 use App\Models\Treso\MontantCategorie;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class FactureRecueController extends Controller
 {

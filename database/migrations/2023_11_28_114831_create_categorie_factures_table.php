@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('categorie_factures', function (Blueprint $table) {
             $table->id();
-            $table->string('nom', 255);
-            $table->string('code', 1)->unique();
+            $table->string('nom', 255)->unique();
             $table->bigInteger('parent_id')->nullable();
-            $table->timestamps();
 
             $table->foreign('parent_id')
                 ->references('id')
                 ->on('categorie_factures')
                 ->onDelete('cascade')
                 ->nullable();
+
+            $table->timestamps();
         });
     }
 

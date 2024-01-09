@@ -145,3 +145,5 @@ Route::post('/Picsous/notedefrais/store',[App\Http\Controllers\Treso\NoteDeFrais
 Route::get('/Picsous/notedefrais/edit/{factureRecue}',[App\Http\Controllers\Treso\NoteDeFraisController::class, 'edit'])->name('Picsous.notedefrais.edit');
 Route::put('/Picsous/notedefrais/update/{factureRecue}',[App\Http\Controllers\Treso\NoteDeFraisController::class, 'update'])->name('Picsous.notedefrais.update');
 Route::delete('/Picsous/notedefrais/{factureRecue}',[App\Http\Controllers\Treso\NoteDeFraisController::class, 'destroy'])->name('Picsous.notedefrais.destroy');
+
+Route::get('/{record}/pdf/download', [App\Http\Controllers\DownloadPdfController::class, 'download '])->name('notedefrais.pdf.download');

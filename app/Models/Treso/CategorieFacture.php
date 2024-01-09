@@ -17,6 +17,11 @@ class CategorieFacture extends Model
         return $this->belongsTo(CategorieFacture::class, 'id_parent');
     }
 
+    public function nom()
+    {
+        return $this->nom;
+    }
+
     public function children()
     {
         return $this->hasMany(CategorieFacture::class, 'id_parent');
