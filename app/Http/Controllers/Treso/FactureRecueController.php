@@ -87,7 +87,8 @@ class FactureRecueController extends Controller
     {
         $categorieFacture = CategorieFacture::all();
         return view(
-            'Picsous.facturerecue.edit', [
+            'Picsous.facturerecue.edit',
+            [
                 'factureRecue' => $factureRecue,
                 'categorieFactureRecues' => $categorieFacture
 
@@ -95,7 +96,7 @@ class FactureRecueController extends Controller
         );
     }
 
-    public function update(Request $request,FactureRecue $factureRecue)
+    public function update(Request $request, FactureRecue $factureRecue)
     {
 
         dump($request->state);
@@ -120,10 +121,9 @@ class FactureRecueController extends Controller
         return to_route('Picsous.facturerecue');
     }
 
-    public function destroy(Request $request,FactureRecue $factureRecue)
+    public function destroy(Request $request, FactureRecue $factureRecue)
     {
         $factureRecue->delete();
         return to_route('Picsous.facturerecue');
     }
-
 }

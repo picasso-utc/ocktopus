@@ -143,7 +143,8 @@ class NoteDeFraisResource extends Resource
         $total = $selectedProducts->reduce(
             function ($total, $product) {
                 return $total + ($product['prix_unitaire_ttc'] * $product['quantite']);
-            }, 0
+            },
+            0
         );
 
         $set('total', number_format($total, 2, '.', ''));
@@ -163,7 +164,7 @@ class NoteDeFraisResource extends Resource
                     ->label('État')
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => match ($state){
+                        fn (string $state): string => match ($state) {
                         'D' => 'Note à payer',
                         'R' => 'Note à rembourser',
                         'E' => 'Note en attente',
@@ -202,7 +203,8 @@ class NoteDeFraisResource extends Resource
                                     echo Pdf::loadHtml(
                                         Blade::render('pdf', ['record' => $record])
                                     )->stream();
-                                }, $record->id . '.pdf'
+                                },
+                                $record->id . '.pdf'
                             );
                         }
                     ),

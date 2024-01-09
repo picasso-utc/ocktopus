@@ -9,6 +9,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
 use Filament\Infolists;
+
 use function Laravel\Prompts\warning;
 
 class ViewFactureRecue extends ViewRecord
@@ -53,7 +54,7 @@ class ViewFactureRecue extends ViewRecord
                                             ->label('État')
                                             ->badge()
                                             ->formatStateUsing(
-                                                fn (string $state): string => match ($state){
+                                                fn (string $state): string => match ($state) {
                                                 'D' => 'Facture à payer',
                                                 'R' => 'Facture à rembourser',
                                                 'E' => 'Facture en attente',

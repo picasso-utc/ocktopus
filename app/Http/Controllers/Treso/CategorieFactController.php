@@ -7,7 +7,6 @@ use App\Models\Treso\CategorieFacture;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-
 class CategorieFactController extends Controller
 {
     public function categorie()
@@ -49,13 +48,14 @@ class CategorieFactController extends Controller
     public function edit(CategorieFacture $categorieFactureRecues)
     {
         return view(
-            'Picsous.categorie.edit', [
+            'Picsous.categorie.edit',
+            [
                 'categorieFactureRecues' => $categorieFactureRecues
             ]
         );
     }
 
-    public function update(Request $request,CategorieFacture $categorieFactureRecues)
+    public function update(Request $request, CategorieFacture $categorieFactureRecues)
     {
         $categorieFactureRecues->update(
             [
@@ -66,7 +66,7 @@ class CategorieFactController extends Controller
         return to_route('Picsous.facturerecue');
     }
 
-    public function destroy(Request $request,CategorieFacture $categorieFactureRecues)
+    public function destroy(Request $request, CategorieFacture $categorieFactureRecues)
     {
         $categorieFactureRecues->delete();
         return to_route('Picsous.facturerecue');

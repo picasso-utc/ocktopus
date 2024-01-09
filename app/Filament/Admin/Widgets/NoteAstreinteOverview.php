@@ -56,8 +56,10 @@ class NoteAstreinteOverview extends BaseWidget
             ? ($nombreAstreintesNotees / $totalAstreintes) * 100
             : 0;
         $couleurPourcentage = 'success' ;
-        if ($pourcentageAstreintesNotees < 75) { $couleurPourcentage =  'danger';
-        } else if ($couleurPourcentage > 90) { $couleurPourcentage = 'success';
+        if ($pourcentageAstreintesNotees < 75) {
+            $couleurPourcentage =  'danger';
+        } elseif ($couleurPourcentage > 90) {
+            $couleurPourcentage = 'success';
         }
         return [
             Stat::make('Astreintes', Astreinte::query()->where('member_id', 1)->count()) //Filament Auth

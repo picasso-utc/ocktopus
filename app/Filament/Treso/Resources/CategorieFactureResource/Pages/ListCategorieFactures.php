@@ -16,5 +16,4 @@ class ListCategorieFactures extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
 }

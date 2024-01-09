@@ -114,5 +114,4 @@ class CategorieFactureResource extends Resource
             'edit' => Pages\EditCategorieFacture::route('/{record}/edit'),
         ];
     }
-
 }

@@ -9,7 +9,7 @@ class NoteDeFrais extends Model
 {
     use HasFactory;
 
-    protected $table ='note_de_frais';
+    protected $table = 'note_de_frais';
     protected $fillable = [
         'state', 'date_facturation', 'nom', 'prenom', 'numero_voie', 'rue',
         'code_postal', 'ville', 'email'

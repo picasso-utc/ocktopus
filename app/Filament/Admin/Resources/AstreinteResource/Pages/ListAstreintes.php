@@ -47,10 +47,12 @@ class ListAstreintes extends ListRecords
                         $query->where('member_id', 1)//Filament::auth()->id()
                             ->whereNull('note_orga')
                             ->whereHas(
-                                'creneau', function ($query) {
+                                'creneau',
+                                function ($query) {
                                     $query->whereNotNull('perm_id')
                                         ->whereHas(
-                                            'perm', function ($query) {
+                                            'perm',
+                                            function ($query) {
                                                 $semestreActifId = Semestre::where('activated', true)->value('id');
                                                 $query->where('semestre', $semestreActifId);
                                             }
@@ -64,10 +66,12 @@ class ListAstreintes extends ListRecords
                     function (Builder $query) {
                         $query->where('member_id', 1)//Filament::auth()->id()
                             ->whereHas(
-                                'creneau', function ($query) {
+                                'creneau',
+                                function ($query) {
                                     $query->whereNotNull('perm_id')
                                         ->whereHas(
-                                            'perm', function ($query) {
+                                            'perm',
+                                            function ($query) {
                                                 $semestreActifId = Semestre::where('activated', true)->value('id');
                                                 $query->where('semestre', $semestreActifId);
                                             }

@@ -30,5 +30,4 @@ class Perm extends Model
 
         return $creneauCount < 3;
     }
-
 }

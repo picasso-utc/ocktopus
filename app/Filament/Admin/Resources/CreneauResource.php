@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Illuminate\View\View;
+
 use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 /**
@@ -208,7 +209,7 @@ class CreneauResource extends Resource
 
     /**
      Get the relations associated with the resource. -> UNUSED
-    
+
      @return array
      */
     public static function getRelations(): array
@@ -249,7 +250,4 @@ class CreneauResource extends Resource
         // Dissocier la perm associée du créneau spécifique
         Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
     }
-
 }
-
-

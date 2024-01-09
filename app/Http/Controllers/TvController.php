@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class TvController extends Controller
 {
-
     /**
      * Affiche la vue pour naviguer entre la gestion des médias, TVs et liens.
      *
@@ -41,7 +40,8 @@ class TvController extends Controller
     {
         $link = Link::find($tv->link_id);
         return view(
-            'TV.display', [
+            'TV.display',
+            [
             'link' => $link
             ]
         );
@@ -56,7 +56,8 @@ class TvController extends Controller
     {
         $links = Link::all();
         return view(
-            'TV.create', [
+            'TV.create',
+            [
             'links' => $links
             ]
         );
@@ -99,7 +100,8 @@ class TvController extends Controller
     {
         $links = Link::all();
         return view(
-            'TV.edit', [
+            'TV.edit',
+            [
             'tv' => $tv,
             'links' => $links
             ]

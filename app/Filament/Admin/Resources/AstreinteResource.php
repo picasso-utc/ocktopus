@@ -13,8 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use function Webmozart\Assert\Tests\StaticAnalysis\notNull;
 
+use function Webmozart\Assert\Tests\StaticAnalysis\notNull;
 
 class AstreinteResource extends Resource
 {

@@ -15,7 +15,9 @@ use Filament\Models\Contracts\FilamentUser;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -38,9 +40,9 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         if ($panel->getId() === 'admin') {
             return $this->role->isMember();
-        } else if ($panel->getId() === 'treso') {
+        } elseif ($panel->getId() === 'treso') {
             return $this->role->isAdministrator();
-        } else if ($panel->getId() === 'public') {
+        } elseif ($panel->getId() === 'public') {
             return true;
         }
         return false;

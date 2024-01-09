@@ -7,6 +7,7 @@ use App\Models\Treso\NoteDeFrais;
 use App\Models\Treso\ElementFacture;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+
 class NoteDeFraisController extends Controller
 {
     public function notedefrais()
@@ -65,7 +66,8 @@ class NoteDeFraisController extends Controller
     {
         $categorieFacture = CategorieFacture::all();
         return view(
-            'Picsous.noteDeFrais.edit', [
+            'Picsous.noteDeFrais.edit',
+            [
                 'factureRecue' => $factureRecue,
                 'categorieFactureRecues' => $categorieFacture
 
@@ -73,7 +75,7 @@ class NoteDeFraisController extends Controller
         );
     }
 
-    public function update(Request $request,FactureRecue $factureRecue)
+    public function update(Request $request, FactureRecue $factureRecue)
     {
 
         dump($request->state);
@@ -98,7 +100,7 @@ class NoteDeFraisController extends Controller
         return to_route('Picsous.noteDeFrais');
     }
 
-    public function destroy(Request $request,FactureRecue $factureRecue)
+    public function destroy(Request $request, FactureRecue $factureRecue)
     {
         $factureRecue->delete();
         return to_route('Picsous.noteDeFrais');

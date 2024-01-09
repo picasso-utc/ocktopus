@@ -72,7 +72,7 @@ class MediaResource extends Resource
                             $type = $get('media_type');
                             if ($type == MediaType::Video->value) {
                                 return 'Nombre de répétitions de la vidéo';
-                            } else if ($type == MediaType::Image->value) {
+                            } elseif ($type == MediaType::Image->value) {
                                 return 'Durée d\'affichage en secondes';
                             } else {
                                 return '';
@@ -90,7 +90,7 @@ class MediaResource extends Resource
                             $type = $get('media_type');
                             if ($type == MediaType::Image->value) {
                                 $files = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                            } else if ($type == MediaType::Video->value) {
+                            } elseif ($type == MediaType::Video->value) {
                                 $files = ['video/mp4', 'video/quicktime', 'video/ogg', 'video/webm'];
                             } else {
                                 $files = [];

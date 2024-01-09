@@ -90,7 +90,8 @@ class MediaController extends Controller
     public function edit(Media $media)
     {
         return view(
-            'TV.medias.edit', [
+            'TV.medias.edit',
+            [
             'media' => $media
             ]
         );

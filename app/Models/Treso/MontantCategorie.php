@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models\Treso;
-use App\Models\Treso\CategorieFacture;
 
+use App\Models\Treso\CategorieFacture;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

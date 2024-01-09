@@ -48,7 +48,7 @@ class GingerClient
      * @param  array|null $parameters
      * @return array
      */
-    private function apiCall(string $method, string $path, array $data = null, array $parameters = null) : array
+    private function apiCall(string $method, string $path, array $data = null, array $parameters = null): array
     {
         $uri = $this->config['url'] . $path;
         $key = $this->config['key'];

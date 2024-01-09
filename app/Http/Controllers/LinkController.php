@@ -64,7 +64,8 @@ class LinkController extends Controller
     public function edit(Link $link)
     {
         return view(
-            'TV.links.edit', [
+            'TV.links.edit',
+            [
             'link' => $link
             ]
         );

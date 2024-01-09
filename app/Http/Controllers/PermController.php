@@ -9,7 +9,4 @@ use Illuminate\View\View;
 
 class PermController extends Controller
 {
-
-
 }
-

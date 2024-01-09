@@ -17,7 +17,6 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
-
 class ShotgunCreneau extends BaseWidget
 {
     protected static ?int $sort = 4;
@@ -88,7 +87,7 @@ class ShotgunCreneau extends BaseWidget
                 [
                 Tables\Actions\Action::make('shotgun1')
                     ->label(
-                        fn($record) => match($record->creneau) {
+                        fn($record) => match ($record->creneau) {
                         'M' => '9h30-10h',
                         'D' => '11h45-13h',
                         'S' => '17h30-23h',
@@ -99,7 +98,7 @@ class ShotgunCreneau extends BaseWidget
                     ->action(fn($record) => self::handleShotgun1($record)),
                 Tables\Actions\Action::make('shotgun2')
                     ->label(
-                        fn($record) => match($record->creneau) {
+                        fn($record) => match ($record->creneau) {
                         'M' => '10h-12h',
                         'D' => '13h-14h30',
                         'S' => '18h30-23h',
@@ -153,11 +152,10 @@ class ShotgunCreneau extends BaseWidget
                 ->where('member_id', 1) //A changer Filament::auth()->id()
                 ->where('astreinte_type', $astreinteType)
                 ->first();
-            if ($astreinteType=="Soir 1") {
+            if ($astreinteType == "Soir 1") {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->first() !=null;
-            }
-            else {
+                        ->first() != null;
+            } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                         ->where('astreinte_type', $astreinteType)->first() != null;
             }
@@ -172,14 +170,15 @@ class ShotgunCreneau extends BaseWidget
 
                 // Enregistre l'instance dans la base de données
                 $astreinte->save();
-            }
-            else {
-                if ($astreinteUser) { Astreinte::where('creneau_id', $record->id)
+            } else {
+                if ($astreinteUser) {
+                    Astreinte::where('creneau_id', $record->id)
                     ->where('member_id', 1) //A changer
                     ->where('astreinte_type', $astreinteType)
                     ->first()
                     ->delete();
-                } else { Notification::make()
+                } else {
+                    Notification::make()
                     ->title('Il n\'y a plus de places pour cette astreinte')
                     ->color('danger')
                     ->send();
@@ -196,20 +195,18 @@ class ShotgunCreneau extends BaseWidget
      */
     private static function handleShotgun2(mixed $record): void
     {
-        $astreinteType=null;
-        $astreinteUserOther=null;
-        if ($record->creneau=="M") {
+        $astreinteType = null;
+        $astreinteUserOther = null;
+        if ($record->creneau == "M") {
             $astreinteType = "Matin 2";
-        }
-        elseif ($record->creneau=="D") {
+        } elseif ($record->creneau == "D") {
             $astreinteType = "Déjeuner 2";
-        }
-        elseif ($record->creneau=="S") {
+        } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 2";
         }
         if ($astreinteType) {
-            if ($astreinteType== "Soir 2") {
-                $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count()>=3;
+            if ($astreinteType == "Soir 2") {
+                $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
                     ->where('member_id', Filament::auth()->id())
                     ->where('astreinte_type', $astreinteType)
@@ -272,16 +269,17 @@ class ShotgunCreneau extends BaseWidget
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 1";
         }
-        if (Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())
             ->where('astreinte_type', $astreinteType)->first()
         ) {
             return 'success';
         }
-        if (Astreinte::where('creneau_id', $record->id)->where('astreinte_type', $astreinteType)->first()
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('astreinte_type', $astreinteType)->first()
         ) {
             return 'danger';
         }
-
     }
 
     /**
@@ -299,15 +297,16 @@ class ShotgunCreneau extends BaseWidget
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 2";
         }
-        if (Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())->where('astreinte_type', $astreinteType)->first()
-        ) { return 'success';
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())->where('astreinte_type', $astreinteType)->first()
+        ) {
+            return 'success';
         }
-        if (($astreinteType=="Soir 2" && Astreinte::where('creneau_id', $record->id)->count()>=3)||($astreinteType!="Soir 2" && Astreinte::where('creneau_id', $record->id)            ->where('astreinte_type', $astreinteType)->first())
+        if (
+            ($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)            ->where('astreinte_type', $astreinteType)->first())
         ) {
             return 'danger';
         }
-
-
     }
 
     function getDateSamediAvant(): Carbon

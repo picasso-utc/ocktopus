@@ -173,8 +173,7 @@ class EditAstreinte extends EditRecord
             return $this->formMatin($form);
         } elseif ($astreinteType === 'Déjeuner 1' || $astreinteType === 'Déjeuner 2') {
             return $this->formMidi($form);
-        }
-        elseif ($astreinteType === 'Soir 1' || $astreinteType === 'Soir 2' || $astreinteType === 'Soir 3' || $astreinteType === 'Soir 4') {
+        } elseif ($astreinteType === 'Soir 1' || $astreinteType === 'Soir 2' || $astreinteType === 'Soir 3' || $astreinteType === 'Soir 4') {
             return $this->formSoir($form);
         }
 

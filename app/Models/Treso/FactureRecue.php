@@ -10,7 +10,7 @@ class FactureRecue extends Model
 {
     use HasFactory;
 
-    protected $table ='facture_recues';
+    protected $table = 'facture_recues';
     protected $fillable = [
         'tva', 'prix', 'perm_id', 'state', 'destinataire', 'date',
         'date_created', 'date_paiement', 'date_remboursement', 'moyen_paiement',
@@ -49,7 +49,7 @@ class FactureRecue extends Model
     {
         $price = 0;
 
-        foreach ($this->categoriePrix as $cat){
+        foreach ($this->categoriePrix as $cat) {
             $price += $cat->prix;
         }
 
@@ -65,6 +65,4 @@ class FactureRecue extends Model
     {
         return $this->hasMany(MontantCategorie::class, 'facture_id');
     }
-
-
 }

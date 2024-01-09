@@ -26,26 +26,30 @@ class ManageGoodies extends ManageRecords
         $dateStart = (new DateTime("2023-12-10"))->format('Y-m-d\TH:i:s.u\Z');
         $dateEnd = (new DateTime("2023-12-16"))->format('Y-m-d\TH:i:s.u\Z');
         $response = $client->makePayutcRequest(
-            'GET', 'transactions', [
+            'GET',
+            'transactions',
+            [
             'created__gt' => $dateStart,
             'created__lt' => $dateEnd,
             ]
         );
         $jsonData = json_decode($response->getContent(), true);
         $length = count($jsonData);
-        $dateStart = $jsonData[$length-1]['created'];
+        $dateStart = $jsonData[$length - 1]['created'];
 
         while ($length > 499) {
             $accumulatedData = array_merge($accumulatedData, $jsonData);
             $response = $client->makePayutcRequest(
-                'GET', 'transactions', [
+                'GET',
+                'transactions',
+                [
                 'created__gt' => $dateStart,
                 'created__lt' => $dateEnd,
                 ]
             );
             $jsonData = json_decode($response->getContent(), true);
             $length = count($jsonData);
-            $dateStart = $jsonData[$length-1]['created'];
+            $dateStart = $jsonData[$length - 1]['created'];
         }
 
         $accumulatedData = array_merge($accumulatedData, $jsonData);
@@ -67,7 +71,8 @@ class ManageGoodies extends ManageRecords
             'X-API-KEY' => env('PROXY_KEY')
             ]
         )->post(
-            env('PROXY_URL'), [
+            env('PROXY_URL'),
+            [
                 'wallets' => $winners,
                 ]
         );

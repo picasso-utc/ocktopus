@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Semestre;
 use Illuminate\Support\Carbon;
 
-
 class ListCreneaus extends ListRecords
 {
     protected static string $resource = CreneauResource::class;
@@ -19,7 +18,7 @@ class ListCreneaus extends ListRecords
      *
      * @return string
      */
-    protected static function getStateSemester() : string
+    protected static function getStateSemester(): string
     {
         $semestre = Semestre::where('activated', true)->first();
 
@@ -31,7 +30,7 @@ class ListCreneaus extends ListRecords
      *
      * @return Carbon
      */
-    protected static function getStartSemester() : string
+    protected static function getStartSemester(): string
     {
         $semestre = Semestre::where('activated', true)->first();
 
@@ -43,7 +42,7 @@ class ListCreneaus extends ListRecords
      *
      * @return mixed
      */
-    protected static function getEndSemester() : mixed //string ou carbon
+    protected static function getEndSemester(): mixed //string ou carbon
     {
         $semestre = Semestre::where('activated', true)->first();
 

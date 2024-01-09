@@ -170,7 +170,7 @@ class FactureRecueResource extends Resource
                     ->label('État')
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => match ($state){
+                        fn (string $state): string => match ($state) {
                         'D' => 'Facture à payer',
                         'R' => 'Facture à rembourser',
                         'E' => 'Facture en attente',

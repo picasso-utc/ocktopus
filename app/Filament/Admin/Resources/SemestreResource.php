@@ -16,8 +16,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use App\Models\Creneau;
 
-
-
 class SemestreResource extends Resource
 {
     protected static ?string $model = Semestre::class;
@@ -156,14 +154,11 @@ class SemestreResource extends Resource
      * @param  mixed $record
      * @return void
      */
-    public static function handleMakeActif($record) : void
+    public static function handleMakeActif($record): void
     {
         // Désactiver tous les autres semestres
         Semestre::where('id', '<>', $record->id)->update(['activated' => false]);
         // Activer le semestre actuel
-        Semestre::where('id', '=', $record->id)->update(['activated'=>true]);
+        Semestre::where('id', '=', $record->id)->update(['activated' => true]);
     }
-
-
-
 }

@@ -10,5 +10,4 @@ class CreatePerm extends CreateRecord
 {
     protected static string $resource = PermResource::class;
     protected static ?string $title = 'Nouvelle permanence';
-
 }

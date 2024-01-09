@@ -63,7 +63,8 @@ class PayUtcClient
                 $query = array_merge(
                     [
                     'sessionid' => $session_id,
-                    ], $options
+                    ],
+                    $options
                 );
 
                 // Configuration de la requête
@@ -87,7 +88,6 @@ class PayUtcClient
 
                     // Passage à la page suivante
                     $currentPage++;
-
                 } else {
                     // Gestion des erreurs en cas de réponse non réussie
                     $errorMessage = 'Failed to retrieve data from Payutc API. Status Code: ' . $response->getStatusCode();
@@ -99,12 +99,10 @@ class PayUtcClient
 
             // Retour d'une réponse JSON avec l'ensemble des données
             return response()->json($allData);
-
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             // Gestion des exceptions liées à la requête HTTP
             $errorMessage = 'HTTP Request Exception: ' . $e->getMessage();
             return response()->json(['error' => $errorMessage], 500);
-
         } catch (\Exception $e) {
             // Gestion des autres exceptions
             $errorMessage = 'An error occurred: ' . $e->getMessage();
@@ -125,10 +123,14 @@ class PayUtcClient
 
         // Utilisation du cache Laravel pour stocker et récupérer la session
         return Cache::remember(
-            'payutc.session', $sessionTime, function () {
+            'payutc.session',
+            $sessionTime,
+            function () {
                 // Requête pour obtenir une session auprès de l'API Payutc
                 $res = $this->client->request(
-                    'POST', 'https://api.nemopay.net/services/WEBSALE/login2', [
+                    'POST',
+                    'https://api.nemopay.net/services/WEBSALE/login2',
+                    [
                     'body' => json_encode(
                         [
                         'password' => env('PAYUTC_PASSWORD'),

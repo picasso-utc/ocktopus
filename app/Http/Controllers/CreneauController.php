@@ -8,12 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Creneau;
 use Carbon\Carbon;
 
-
-
 class CreneauController extends Controller
 {
-
-
     private function createCreneau(Carbon $date, string $creneau)
     {
         Creneau::create(
@@ -39,5 +35,4 @@ class CreneauController extends Controller
             }
         }
     }
-
 }

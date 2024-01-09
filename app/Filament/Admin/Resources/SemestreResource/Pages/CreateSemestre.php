@@ -29,7 +29,5 @@ class CreateSemestre extends CreateRecord
 
                 ]
             );
-
     }
-
 }

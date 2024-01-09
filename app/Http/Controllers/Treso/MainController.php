@@ -11,7 +11,8 @@ class MainController extends Controller
     {
 
         return view(
-            'home', [
+            'home',
+            [
             'FactureRecue' => FactureRecue::all()
             ]
         );
