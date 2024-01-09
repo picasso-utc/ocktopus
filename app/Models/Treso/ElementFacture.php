@@ -11,4 +11,5 @@ class ElementFacture extends Model
 
     protected $table = 'element_factures';
     protected $fillable = ['description', 'prix_unitaire_ttc', 'tva', 'quantite', 'note_de_frais_id'];
+
 }

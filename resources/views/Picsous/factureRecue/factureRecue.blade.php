@@ -12,6 +12,12 @@
             <a href="{{route('Picsous.facturerecue.create')}}">Ajouter une facture</a>
         </p>
         <br>
+
+        <iframe src="/01HK9TDQEPPQZV26Y6DHTXCV3M.pdf" width="100%" height="500px"> </iframe>
+        <a href="/01HK9TDQEPPQZV26Y6DHTXCV3M.pdf">exemple</a>.
+
+
+
         <table>
             <tr>
                 <th>Ref.</th>

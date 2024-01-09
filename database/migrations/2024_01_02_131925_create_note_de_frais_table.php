@@ -22,6 +22,7 @@ return new class extends Migration
             $table->char('code_postal',5);
             $table->char('ville',255);
             $table->char('email',255);
+            $table->float('total')->default(0);
             $table->timestamps();
         });
     }

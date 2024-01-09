@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('state', 1);
             $table->float('tva')->default(0);
             $table->float('prix')->default(0);
-            $table->char('nom_entreprise',255);
+            $table->char('destinataire',255);
             $table->date('date')->default(now());
             $table->date('date_paiement')->nullable();
             $table->date('date_remboursement')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->char('personne_a_rembourser',255)->nullable();
             $table->boolean('immobilisation')->default(False);
             $table->text('remarque')->nullable();
-            $table->text('facture_number')->nullable();
+            $table->string('pdf_path')->nullable();
 
             //  Attribut pour link une facture à une perm
             //$table->foreignId('perm')->references('perms','creneau')->onDelete('cascade');
