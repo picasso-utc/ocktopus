@@ -42,5 +42,3 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
-
-Route::get('/get-goodies-winner', [\App\Http\Controllers\GoodiesController::class, 'getWinner'])->name('payutc.goodiesWinner');
