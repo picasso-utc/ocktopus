@@ -28,9 +28,6 @@ class User extends Authenticatable implements FilamentUser, HasName
         'role',
     ];
 
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-
     protected $casts = [
         'name' => 'string',
         'email' => 'string',
@@ -48,9 +45,21 @@ class User extends Authenticatable implements FilamentUser, HasName
         }
         return false;
     }
-
     public function getFilamentName(): string
     {
         return explode('.', $this->email)[0];
+    }
+
+    public function getNombrePointsAttribute()
+    {
+        // Récupérer toutes les astreintes de l'utilisateur
+        $astreintes = Astreinte::where('member_id', $this->id)->get();
+
+        // Calculer le nombre total de points en utilisant la fonction définie
+        $nombrePoints = $astreintes->sum(function ($astreinte) {
+            return $astreinte->points;
+        });
+
+        return $nombrePoints;
     }
 }

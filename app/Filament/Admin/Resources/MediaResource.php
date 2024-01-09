@@ -4,8 +4,8 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\MediaType;
 use App\Filament\Fields\MediaTypeSelect;
-use App\Filament\Resources\MediaResource\Pages;
-use App\Filament\Resources\MediaResource\RelationManagers;
+use App\Filament\Admin\Resources\MediaResource\Pages;
+use App\Filament\Admin\Resources\MediaResource\RelationManagers;
 use App\Models\Media;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,16 +13,50 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+/**
+ * Class MediaResource
+ *
+ * A Filament resource for managing media items.
+ *
+ * @package App\Filament\Admin\Resources
+ */
 class MediaResource extends Resource
 {
+    /**
+     * The model associated with this resource.
+     *
+     * @var string|null
+     */
     protected static ?string $model = Media::class;
 
+    /**
+     * The icon to be displayed in the navigation menu.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
+    /**
+     * The navigation group to which this resource belongs.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationGroup = 'Gestion des télés';
 
+    /**
+     * The label to be displayed in the navigation menu.
+     *
+     * @var string|null
+     */
     protected static ?string $navigationLabel = 'Médias';
 
+    /**
+     * Define the form for creating and updating media items.
+     *
+     * @param Form $form The Filament form instance.
+     *
+     * @return Form The modified form.
+     */
     public static function form(Form $form): Form
     {
         return $form
@@ -66,7 +100,13 @@ class MediaResource extends Resource
             ]);
     }
 
-
+    /**
+     * Define the table columns and configuration for displaying media items.
+     *
+     * @param Table $table The Filament table instance.
+     *
+     * @return Table The modified table.
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -97,6 +137,11 @@ class MediaResource extends Resource
             ]);
     }
 
+    /**
+     * Get the pages associated with this resource.
+     *
+     * @return array An array of page configurations.
+     */
     public static function getPages(): array
     {
         return [

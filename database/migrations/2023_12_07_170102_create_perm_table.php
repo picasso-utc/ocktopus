@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('mail_resp_2', 255)->nullable();
             $table->string('mail_asso', 255)->nullable();
             $table->boolean('validated')->default(false);
+            $table->foreignIdFor(\App\Models\Semestre::class, 'semestre');
             $table->timestamps();
         });
     }
