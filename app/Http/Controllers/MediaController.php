@@ -45,12 +45,13 @@ class MediaController extends Controller
     /**
      * Enregistre la création d'un média à partir d'une requête reçue.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate(
+            [
             'name' => 'required|string|max:50',
             'media_type' => 'required|in:Image,Video',
             'activated' => 'boolean',
@@ -60,14 +61,17 @@ class MediaController extends Controller
                 'file',
                 'mimes:' . ($request->input('media_type') === 'Video' ? 'mp4' : 'jpeg,png'),
             ],
-        ]);
+            ]
+        );
 
-        $media = new Media([
+        $media = new Media(
+            [
             'name' => $request->name,
             'media_type' => $request->media_type,
             'activated' => $request->has('activate'),
             'times' => $request->times,
-        ]);
+            ]
+        );
 
         // Méthode pour stocker le média et avoir pour l'attribut "media_path" le chemin d'accès
         $mediaPath = $request->file('media_path')->store('TV', 'public');
@@ -80,21 +84,23 @@ class MediaController extends Controller
     /**
      * Retourne la vue pour modifier le média.
      *
-     * @param  \App\Models\Media  $media
+     * @param  \App\Models\Media $media
      * @return \Illuminate\Contracts\View\View
      */
     public function edit(Media $media)
     {
-        return view('TV.medias.edit', [
+        return view(
+            'TV.medias.edit', [
             'media' => $media
-        ]);
+            ]
+        );
     }
 
     /**
      * Modifie le média à partir d'une requête reçue.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Media  $media
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Media        $media
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Media $media)
@@ -108,16 +114,20 @@ class MediaController extends Controller
                 // On vérifie juste que l'on avait un média pour ne pas faire d'erreur
                 Storage::disk('public')->delete($media->media_path);
             }
-            $media->update([
+            $media->update(
+                [
                 'media_path' => $newMediaPath,
-            ]);
+                ]
+            );
         }
 
-        $media->update([
+        $media->update(
+            [
             'name' => $request->name,
             'activated' => $request->has('activate'),
             'times' => $request->times,
-        ]);
+            ]
+        );
 
         return redirect()->route('TV.medias');
     }
@@ -125,7 +135,7 @@ class MediaController extends Controller
     /**
      * Détruit le média en supprimant d'abord le fichier correspondant.
      *
-     * @param  \App\Models\Media  $media
+     * @param  \App\Models\Media $media
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Media $media)

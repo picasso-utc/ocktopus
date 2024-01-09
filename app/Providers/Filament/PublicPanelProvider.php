@@ -25,25 +25,31 @@ class PublicPanelProvider extends PanelProvider
     {
         return $panel
             ->id('public')
-            ->path('public')
+            ->path('/')
             ->brandName("Pic'Asso - Public")
-            ->colors([
+            ->colors(
+                [
                 'primary' => Color::Blue,
                 'danger' => Color::Red,
                 'success' => Color::Green,
                 'warning' => Color::Yellow,
-            ])
+                ]
+            )
             ->discoverResources(in: app_path('Filament/Public/Resources'), for: 'App\\Filament\\Public\\Resources')
             ->discoverPages(in: app_path('Filament/Public/Pages'), for: 'App\\Filament\\Public\\Pages')
-            ->pages([
+            ->pages(
+                [
                 Pages\Dashboard::class,
-            ])
+                ]
+            )
             ->discoverWidgets(in: app_path('Filament/Public/Widgets'), for: 'App\\Filament\\Public\\Widgets')
-            ->widgets([
+            ->widgets(
+                [
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
-            ->middleware([
+                ]
+            )
+            ->middleware(
+                [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
@@ -53,9 +59,12 @@ class PublicPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
+                ]
+            )
+            ->authMiddleware(
+                [
                 Auth::class,
-            ]);
+                ]
+            );
     }
 }

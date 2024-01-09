@@ -14,10 +14,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // ---------------------------Téléchargement de fichier image------------------------------------- //
 Route::prefix('/image')->group(function () {
     //get image from ?url=

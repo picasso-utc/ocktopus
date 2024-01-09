@@ -13,16 +13,18 @@ class NoteDeFraisController extends Controller
     {
         $noteDeFrais = NoteDeFrais::all();
         $elementFacture = ElementFacture::all();
-        return view('Picsous.notedefrais.notedefrais', compact('noteDeFrais','elementFacture'));
+        return view('Picsous.notedefrais.notedefrais', compact('noteDeFrais', 'elementFacture'));
     }
 
-    public function notedefraisInfo(FactureRecue $factureRecue){
+    public function notedefraisInfo(FactureRecue $factureRecue)
+    {
         $noteDeFrais = NoteDeFrais::all();
         $elementFacture = ElementFacture::all();
         return view('Picsous.notedefrais.notedefraisInfo', compact('noteDeFrais', 'elementFacture'));
     }
 
-    public function create(){
+    public function create()
+    {
         $noteDeFrais = NoteDeFrais::all();
         return view('Picsous.notedefrais.create', compact('noteDeFrais'));
     }
@@ -30,7 +32,8 @@ class NoteDeFraisController extends Controller
     public function store(Request $request)
     {
 
-        $noteDeFrais = new noteDeFrais([
+        $noteDeFrais = new noteDeFrais(
+            [
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'state' => $request->state,
@@ -40,24 +43,29 @@ class NoteDeFraisController extends Controller
             'ville' => $request->ville,
             'email' => $request->email,
             'date_facturation' => $request->date_facturation
-        ]);
+            ]
+        );
         $noteDeFrais->save();
 
-        $elementFacture = new ElementFacture([
+        $elementFacture = new ElementFacture(
+            [
             'description' => $request->description,
             'prix_unitaire_ttc' => $request->prix_unitaire_ttc,
             'tva' => $request->tva,
             'quantite' => $request->quantite,
             'note_de_frais_id' => $noteDeFrais->id
-        ]);
+            ]
+        );
         $elementFacture->save();
 
         return to_route('Picsous.notedefrais');
     }
 
-    public function edit(FactureRecue $factureRecue){
+    public function edit(FactureRecue $factureRecue)
+    {
         $categorieFacture = CategorieFacture::all();
-        return view('Picsous.noteDeFrais.edit', [
+        return view(
+            'Picsous.noteDeFrais.edit', [
                 'factureRecue' => $factureRecue,
                 'categorieFactureRecues' => $categorieFacture
 
@@ -65,27 +73,33 @@ class NoteDeFraisController extends Controller
         );
     }
 
-    public function update(Request $request,FactureRecue $factureRecue){
+    public function update(Request $request,FactureRecue $factureRecue)
+    {
 
         dump($request->state);
-        $request->validate([
+        $request->validate(
+            [
             'nom_entreprise' => 'required|string|max:255',
             'prix' => 'required|integer',
             'state' => 'required|string',
             'tva' => 'required|integer'
-        ]);
+            ]
+        );
         dump($request->state);
         //dump($request->state);
-        $factureRecue->update([
+        $factureRecue->update(
+            [
             'nom_entreprise' => $request->nom_entreprise,
             'prix' => $request->prix,
             'state' => $request->state,
             'tva' => $request->tva
-        ]);
+            ]
+        );
         return to_route('Picsous.noteDeFrais');
     }
 
-    public function destroy(Request $request,FactureRecue $factureRecue){
+    public function destroy(Request $request,FactureRecue $factureRecue)
+    {
         $factureRecue->delete();
         return to_route('Picsous.noteDeFrais');
     }

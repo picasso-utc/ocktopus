@@ -19,13 +19,13 @@ class FactureRecue extends Model
 
     public function getStateLabel(string $etat)
     {
-        if ($etat === 'D'){
+        if ($etat === 'D') {
             return 'Facture à payer';
-        } elseif ($etat === 'R'){
+        } elseif ($etat === 'R') {
             return 'Facture à rembourser';
-        } elseif ($etat === 'E'){
+        } elseif ($etat === 'E') {
             return 'Facture en attente';
-        } elseif ($etat === 'P'){
+        } elseif ($etat === 'P') {
             return 'Facture payée';
         } else {
             return 'Inconnu';

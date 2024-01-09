@@ -25,20 +25,24 @@ class ManageGoodies extends ManageRecords
         $accumulatedData = [];
         $dateStart = (new DateTime("2023-12-10"))->format('Y-m-d\TH:i:s.u\Z');
         $dateEnd = (new DateTime("2023-12-16"))->format('Y-m-d\TH:i:s.u\Z');
-        $response = $client->makePayutcRequest('GET', 'transactions', [
+        $response = $client->makePayutcRequest(
+            'GET', 'transactions', [
             'created__gt' => $dateStart,
             'created__lt' => $dateEnd,
-        ]);
+            ]
+        );
         $jsonData = json_decode($response->getContent(), true);
         $length = count($jsonData);
         $dateStart = $jsonData[$length-1]['created'];
 
         while ($length > 499) {
             $accumulatedData = array_merge($accumulatedData, $jsonData);
-            $response = $client->makePayutcRequest('GET', 'transactions', [
+            $response = $client->makePayutcRequest(
+                'GET', 'transactions', [
                 'created__gt' => $dateStart,
                 'created__lt' => $dateEnd,
-            ]);
+                ]
+            );
             $jsonData = json_decode($response->getContent(), true);
             $length = count($jsonData);
             $dateStart = $jsonData[$length-1]['created'];
@@ -56,13 +60,17 @@ class ManageGoodies extends ManageRecords
             }
         }
 
-        $user = Http::withHeaders([
+        $user = Http::withHeaders(
+            [
             'X-Return-Structure' => 'array',
             'Content-Type' => 'application/json',
             'X-API-KEY' => env('PROXY_KEY')
-        ])->post(env('PROXY_URL'), [
-            'wallets' => $winners,
-        ]);
+            ]
+        )->post(
+            env('PROXY_URL'), [
+                'wallets' => $winners,
+                ]
+        );
 
         $winnersName = [];
         for ($i = 0; $i < 20; $i++) {

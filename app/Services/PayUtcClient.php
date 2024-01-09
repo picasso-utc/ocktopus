@@ -11,7 +11,8 @@ class PayUtcClient
     public function __construct()
     {
         // On crée une nouvelle instance de la classe Client de Guzzle.
-        $this->client = new Client([
+        $this->client = new Client(
+            [
             // L'URL de base pour les requêtes de l'API est récupérée à partir de la variable d'environnement API_URL.
             'base_url' => env('PAYUTC_API_URL'),
 
@@ -29,15 +30,17 @@ class PayUtcClient
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ],
-        ]);
+            ]
+        );
     }
 
     /**
      * Fonction générale qui permet de faire une requête a l'API dont la doc est présente ici :
      * https://docapi.weezevent.com/openapi.html?weezpay
-     * @param $method
-     * @param $endpoint
-     * @param $options
+     *
+     * @param  $method
+     * @param  $endpoint
+     * @param  $options
      * @return \Illuminate\Http\JsonResponse
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -57,9 +60,11 @@ class PayUtcClient
                 $apiUrl = $this->client->getConfig('base_url') . $endpoint;
 
                 // Construction des paramètres de requête en fusionnant les options avec les valeurs par défaut
-                $query = array_merge([
+                $query = array_merge(
+                    [
                     'sessionid' => $session_id,
-                ], $options);
+                    ], $options
+                );
 
                 // Configuration de la requête
                 $requestConfig = [
@@ -89,7 +94,7 @@ class PayUtcClient
                     return response()->json(['error' => $errorMessage], $response->getStatusCode());
                 }
 
-            // Continue tant que le nombre d'éléments dans la réponse est égal au nombre attendu par page
+                // Continue tant que le nombre d'éléments dans la réponse est égal au nombre attendu par page
             } while ($currentPage != 1);
 
             // Retour d'une réponse JSON avec l'ensemble des données
@@ -110,6 +115,7 @@ class PayUtcClient
     /**
      * Fonction qui requête à l'ancienne API l'id de session pour utiliser cet id dans la nouvelle api
      * documentation ici : https://apidoc.nemopay.net/Base_Service/#loginApp
+     *
      * @return string
      */
     public function getSession(): string
@@ -118,30 +124,36 @@ class PayUtcClient
         $sessionTime = 30 * 60;
 
         // Utilisation du cache Laravel pour stocker et récupérer la session
-        return Cache::remember('payutc.session', $sessionTime, function () {
-            // Requête pour obtenir une session auprès de l'API Payutc
-            $res = $this->client->request('POST', 'https://api.nemopay.net/services/WEBSALE/login2', [
-                'body' => json_encode([
-                    'password' => env('PAYUTC_PASSWORD'),
-                    'login' => env('PAYUTC_LOGIN'),
-                ]),
-                'headers' => [
+        return Cache::remember(
+            'payutc.session', $sessionTime, function () {
+                // Requête pour obtenir une session auprès de l'API Payutc
+                $res = $this->client->request(
+                    'POST', 'https://api.nemopay.net/services/WEBSALE/login2', [
+                    'body' => json_encode(
+                        [
+                        'password' => env('PAYUTC_PASSWORD'),
+                        'login' => env('PAYUTC_LOGIN'),
+                        ]
+                    ),
+                    'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
-                ],
-            ]);
+                    ],
+                    ]
+                );
 
-            // Vérification du code de statut de la réponse
-            if ($res->getStatusCode() != 200) {
-                // En cas d'échec, une exception est levée
-                throw new \Exception('Erreur lors de l\'obtention de la session depuis Payutc');
+                // Vérification du code de statut de la réponse
+                if ($res->getStatusCode() != 200) {
+                    // En cas d'échec, une exception est levée
+                    throw new \Exception('Erreur lors de l\'obtention de la session depuis Payutc');
+                }
+
+                // Décodage du corps de la réponse JSON
+                $body = json_decode($res->getBody()->getContents(), true);
+
+                // Retourne l'identifiant de session obtenu
+                return $body['sessionid'];
             }
-
-            // Décodage du corps de la réponse JSON
-            $body = json_decode($res->getBody()->getContents(), true);
-
-            // Retourne l'identifiant de session obtenu
-            return $body['sessionid'];
-        });
+        );
     }
 }

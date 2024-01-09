@@ -33,10 +33,13 @@ class CategorieFactureResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                     Grid::make(2)
-                        ->schema([
-                            Group::make([
+                        ->schema(
+                            [
+                            Group::make(
+                                [
                                 TextInput::make('nom')
                                     ->required()
                                     ->maxLength(255)
@@ -44,40 +47,55 @@ class CategorieFactureResource extends Resource
                                 Toggle::make('Sous_catégorie_?')
                                     ->live()
                                     ->columnSpan(3),
-                            ]),
-                            Group::make([
+                                ]
+                            ),
+                            Group::make(
+                                [
                                 Select::make('parent_id')
                                     ->label('Catégorie parent')
-                                    ->options(CategorieFacture::query()->pluck('nom','id'))
+                                    ->options(CategorieFacture::query()->pluck('nom', 'id'))
                                     ->hidden(fn (Get $get): bool => ! $get('Sous_catégorie_?'))
                                     ->columnSpan(1),
-                            ])
-                    ])->columns(3),
-        ]);
+                                ]
+                            )
+                            ]
+                        )->columns(3),
+                ]
+            );
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 TextColumn::make('nom'),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
+                ]
+            )
+            ->bulkActions(
+                [
                 /*Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),*/
-            ])
-            ->groups([
+                ]
+            )
+            ->groups(
+                [
 
                 Tables\Grouping\Group::make('parent_id')
                     ->label('Catégorie'),
-            ])
+                ]
+            )
             ->defaultGroup('parent_id');
     }
 

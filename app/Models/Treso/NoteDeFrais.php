@@ -17,13 +17,13 @@ class NoteDeFrais extends Model
 
     public function getStateLabel(string $etat)
     {
-        if ($etat === 'D'){
+        if ($etat === 'D') {
             return 'Note à payer';
-        } elseif ($etat === 'R'){
+        } elseif ($etat === 'R') {
             return 'Note à rembourser';
-        } elseif ($etat === 'E'){
+        } elseif ($etat === 'E') {
             return 'Note en attente';
-        } elseif ($etat === 'P'){
+        } elseif ($etat === 'P') {
             return 'Note payée';
         } else {
             return 'Inconnu';

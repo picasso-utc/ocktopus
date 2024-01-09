@@ -26,18 +26,20 @@ class SemestreResource extends Resource
     protected static ?string $navigationGroup = 'General';
 
         /**
-     * Define the form for creating and updating semesters.
-     *
-     * @param Form $form The Filament form instance.
-     *
-     * @return Form The modified form.
-     */
+         * Define the form for creating and updating semesters.
+         *
+         * @param Form $form The Filament form instance.
+         *
+         * @return Form The modified form.
+         */
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 //
-            ]);
+                ]
+            );
     }
 
     /**
@@ -50,21 +52,26 @@ class SemestreResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\IconColumn::make("activated")
                     ->boolean()
                     ->label("Actif"),
                 Tables\Columns\TextColumn::make("state")
-                ->label("Etat"),
+                    ->label("Etat"),
                 Tables\Columns\TextColumn::make("startOfSemestre")
                     ->label("Début"),
                 Tables\Columns\TextColumn::make("endOfSemestre")
                     ->label("Fin"),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\Action::make('CreateCreneaux')
                     ->label('Créer des créneaux')
                     ->button()
@@ -74,10 +81,13 @@ class SemestreResource extends Resource
                     ->button()
                     ->action(fn($record) => self::handleMakeActif($record))
 
-            ])
+                ]
+            )
 
-            ->bulkActions([
-            ]);
+            ->bulkActions(
+                [
+                ]
+            );
     }
 
     /**
@@ -114,7 +124,7 @@ class SemestreResource extends Resource
     /**
      * Handle the creation of creneaux for the given semestre.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return void
      */
     protected static function handleCreateSemestre($record)
@@ -123,7 +133,7 @@ class SemestreResource extends Resource
         $startDate = Carbon::parse($record->startOfSemestre);
         $endDate = Carbon::parse($record->endOfSemestre);
 
-        $existingCreneau = Creneau::where('date','=', $startDate)->first();
+        $existingCreneau = Creneau::where('date', '=', $startDate)->first();
 
         if (!$existingCreneau) {
             $creneauController = new CreneauController();
@@ -143,7 +153,7 @@ class SemestreResource extends Resource
     /**
      * Make the specified semestre active and deactivate others.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return void
      */
     public static function handleMakeActif($record) : void
@@ -151,7 +161,7 @@ class SemestreResource extends Resource
         // Désactiver tous les autres semestres
         Semestre::where('id', '<>', $record->id)->update(['activated' => false]);
         // Activer le semestre actuel
-        Semestre::where('id','=',$record->id)->update(['activated'=>true]);
+        Semestre::where('id', '=', $record->id)->update(['activated'=>true]);
     }
 
 

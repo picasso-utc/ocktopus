@@ -47,7 +47,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     }
     public function getFilamentName(): string
     {
-        return explode('.', $this->email)[0];
+        return mailToName($this->email);
     }
 
     public function getNombrePointsAttribute()
@@ -56,9 +56,11 @@ class User extends Authenticatable implements FilamentUser, HasName
         $astreintes = Astreinte::where('member_id', $this->id)->get();
 
         // Calculer le nombre total de points en utilisant la fonction définie
-        $nombrePoints = $astreintes->sum(function ($astreinte) {
-            return $astreinte->points;
-        });
+        $nombrePoints = $astreintes->sum(
+            function ($astreinte) {
+                return $astreinte->points;
+            }
+        );
 
         return $nombrePoints;
     }

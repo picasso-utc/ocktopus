@@ -11,7 +11,8 @@ class Tv extends Model
     use HasFactory;
     protected $table = 'tv';
     protected $fillable = ['name', 'link_id'];
-    public function link(): belongsTo{
+    public function link(): belongsTo
+    {
         return $this->belongsTo(Link::class);
     }
 }

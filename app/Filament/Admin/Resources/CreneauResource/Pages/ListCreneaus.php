@@ -59,10 +59,12 @@ class ListCreneaus extends ListRecords
     {
         return [
             'semestre' => Tab::make(self::getStateSemester())
-                ->modifyQueryUsing(function (Builder $query) {
-                    // Les créneaux qui se situent entre le début et la fin du semestre actif
-                    return $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]);
-                }),
+                ->modifyQueryUsing(
+                    function (Builder $query) {
+                        // Les créneaux qui se situent entre le début et la fin du semestre actif
+                        return $query->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]);
+                    }
+                ),
         ];
     }
 

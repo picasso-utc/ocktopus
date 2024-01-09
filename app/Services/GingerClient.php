@@ -20,7 +20,7 @@ class GingerClient
     /**
      * Get user information based on a username.
      *
-     * @param string $username
+     * @param  string $username
      * @return array
      */
     public function getUserInfo(string $username): array
@@ -31,7 +31,7 @@ class GingerClient
     /**
      * Get badge information based on a badge ID.
      *
-     * @param string $badgeId
+     * @param  string $badgeId
      * @return array
      */
     public function getBadgeInfo(string $badgeId): array
@@ -42,10 +42,10 @@ class GingerClient
     /**
      * Perform API call to Ginger/v1.
      *
-     * @param string $method
-     * @param string $path
-     * @param array|null $data
-     * @param array|null $parameters
+     * @param  string     $method
+     * @param  string     $path
+     * @param  array|null $data
+     * @param  array|null $parameters
      * @return array
      */
     private function apiCall(string $method, string $path, array $data = null, array $parameters = null) : array
@@ -64,7 +64,7 @@ class GingerClient
     /**
      * Build a response for the API call.
      *
-     * @param Response $apiResponse
+     * @param  Response $apiResponse
      * @return array
      */
     private function buildResponse(Response $apiResponse): array

@@ -35,9 +35,11 @@ class NoteDeFraisResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Fieldset::make('Coordonnées')
-                    ->schema([
+                    ->schema(
+                        [
                         TextInput::make('prenom')
                             ->required()
                             ->maxLength(255),
@@ -61,9 +63,11 @@ class NoteDeFraisResource extends Resource
                             ->maxLength(255)
                             ->email()
                             ->suffixIcon('heroicon-m-at-symbol'),
-                    ]),
+                        ]
+                    ),
                 Fieldset::make('Informations')
-                    ->schema([
+                    ->schema(
+                        [
                         DatePicker::make('date_facturation')
                             ->label('Date de facturation')
                             ->required()
@@ -72,18 +76,22 @@ class NoteDeFraisResource extends Resource
                         Select::make('state')
                             ->label('État')
                             ->required()
-                            ->options([
+                            ->options(
+                                [
                                 'D' => 'Note à payer',
                                 'R' => 'Note à rembourser',
                                 'E' => 'Note en attente',
                                 'P' => 'Note payée',
-                            ])
-                    ]),
+                                ]
+                            )
+                        ]
+                    ),
                 Repeater::make('elementFacture')
                     ->label('Element(s) de la facture')
                     ->relationship()
                     ->addActionLabel('Ajouter une ligne à la note')
-                    ->schema([
+                    ->schema(
+                        [
                         TextInput::make('description')
                             ->columnSpan(3)
                             ->required()
@@ -102,15 +110,18 @@ class NoteDeFraisResource extends Resource
                             ->required()
                             ->numeric()
                             ->suffixIcon('heroicon-o-currency-euro'),
-                    ])
+                        ]
+                    )
                     ->defaultItems(1)
                     ->columns(6)
                     ->columnSpan('full')
                     ->live()
                     // After adding a new row, we need to update the totals
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        self::updateTotals($get, $set);
-                    })
+                    ->afterStateUpdated(
+                        function (Get $get, Set $set) {
+                            self::updateTotals($get, $set);
+                        }
+                    )
                     // After deleting a row, we need to update the totals
                     ->deleteAction(
                         fn(Action $action) => $action->after(fn(Get $get, Set $set) => self::updateTotals($get, $set)),
@@ -121,16 +132,19 @@ class NoteDeFraisResource extends Resource
                     ->label('Total TTC (€)')
                     ->numeric()
                     ->suffixIcon('heroicon-o-currency-euro'),
-            ]);
+                ]
+            );
     }
 
     public static function updateTotals(Get $get, Set $set): void
     {
         $selectedProducts = collect($get('elementFacture'))->filter(fn($item) => !empty($item['prix_unitaire_ttc']) && !empty($item['quantite']));
 
-        $total = $selectedProducts->reduce(function ($total, $product) {
-            return $total + ($product['prix_unitaire_ttc'] * $product['quantite']);
-        }, 0);
+        $total = $selectedProducts->reduce(
+            function ($total, $product) {
+                return $total + ($product['prix_unitaire_ttc'] * $product['quantite']);
+            }, 0
+        );
 
         $set('total', number_format($total, 2, '.', ''));
     }
@@ -140,51 +154,69 @@ class NoteDeFraisResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 TextColumn::make('prenom'),
                 TextColumn::make('nom'),
                 TextColumn::make('date_facturation'),
                 TextColumn::make('state')
                     ->label('État')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state){
+                    ->formatStateUsing(
+                        fn (string $state): string => match ($state){
                         'D' => 'Note à payer',
                         'R' => 'Note à rembourser',
                         'E' => 'Note en attente',
                         'P' => 'Note payée',
-                    })
-                    ->color(fn (string $state): string => match ($state) {
+                        }
+                    )
+                    ->color(
+                        fn (string $state): string => match ($state) {
                         'D' => 'danger',
                         'R' => 'info',
                         'E' => 'warning',
                         'P' => 'success',
-                    }),
+                        }
+                    ),
                 /*TextColumn::make('total')
                     ->label('Total TTC')
                     ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €")),*/
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function (NoteDeFrais $record) {
-                        return response()->streamDownload(function () use ($record) {
-                            echo Pdf::loadHtml(
-                                Blade::render('pdf', ['record' => $record])
-                            )->stream();
-                        }, $record->id . '.pdf');
-                    }),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                    ->action(
+                        function (NoteDeFrais $record) {
+                            return response()->streamDownload(
+                                function () use ($record) {
+                                    echo Pdf::loadHtml(
+                                        Blade::render('pdf', ['record' => $record])
+                                    )->stream();
+                                }, $record->id . '.pdf'
+                            );
+                        }
+                    ),
+                ]
+            )
+            ->bulkActions(
+                [
+                Tables\Actions\BulkActionGroup::make(
+                    [
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    ]
+                ),
+                ]
+            );
     }
 
     public static function getRelations(): array

@@ -16,11 +16,13 @@ class CreneauController extends Controller
 
     private function createCreneau(Carbon $date, string $creneau)
     {
-        Creneau::create([
+        Creneau::create(
+            [
             'date' => $date,
             'creneau' => $creneau,
             // Autres colonnes et valeurs nécessaires
-        ]);
+            ]
+        );
     }
 
     public function createCreneaux($startDate, $endDate)

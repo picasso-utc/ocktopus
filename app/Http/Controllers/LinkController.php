@@ -32,20 +32,24 @@ class LinkController extends Controller
     /**
      * Enregistre la création d'un média à partir d'une requête reçue.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate(
+            [
             'name' => 'required|string|max:50',
             'url' => 'required|string|max:300'
-        ]);
+            ]
+        );
 
-        $link = new Link([
+        $link = new Link(
+            [
             'name' => $request->name,
             'url' => $request->url,
-        ]);
+            ]
+        );
 
         $link->save();
         return to_route('TV.links');
@@ -54,36 +58,40 @@ class LinkController extends Controller
     /**
      * Retourne la vue pour modifier le lien.
      *
-     * @param  \App\Models\Link  $link
+     * @param  \App\Models\Link $link
      * @return \Illuminate\Contracts\View\View
      */
     public function edit(Link $link)
     {
-        return view('TV.links.edit', [
+        return view(
+            'TV.links.edit', [
             'link' => $link
-        ]);
+            ]
+        );
     }
 
     /**
      * Modifie le lien à partir d'une requête reçue.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Link  $link
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Link         $link
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Link $link)
     {
-        $link->update([
+        $link->update(
+            [
             'name' => $request->name,
             'url' => $request->url,
-        ]);
+            ]
+        );
         return to_route('TV.links');
     }
 
     /**
      * Détruit le lien.
      *
-     * @param  \App\Models\Link  $link
+     * @param  \App\Models\Link $link
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Link $link)
