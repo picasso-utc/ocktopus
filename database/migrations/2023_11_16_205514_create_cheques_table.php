@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('num');
             $table->float('valeur')->default(0);
-
-            // Utilisation d'une colonne ENUM pour 'state'
             $table->enum('state', ['E', 'P', 'A', 'C']);
             $table->string('destinataire', 255)->nullable()->default(null);
             $table->date('date_encaissement')->nullable();

@@ -4,10 +4,9 @@ namespace App\Filament\Treso\Resources;
 
 use App\Filament\Treso\Resources\NoteDeFraisResource\Pages;
 use App\Filament\Treso\Resources\NoteDeFraisResource\RelationManagers;
-use App\Models\Treso\CategorieFacture;
-use App\Models\Treso\ElementFacture;
-use App\Models\Treso\NoteDeFrais;
-use Filament\Forms;
+use App\Models\NoteDeFrais;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
@@ -20,10 +19,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Blade;
 
 class NoteDeFraisResource extends Resource

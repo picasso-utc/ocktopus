@@ -16,7 +16,6 @@ class CreneauController extends Controller
             [
             'date' => $date,
             'creneau' => $creneau,
-            // Autres colonnes et valeurs nécessaires
             ]
         );
     }
@@ -26,11 +25,9 @@ class CreneauController extends Controller
         // Boucle à travers chaque jour entre la date de début et la date de fin
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             if ($date->isWeekday()) {
-                // Créer un créneau pour le matin
+                // Créer un créneau pour matin/midi/soir
                 $this->createCreneau($date, 'M');
-                // Créer un créneau pour le déjeuner
                 $this->createCreneau($date, 'D');
-                // Créer un créneau pour le soir
                 $this->createCreneau($date, 'S');
             }
         }
