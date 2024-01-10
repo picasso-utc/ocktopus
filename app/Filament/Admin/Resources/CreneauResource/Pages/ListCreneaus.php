@@ -22,7 +22,7 @@ class ListCreneaus extends ListRecords
     {
         $semestre = Semestre::where('activated', true)->first();
 
-        return $semestre ? $semestre->state : 'nope';
+        return $semestre ? $semestre->state : 'Aucun semestre actif';
     }
 
     /**

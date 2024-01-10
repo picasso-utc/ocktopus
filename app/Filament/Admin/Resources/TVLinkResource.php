@@ -71,7 +71,8 @@ class TVLinkResource extends Resource
                     ]
                 ),
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucun lien de télés');
     }
 
 

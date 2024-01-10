@@ -19,9 +19,8 @@ use Carbon\Carbon;
 
 class ShotgunCreneau extends BaseWidget
 {
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
-    protected static ?string $maxWeight = '300px';
 
     public function table(Table $table): Table
     {

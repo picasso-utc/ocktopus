@@ -18,6 +18,7 @@ class TvSetupResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tv';
     protected static ?string $navigationGroup = 'Gestion des télés';
     protected static ?string $navigationLabel = 'Télés';
+    protected static ?string $pluralLabel = 'Télés';
 
     public static function form(Form $form): Form
     {
@@ -78,7 +79,8 @@ class TvSetupResource extends Resource
                     ]
                 ),
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucune TV');
     }
 
     public static function getPages(): array

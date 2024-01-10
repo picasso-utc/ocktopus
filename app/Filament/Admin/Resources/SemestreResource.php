@@ -21,7 +21,7 @@ class SemestreResource extends Resource
     protected static ?string $model = Semestre::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
-    protected static ?string $navigationGroup = 'General';
+    protected static ?string $navigationGroup = 'Admin';
 
         /**
          * Define the form for creating and updating semesters.
@@ -81,11 +81,11 @@ class SemestreResource extends Resource
 
                 ]
             )
-
             ->bulkActions(
                 [
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucun semestre');
     }
 
     /**

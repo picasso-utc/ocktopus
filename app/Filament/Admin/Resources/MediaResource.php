@@ -150,7 +150,8 @@ class MediaResource extends Resource
                     ]
                 ),
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucun média');
     }
 
     /**

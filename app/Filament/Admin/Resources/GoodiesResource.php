@@ -17,9 +17,9 @@ class GoodiesResource extends Resource
 {
     protected static ?string $model = Goodies::class;
     protected static ?string $label = 'Goodies';
-    protected static ?string $navigationGroup = 'General';
-
+    protected static ?string $navigationGroup = 'Général';
     protected static ?string $navigationIcon = 'heroicon-o-gift';
+    protected static ?int $navigationSort = -2;
 
     public static function form(Form $form): Form
     {
@@ -59,7 +59,8 @@ class GoodiesResource extends Resource
                 //
                 ]
             )
-            ->paginated([20]);
+            ->paginated([20])
+            ->emptyStateHeading('Aucun goodies généré.');
     }
 
     public static function getPages(): array

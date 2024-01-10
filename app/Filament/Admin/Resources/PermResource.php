@@ -165,7 +165,8 @@ class PermResource extends Resource
                 [
 
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucune permanence');
     }
 
     public static function infolist(Infolist $infolist): Infolist

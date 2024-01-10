@@ -68,7 +68,8 @@ class AstreinteResource extends Resource
                     ]
                 ),
                 ]
-            );
+            )
+            ->emptyStateHeading('Aucune astreinte');
     }
 
     public static function getRelations(): array

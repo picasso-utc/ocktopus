@@ -204,7 +204,8 @@ class CreneauResource extends Resource
                 '2xl' => 3,
                 ]
             )
-            ->recordUrl(null);
+            ->recordUrl(null)
+            ->emptyStateHeading('Aucun créneau');
     }
 
     /**
