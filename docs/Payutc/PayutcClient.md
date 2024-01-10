@@ -1,4 +1,4 @@
-# Service ApiPayutc
+# Service Payutc
 
 **Il est important de lire tout la doc payutc pour comprendre comment marche le service et quels sont les problèmes rencontrés (pour ne pas les rerecontrés)**
 
@@ -13,7 +13,7 @@ use App\Services\PayUtcClient;
 
 // Initialisation du service PayutcClient
 
-    private ApiPayutcClient $client;
+    private PayutcClient $client;
 
     public function __construct(PayUtcClient $client)
     {
@@ -21,7 +21,7 @@ use App\Services\PayUtcClient;
     }
 ```
 
-### Méthodes du Service ApiPayutcClient
+### Méthodes du Service PayutcClient
 **1. `makePayutcRequest($method, $endpoint, $options = []): qui renvoit un json`**
 
 Cette méthode permet de faire n'importe quel requête vers la nouvelle API de weezpay (documentation ici : https://docapi.weezevent.com/openapi.html?weezpay).
