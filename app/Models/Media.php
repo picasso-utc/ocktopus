@@ -9,6 +9,7 @@ use App\Enums\MediaType;
 class Media extends Model
 {
     use HasFactory;
+
     protected $table = 'media';
 
     protected $fillable = [

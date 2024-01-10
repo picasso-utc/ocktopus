@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Link extends Model
 {
     use HasFactory;
+
     protected $table = 'link';
     protected $fillable = [
         'name',
         'url',
     ];
-    public function tvs():HasMany
+    public function tvs(): HasMany
     {
         return $this->HasMany(Tv::class);
     }

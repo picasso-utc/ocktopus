@@ -2,39 +2,26 @@
 
 namespace App\Filament\Treso\Resources;
 
-use App\Enums\MediaType;
 use App\Filament\Treso\Resources\FactureRecueResource\Pages;
-use App\Models\Treso\CategorieFacture;
-use App\Models\Treso\FactureRecue;
-use App\Models\Treso\MontantCategorie;
-use Filament\Forms;
+use App\Models\CategorieFacture;
+use App\Models\FactureRecue;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Group;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Support\Facades\Storage;
-use Filament\Tables\Actions\Action;
 
 class FactureRecueResource extends Resource
 {
@@ -49,7 +36,8 @@ class FactureRecueResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 TextInput::make('destinataire')
                     ->required()
                     ->maxLength(255)
@@ -84,12 +72,14 @@ class FactureRecueResource extends Resource
                 Select::make('state')
                     ->label('État')
                     ->required()
-                    ->options([
+                    ->options(
+                        [
                         'D' => 'Facture à payer',
                         'R' => 'Facture à rembourser',
                         'E' => 'Facture en attente',
                         'P' => 'Facture payée',
-                    ])
+                        ]
+                    )
                     ->columnSpan(2),
                 RichEditor::make('remarque')
                     ->columnSpan(4),
@@ -103,10 +93,11 @@ class FactureRecueResource extends Resource
                 Repeater::make('categoriePrix')
                     ->label('Catégories')
                     ->relationship()
-                    ->schema([
+                    ->schema(
+                        [
                         Select::make('categorie_id')
                             ->label('Catégorie')
-                            ->options(CategorieFacture::query()->pluck('nom','id'))
+                            ->options(CategorieFacture::query()->pluck('nom', 'id'))
                             /*->createOptionForm([
                                 Forms\Components\TextInput::make('nom')
                                     ->required()
@@ -124,19 +115,22 @@ class FactureRecueResource extends Resource
                             ->numeric()
                             ->suffixIcon('heroicon-o-currency-euro')
                             ->columnSpan(3),
-                    ])
+                        ]
+                    )
                     ->defaultItems(1)
                     ->addActionLabel('Ajouter une catégorie')
                     ->columns(6)
                     ->columnSpan('full'),
-            ])
+                ]
+            )
             ->columns(6);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 TextColumn::make('id')
                     ->label('Réf.')
                     ->formatStateUsing(fn (string $state): string => __("Fact. {$state}"))
@@ -162,61 +156,80 @@ class FactureRecueResource extends Resource
                 TextColumn::make('state')
                     ->label('État')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state){
+                    ->formatStateUsing(
+                        fn (string $state): string => match ($state) {
                         'D' => 'Facture à payer',
                         'R' => 'Facture à rembourser',
                         'E' => 'Facture en attente',
                         'P' => 'Facture payée',
-                    })
-                    ->color(fn (string $state): string => match ($state) {
+                        }
+                    )
+                    ->color(
+                        fn (string $state): string => match ($state) {
                         'D' => 'danger',
                         'R' => 'info',
                         'E' => 'warning',
                         'P' => 'success',
-                    }),
+                        }
+                    ),
                 TextColumn::make('personne_a_rembourser')
                     ->label('Personne à rembourser')
                     ->default('--'),
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
                     ->searchable()
-                    ->formatStateUsing(function ($state){
-                        return $state->categorie->nom;
-                    })
+                    ->formatStateUsing(
+                        function ($state) {
+                            return $state->categorie->nom;
+                        }
+                    )
                     ->color('gray')
                     ->badge(),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 Filter::make('date')
-                    ->form([
+                    ->form(
+                        [
                         DatePicker::make('date_de_début'),
                         DatePicker::make('date_de_fin'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_de_début'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_de_fin'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                            );
-                    })
-            ])
-            ->actions([
-                ActionGroup::make([
+                        ]
+                    )
+                    ->query(
+                        function (Builder $query, array $data): Builder {
+                            return $query
+                                ->when(
+                                    $data['date_de_début'],
+                                    fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                                )
+                                ->when(
+                                    $data['date_de_fin'],
+                                    fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                                );
+                        }
+                    )
+                ]
+            )
+            ->actions(
+                [
+                ActionGroup::make(
+                    [
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ]),
-            ])
-            ->bulkActions([
+                    ]
+                ),
+                ]
+            )
+            ->bulkActions(
+                [
                 /*
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),*/
-            ]);
+                ]
+            );
     }
 
     public static function getRelations(): array

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('date_paiement')->nullable();
             $table->date('date_due');
             $table->enum('etat', ['D', 'A', 'T', 'P']);
-            //$table->foreignId('semestre')->nullable->references('semestre_id')->on('Semestre')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -9,5 +9,4 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateNoteDeFrais extends CreateRecord
 {
     protected static string $resource = NoteDeFraisResource::class;
-
 }

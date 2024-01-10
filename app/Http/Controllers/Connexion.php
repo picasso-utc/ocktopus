@@ -14,12 +14,13 @@ class Connexion extends Controller
     /**
      * Handle the authentication process.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return mixed
      */
     public function auth(Request $request): mixed
     {
-        $provider = new \League\OAuth2\Client\Provider\GenericProvider([
+        $provider = new \League\OAuth2\Client\Provider\GenericProvider(
+            [
             "clientId" => config('app.OAUTH_clientId'),
             "clientSecret" => config('app.OAUTH_clientSecret'),
             "redirectUri" => config('app.OAUTH_redirectUri'),
@@ -28,7 +29,8 @@ class Connexion extends Controller
             "urlResourceOwnerDetails" => "https://auth.assos.utc.fr/api/user",
             "scopes" => "users-infos read-assos read-memberships",
             "baseUrl" => "https://auth.assos.utc.fr/api/user",
-        ]);
+            ]
+        );
 
         // If the authorization code is not present, authenticate the user
         if (empty($request->input('code'))) {
@@ -43,16 +45,19 @@ class Connexion extends Controller
         } else {
             try {
                 // Exchange the authorization code for an access token
-                $accessToken = $provider->getAccessToken('authorization_code', [
+                $accessToken = $provider->getAccessToken(
+                    'authorization_code',
+                    [
                     'code' => $request->input('code'),
-                ]);
+                    ]
+                );
 
                 $userData = $provider->getResourceOwner($accessToken);
                 // Make a request to the authentication server to get user associations
                 $response = Http::withToken($accessToken)->get('https://auth.assos.utc.fr/api/user/associations/current');
 
-                if($response->failed()){
-                    return response()->json(['message'=>'Error while getting user infos','JWT_ERROR'=>true],401);
+                if ($response->failed()) {
+                    return response()->json(['message' => 'Error while getting user infos','JWT_ERROR' => true], 401);
                 }
 
                 $userAssos = $response->json();
@@ -104,7 +109,7 @@ class Connexion extends Controller
     /**
      * Logs out the user from Ocktopus.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return mixed
      */
     public function logout(Request $request): mixed

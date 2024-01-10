@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Treso\MontantCategorie;
 
 return new class extends Migration
 {
@@ -26,14 +25,6 @@ return new class extends Migration
             $table->boolean('immobilisation')->default(False);
             $table->text('remarque')->nullable();
             $table->string('pdf_path')->nullable();
-
-            //  Attribut pour link une facture à une perm
-            //$table->foreignId('perm')->references('perms','creneau')->onDelete('cascade');
-
-            //  Attribut pour link une facture à un semestre
-            //$table->foreignId('semestre')->nullable()->references('semestre','semestre_id')
-            //    ->onDelete('set null');;
-
             $table->timestamps();
         });
     }

@@ -6,8 +6,8 @@ use App\Filament\Admin\Resources\CreneauResource;
 use App\Models\Astreinte;
 use App\Models\Creneau;
 use App\Models\Perm;
-use App\Models\Semestre;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Filters\Filter;
@@ -17,147 +17,126 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
-
 class ShotgunCreneau extends BaseWidget
 {
-    protected static ?int $sort = 4;
-
+    protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
-    protected static ?string $maxWeight = '300px';
 
     public function table(Table $table): Table
     {
         return $table
             ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]))
-            ->groups([
+            ->groups(
+                [
                 Group::make('date')->date()
                     ->collapsible()
                     ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)->format('l')),
-            ])
+                ]
+            )
             ->defaultGroup('date')
-            ->columns([
-                Tables\Columns\Layout\Stack::make([
+            ->columns(
+                [
+                Tables\Columns\Layout\Stack::make(
+                    [
                     Tables\Columns\TextColumn::make('creneau')
                         ->label('creneau'),
                     Tables\Columns\TextColumn::make('perm.nom')
                         ->label('Perm associée')
                         ->badge(),
                     Tables\Columns\TextColumn::make('creneau')
-                        ->formatStateUsing(function ($state, Creneau $creneau) {
-                            $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
+                        ->formatStateUsing(
+                            function ($state, Creneau $creneau) {
+                                $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
                                 ->pluck('member_id')
                                 ->unique()
                                 ->toArray();
 
-                            $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
-                                ->map(function ($email) {
-                                    return mailToName($email);
-                                });
+                                $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
+                                    ->map(
+                                        function ($email) {
+                                            return mailToName($email);
+                                        }
+                                    );
 
-                            // Join les emails avec une virgule pour les afficher tous
-                            return "Astreinteurs : " . $nomsMembres->implode(', ');
-                        }),
-                ])
-            ])
-            ->filters([
+                                // Join les emails avec une virgule pour les afficher tous
+                                return "Astreinteurs : " . $nomsMembres->implode(', ');
+                            }
+                        ),
+                    ]
+                )
+                ]
+            )
+            ->filters(
+                [
                 Tables\Filters\SelectFilter::make('perm_id')
                     ->options(Perm::pluck('nom', 'id'))
                     ->label('Par perm')
                     ->placeholder('Toutes les perms'),
                 Filter::make('Libre')
                     ->label('Libre')
-                    ->query(function (Builder $query) {
-                        $query->where('perm_id', null);
-                    }),
-            ])
+                    ->query(
+                        function (Builder $query) {
+                            $query->where('perm_id', null);
+                        }
+                    ),
+                ]
+            )
 
-            ->actions([
+            ->actions(
+                [
                 Tables\Actions\Action::make('shotgun1')
-                    ->label(fn($record) => match($record->creneau) {
+                    ->label(
+                        fn($record) => match ($record->creneau) {
                         'M' => '9h30-10h',
                         'D' => '11h45-13h',
                         'S' => '17h30-23h',
-                    })
+                        }
+                    )
                     ->button()
                     ->color(fn($record) => self::determineColor1($record))
-                    ->action(fn($record) => self::handleshotgun1($record)),
+                    ->action(fn($record) => self::handleShotgun1($record)),
                 Tables\Actions\Action::make('shotgun2')
-                    ->label(fn($record) => match($record->creneau) {
+                    ->label(
+                        fn($record) => match ($record->creneau) {
                         'M' => '10h-12h',
                         'D' => '13h-14h30',
                         'S' => '18h30-23h',
-                    })
+                        }
+                    )
                     ->button()
                     ->color(fn($record) => self::determineColor2($record))
-                    ->action(fn($record) => self::handleshotgun2($record)),
+                    ->action(fn($record) => self::handleShotgun2($record)),
                 //->disabled(true), -> à creuser pour etre encore mieux
-            ])
+                ]
+            )
 
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                ]),
-            ])
-            ->contentGrid([
+            ->bulkActions(
+                [
+                Tables\Actions\BulkActionGroup::make(
+                    [
+                    ]
+                ),
+                ]
+            )
+            ->contentGrid(
+                [
                 'sm' => 3,
                 'md' => 3,
                 'lg' => 3,
                 'xl' => 3,
                 '2xl' => 3,
-            ])
+                ]
+            )
             ->recordUrl(null);
-    }
-
-    /**
-     * Get the relations associated with the resource. -> UNUSED
-     *
-     * @return array
-     */
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-
-    /**
-     * Get the pages associated with the resource.
-     *
-     * @return array
-     */
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListCreneaus::route('/'),
-            'create' => Pages\CreateCreneau::route('/create'),
-            'edit' => Pages\EditCreneau::route('/{record}/edit'),
-        ];
-    }
-
-
-    /*****************
-     * auxiliaries Functions
-     ****************/
-
-    /**
-     * Dissociate the associated permission from a specific slot.
-     *
-     * @param mixed $record
-     * @return void
-     */
-    public static function dissociatePerm($record)
-    {
-        // Dissocier la perm associée du créneau spécifique
-        Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
     }
 
     /**
      * Handle the "shotgun 1" action for a slot.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return void
      */
-    private static function handleshotgun1($record)
+    private static function handleShotgun1($record): void
     {
         $astreinteType = null;
         if ($record->creneau == "M") {
@@ -172,34 +151,37 @@ class ShotgunCreneau extends BaseWidget
                 ->where('member_id', 1) //A changer Filament::auth()->id()
                 ->where('astreinte_type', $astreinteType)
                 ->first();
-            if ($astreinteType=="Soir 1"){
+            if ($astreinteType == "Soir 1") {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->first() !=null;
-            }
-            else {
+                        ->first() != null;
+            } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                         ->where('astreinte_type', $astreinteType)->first() != null;
             }
             if (!$existingAstreinte) {
-                $astreinte = new Astreinte([
+                $astreinte = new Astreinte(
+                    [
                     'member_id' => 1, // À CHANGER
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
-                ]);
+                    ]
+                );
 
                 // Enregistre l'instance dans la base de données
                 $astreinte->save();
-            }
-            else {
-                if ($astreinteUser) Astreinte::where('creneau_id', $record->id)
+            } else {
+                if ($astreinteUser) {
+                    Astreinte::where('creneau_id', $record->id)
                     ->where('member_id', 1) //A changer
                     ->where('astreinte_type', $astreinteType)
                     ->first()
                     ->delete();
-                else Notification::make()
+                } else {
+                    Notification::make()
                     ->title('Il n\'y a plus de places pour cette astreinte')
                     ->color('danger')
                     ->send();
+                }
             }
         }
     }
@@ -207,66 +189,61 @@ class ShotgunCreneau extends BaseWidget
     /**
      * Handle the "shotgun 2" action for a slot.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return void
      */
-
-    private static function handleshotgun2($record)
+    private static function handleShotgun2(mixed $record): void
     {
-        $astreinteType=null;
-        $astreinteUserOther=null;
-        if ($record->creneau=="M") {
+        $astreinteType = null;
+        $astreinteUserOther = null;
+        if ($record->creneau == "M") {
             $astreinteType = "Matin 2";
-        }
-        elseif ($record->creneau=="D") {
+        } elseif ($record->creneau == "D") {
             $astreinteType = "Déjeuner 2";
-        }
-        elseif ($record->creneau=="S") {
+        } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 2";
         }
         if ($astreinteType) {
-            if ($astreinteType== "Soir 2"){
-                $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count()>=3;
+            if ($astreinteType == "Soir 2") {
+                $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', 1) //A changer Filament::auth()->id()
+                    ->where('member_id', Filament::auth()->id())
                     ->where('astreinte_type', $astreinteType)
                     ->first();
                 $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', 1) //A changer Filament::auth()->id()
+                    ->where('member_id', Filament::auth()->id())
                     ->first();
-            }
-            else {
+            } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                         ->where('astreinte_type', $astreinteType)->first() != null;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', 1)
-                    ->where('astreinte_type', $astreinteType)//A changer Filament::auth()->id()
+                    ->where('member_id', Filament::auth()->id())
+                    ->where('astreinte_type', $astreinteType)
                     ->first();
             }
+
             if (!$existingAstreinte && !$astreinteUser && !$astreinteUserOther) {
-                $astreinte = new Astreinte([
-                    'member_id' => 1, // À CHANGER Filament::auth()->id()
+                $astreinte = new Astreinte(
+                    [
+                    'member_id' => Filament::auth()->id(),
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
-                ]);
-                // Enregistre l'instance dans la base de données
+                    ]
+                );
                 $astreinte->save();
-            }
-            else{
-                if ($astreinteUser){
+            } else {
+                if ($astreinteUser) {
                     Astreinte::where('creneau_id', $record->id)
                         ->where('member_id', 1) //A changer Filament::auth()->id()
                         ->where('astreinte_type', $astreinteType)
                         ->first()
                         ->delete();
-                }
-                elseif ($astreinteUserOther){
+                } elseif ($astreinteUserOther) {
                     Notification::make()
                         ->title('Vous avez déjà une perm du soir')
                         ->color('danger')
                         ->send();
-                }
-                elseif ($existingAstreinte) {
+                } elseif ($existingAstreinte) {
                     Notification::make()
                         ->title('Il n\'y a plus de places pour cette astreinte')
                         ->color('danger')
@@ -279,7 +256,7 @@ class ShotgunCreneau extends BaseWidget
     /**
      * Determine the color for "shotgun 1" action.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return string|null
      */
     private static function determineColor1($record)
@@ -291,22 +268,23 @@ class ShotgunCreneau extends BaseWidget
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 1";
         }
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('member_id', 1) //A changer Filament::auth()->id()
-            ->where('astreinte_type', $astreinteType)
-            ->first())
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())
+            ->where('astreinte_type', $astreinteType)->first()
+        ) {
             return 'success';
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('astreinte_type', $astreinteType)->first()) {
+        }
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('astreinte_type', $astreinteType)->first()
+        ) {
             return 'danger';
         }
-
     }
 
     /**
      * Determine the color for "shotgun 2" action.
      *
-     * @param mixed $record
+     * @param  mixed $record
      * @return string|null
      */
     private static function determineColor2($record)
@@ -318,12 +296,14 @@ class ShotgunCreneau extends BaseWidget
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 2";
         }
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('member_id', 1)
-            ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
-            ->first()) return 'success';
-        if (($astreinteType=="Soir 2" && Astreinte::where('creneau_id', $record->id)->count()>=3)||($astreinteType!="Soir 2" && Astreinte::where('creneau_id', $record->id)
-                    ->where('astreinte_type', $astreinteType)->first())){
+        if (
+            Astreinte::where('creneau_id', $record->id)->where('member_id', Filament::auth()->id())->where('astreinte_type', $astreinteType)->first()
+        ) {
+            return 'success';
+        }
+        if (
+            ($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)            ->where('astreinte_type', $astreinteType)->first())
+        ) {
             return 'danger';
         }
     }
@@ -331,19 +311,12 @@ class ShotgunCreneau extends BaseWidget
     function getDateSamediAvant(): Carbon
     {
         $aujourdHui = Carbon::now();
-
-        // Trouver le samedi précédent
         return $aujourdHui->copy()->previous(Carbon::SATURDAY);
-
     }
 
     function getDateSamediApres(): Carbon
     {
         $aujourdHui = Carbon::now();
-
-        // Trouver le samedi précédent
         return $aujourdHui->copy()->next(Carbon::SATURDAY);
     }
-
-
 }

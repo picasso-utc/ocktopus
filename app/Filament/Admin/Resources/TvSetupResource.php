@@ -18,23 +18,27 @@ class TvSetupResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tv';
     protected static ?string $navigationGroup = 'Gestion des télés';
     protected static ?string $navigationLabel = 'Télés';
+    protected static ?string $pluralLabel = 'Télés';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(50),
                 LinkSelect::make('link_id')
                     ->required(),
-            ]);
+                ]
+            );
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -44,27 +48,39 @@ class TvSetupResource extends Resource
                     ->sortable()
                     ->label('Nom du lien'),
                 Tables\Columns\TextColumn::make('id')
-                    ->formatStateUsing(function ($state) {
-                        $app_url = config('app.url');
-                        return "$app_url//:8000/TV/$state";
-                    })
+                    ->formatStateUsing(
+                        function ($state) {
+                            $app_url = config('app.url');
+                            return "$app_url//:8000/TV/$state";
+                        }
+                    )
                     ->label('URL'),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('Show')
                     ->icon('heroicon-o-eye')
                     ->url(fn (Tv $tv) => route('TV.show', $tv->id)),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                ]
+            )
+            ->bulkActions(
+                [
+                Tables\Actions\BulkActionGroup::make(
+                    [
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    ]
+                ),
+                ]
+            )
+            ->emptyStateHeading('Aucune TV');
     }
 
     public static function getPages(): array

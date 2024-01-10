@@ -27,23 +27,29 @@ class TresoPanelProvider extends PanelProvider
             ->id('treso')
             ->path('treso')
             ->brandName("Pic'Asso - Trésorerie")
-            ->colors([
+            ->colors(
+                [
                 'primary' => Color::Blue,
                 'danger' => Color::Red,
                 'success' => Color::Green,
                 'warning' => Color::Yellow,
-            ])
+                ]
+            )
             ->discoverResources(in: app_path('Filament/Treso/Resources'), for: 'App\\Filament\\Treso\\Resources')
             ->discoverPages(in: app_path('Filament/Treso/Pages'), for: 'App\\Filament\\Treso\\Pages')
-            ->pages([
+            ->pages(
+                [
                 Pages\Dashboard::class,
-            ])
+                ]
+            )
             ->discoverWidgets(in: app_path('Filament/Treso/Widgets'), for: 'App\\Filament\\Treso\\Widgets')
-            ->widgets([
+            ->widgets(
+                [
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
-            ->middleware([
+                ]
+            )
+            ->middleware(
+                [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
@@ -53,9 +59,12 @@ class TresoPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
+                ]
+            )
+            ->authMiddleware(
+                [
                 Auth::class,
-            ]);
+                ]
+            );
     }
 }

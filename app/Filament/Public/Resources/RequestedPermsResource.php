@@ -28,7 +28,8 @@ class RequestedPermsResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Forms\Components\TextInput::make('nom')
                     ->required()
                     ->unique('perms', 'nom')
@@ -75,15 +76,19 @@ class RequestedPermsResource extends Resource
                     ->columnSpan(1)
                     ->reactive(),
                 Forms\Components\TextInput::make('mail_asso')
-                    ->required(function (Forms\Get $get) {
-                        return $get('asso');
-                    })
+                    ->required(
+                        function (Forms\Get $get) {
+                            return $get('asso');
+                        }
+                    )
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
                     ->columnSpan(4)
-                    ->disabled(function (Forms\Get $get) {
-                        return !$get('asso');
-                    }),
+                    ->disabled(
+                        function (Forms\Get $get) {
+                            return !$get('asso');
+                        }
+                    ),
                 Forms\Components\TextInput::make('ambiance')
                     ->required()
                     ->label('Ambiance de la perm')
@@ -104,14 +109,16 @@ class RequestedPermsResource extends Resource
                     ->separator(' - ')
                     ->splitKeys(['Enter', ',', 'Tab'])
                     ->columnSpan(3),
-            ])
+                ]
+            )
             ->columns(6);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
                     ->sortable(),
@@ -122,16 +129,23 @@ class RequestedPermsResource extends Resource
                     ->label('Validée')
                     ->boolean()
                     ->sortable(),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 //
-            ])
-            ->bulkActions([
+                ]
+            )
+            ->bulkActions(
+                [
                 //
-            ]);
+                ]
+            );
     }
 
     public static function getRelations(): array

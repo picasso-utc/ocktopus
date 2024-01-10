@@ -7,9 +7,12 @@ use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class   NoteAstreinteOverview extends BaseWidget
+class NoteAstreinteOverview extends BaseWidget
 {
     protected $__name = "test";
+
+    protected static ?int $sort = 3;
+
     protected function getStats(): array
     {
         $userId = 1; //A CHANGER
@@ -53,8 +56,11 @@ class   NoteAstreinteOverview extends BaseWidget
             ? ($nombreAstreintesNotees / $totalAstreintes) * 100
             : 0;
         $couleurPourcentage = 'success' ;
-        if ($pourcentageAstreintesNotees < 75) $couleurPourcentage =  'danger';
-        else if ($couleurPourcentage > 90)$couleurPourcentage = 'success';
+        if ($pourcentageAstreintesNotees < 75) {
+            $couleurPourcentage =  'danger';
+        } elseif ($couleurPourcentage > 90) {
+            $couleurPourcentage = 'success';
+        }
         return [
             Stat::make('Astreintes', Astreinte::query()->where('member_id', 1)->count()) //Filament Auth
                 ->description('Votre nombre d\'astreintes'),
@@ -66,7 +72,7 @@ class   NoteAstreinteOverview extends BaseWidget
                 ->description('Votre nombre d\'astreintes du soir'),
             Stat::make('Astreintes', round($averageAstreintesPerUser, 2))
                 ->description('Nombre moyen d\'astreintes par utilisateur'),
-            Stat::make('Nombre total de points',$totalPointsUtilisateur )
+            Stat::make('Nombre total de points', $totalPointsUtilisateur)
                 ->color($couleurPoints)
                 ->description('Total des points basé sur les astreintes'),
             Stat::make('Moyenne générale des points par utilisateur', round($moyenneGenerale, 2))

@@ -60,44 +60,50 @@ class MediaResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Forms\Components\TextInput::make('name')
                     ->label('Nom')
                     ->required(),
                 MediaTypeSelect::make('media_type'),
                 Forms\Components\TextInput::make('times')
-                    ->label(function (Forms\Get $get) {
-                        $type = $get('media_type');
-                        if ($type == MediaType::Video->value) {
-                            return 'Nombre de répétitions de la vidéo';
-                        } else if ($type == MediaType::Image->value) {
-                            return 'Durée d\'affichage en secondes';
-                        } else {
-                            return '';
+                    ->label(
+                        function (Forms\Get $get) {
+                            $type = $get('media_type');
+                            if ($type == MediaType::Video->value) {
+                                return 'Nombre de répétitions de la vidéo';
+                            } elseif ($type == MediaType::Image->value) {
+                                return 'Durée d\'affichage en secondes';
+                            } else {
+                                return '';
+                            }
                         }
-                    })
+                    )
                     ->numeric()
                     ->default(1)
                     ->minValue(1),
                 Forms\Components\FileUpload::make('media_path')
                     ->label('Média')
                     ->required()
-                    ->acceptedFileTypes(function (Forms\Get $get) {
-                        $type = $get('media_type');
-                        if ($type == MediaType::Image->value) {
-                            $files = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                        } else if ($type == MediaType::Video->value) {
-                            $files = ['video/mp4', 'video/quicktime', 'video/ogg', 'video/webm'];
-                        } else {
-                            $files = [];
+                    ->acceptedFileTypes(
+                        function (Forms\Get $get) {
+                            $type = $get('media_type');
+                            if ($type == MediaType::Image->value) {
+                                $files = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                            } elseif ($type == MediaType::Video->value) {
+                                $files = ['video/mp4', 'video/quicktime', 'video/ogg', 'video/webm'];
+                            } else {
+                                $files = [];
+                            }
+                            return $files;
                         }
-                        return $files;
-                    }),
+                    ),
                 Forms\Components\Checkbox::make('activated')
                     ->label('Activé')
                     ->inline(false)
                     ->default(true),
-            ]);
+                ]
+            );
     }
 
     /**
@@ -110,7 +116,8 @@ class MediaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nom')
                     ->searchable()
@@ -122,19 +129,29 @@ class MediaResource extends Resource
                 Tables\Columns\ToggleColumn::make('activated')
                     ->label('Activé')
                     ->sortable(),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                ]
+            )
+            ->bulkActions(
+                [
+                Tables\Actions\BulkActionGroup::make(
+                    [
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    ]
+                ),
+                ]
+            )
+            ->emptyStateHeading('Aucun média');
     }
 
     /**

@@ -15,10 +15,6 @@ use App\Http\Controllers\TodayConsumptionController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // ---------------------------Téléchargement de fichier image------------------------------------- //
 Route::prefix('/image')->group(function () {
     //get image from ?url=

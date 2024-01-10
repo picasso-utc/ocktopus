@@ -18,7 +18,7 @@ class BlocagesResource extends Resource
     protected static ?string $model = Blocages::class;
     protected static string $title = 'Utilisateurs bloqués';
     protected static ?string $navigationIcon = 'heroicon-o-user-minus';
-    protected static ?string $navigationGroup = "General";
+    protected static ?string $navigationGroup = "Général";
 
     public static function form(Form $form): Form
     {
@@ -70,7 +70,8 @@ class BlocagesResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Aucun utilisateur bloqué');
     }
 
     public static function getPages(): array

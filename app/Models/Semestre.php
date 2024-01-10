@@ -20,5 +20,4 @@ class Semestre extends Model
     {
         return $this->hasMany(Perm::class);
     }
-
 }

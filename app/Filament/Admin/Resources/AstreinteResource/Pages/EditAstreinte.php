@@ -37,113 +37,133 @@ class EditAstreinte extends EditRecord
     /**
      * Define the form structure for the "Matin" type.
      *
-     * @param Form $form
+     * @param  Form $form
      * @return Form
      */
     protected function formMatin(Form $form): Form
     {
         return $form
-        ->schema([
-            Radio::make('note_orga')
-                ->label('Note Organisation')
-                ->options([
-                    '4' => 'Nickel, avec un ménage de qualité',
-                    '3' => 'Rien à redire',
-                    '2' => 'Améliorable mais ça va',
-                    '1' => 'Bof, iels auraient pu faire des efforts',
-                ])
-                ->required(),
+            ->schema(
+                [
+                Radio::make('note_orga')
+                    ->label('Note Organisation')
+                    ->options(
+                        [
+                        '4' => 'Nickel, avec un ménage de qualité',
+                        '3' => 'Rien à redire',
+                        '2' => 'Améliorable mais ça va',
+                        '1' => 'Bof, iels auraient pu faire des efforts',
+                        ]
+                    )
+                    ->required(),
 
-            Textarea::make('commentaire')
-                ->label('Commentaire')
-        ]);
+                Textarea::make('commentaire')
+                    ->label('Commentaire')
+                ]
+            );
     }
     /**
      * Define the form structure for the "Midi" type.
      *
-     * @param Form $form
+     * @param  Form $form
      * @return Form
      */
     protected function formMidi(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Radio::make('note_menu')
                     ->label('Note Menu')
-                    ->options([
+                    ->options(
+                        [
                         '4' => 'Gastro',
                         '3' => 'Pas mal',
                         '2' => 'Satisfaisant',
                         '1' => 'Horrible',
-                    ]),
+                        ]
+                    ),
                 Radio::make('note_orga')
                     ->label('Note Organisation')
-                    ->options([
+                    ->options(
+                        [
                         '4' => 'Nickel, avec un ménage de qualité',
                         '3' => 'Rien à redire',
                         '2' => 'Améliorable mais ça va',
                         '1' => 'Bof, iels auraient pu faire des efforts',
-                    ])
+                        ]
+                    )
                     ->required(),
                 Textarea::make('commentaire')
                     ->label('Commentaire')
-            ]);
+                ]
+            );
     }
 
     /**
      * Define the form structure for the "Soir" type.
      *
-     * @param Form $form
+     * @param  Form $form
      * @return Form
      */
     protected function formSoir(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Radio::make('note_menu')
                     ->label('Note Menu')
-                    ->options([
+                    ->options(
+                        [
                         '4' => 'Gastro',
                         '3' => 'Pas mal',
                         '2' => 'Satisfaisant',
                         '1' => 'Horrible',
-                    ]),
+                        ]
+                    ),
                 Radio::make('note_deco')
                     ->label('Note Décoration')
-                    ->options([
+                    ->options(
+                        [
                         '3' => 'Le pic s\'est refait une beauté',
                         '2' => 'Y\'a eu du travail',
                         '1' => 'Quelques éléments par ci par là',
                         '0' => 'On la cherche toujours',
-                    ])
+                        ]
+                    )
                     ->required(),
                 Radio::make('note_anim')
                     ->label('Note Animation et ambiance')
-                    ->options([
+                    ->options(
+                        [
                         '4' => 'Dancing de folie et anims de qualité',
                         '3' => 'Des efforts avec des anims',
                         '2' => 'Un soir lambda',
                         '1' => 'Bof, iels auraient pu faire des efforts',
-                    ])
+                        ]
+                    )
                     ->required(),
                 Radio::make('note_orga')
                     ->label('Note Organisation')
-                    ->options([
+                    ->options(
+                        [
                         '4' => 'Nickel, avec un ménage de qualité',
                         '3' => 'Rien à redire',
                         '2' => 'Améliorable mais ça va',
                         '1' => 'Bof, iels auraient pu faire des efforts',
-                    ])
+                        ]
+                    )
                     ->required(),
                 Textarea::make('commentaire')
                     ->label('Commentaire')
-            ]);
+                ]
+            );
     }
 
     /**
      * Define the form structure based on the Astreinte type.
      *
-     * @param Form $form
+     * @param  Form $form
      * @return Form
      */
     public function form(Form $form): Form
@@ -153,14 +173,15 @@ class EditAstreinte extends EditRecord
             return $this->formMatin($form);
         } elseif ($astreinteType === 'Déjeuner 1' || $astreinteType === 'Déjeuner 2') {
             return $this->formMidi($form);
-        }
-       elseif ($astreinteType === 'Soir 1' || $astreinteType === 'Soir 2' || $astreinteType === 'Soir 3' || $astreinteType === 'Soir 4') {
+        } elseif ($astreinteType === 'Soir 1' || $astreinteType === 'Soir 2' || $astreinteType === 'Soir 3' || $astreinteType === 'Soir 4') {
             return $this->formSoir($form);
         }
 
         return $form
-            ->schema([
-            ]);
+            ->schema(
+                [
+                ]
+            );
     }
     protected function getHeaderActions(): array
     {

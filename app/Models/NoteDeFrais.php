@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Treso;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +9,7 @@ class NoteDeFrais extends Model
 {
     use HasFactory;
 
-    protected $table ='note_de_frais';
+    protected $table = 'note_de_frais';
     protected $fillable = [
         'state', 'date_facturation', 'nom', 'prenom', 'numero_voie', 'rue',
         'code_postal', 'ville', 'email'
@@ -17,13 +17,13 @@ class NoteDeFrais extends Model
 
     public function getStateLabel(string $etat)
     {
-        if ($etat === 'D'){
+        if ($etat === 'D') {
             return 'Note à payer';
-        } elseif ($etat === 'R'){
+        } elseif ($etat === 'R') {
             return 'Note à rembourser';
-        } elseif ($etat === 'E'){
+        } elseif ($etat === 'E') {
             return 'Note en attente';
-        } elseif ($etat === 'P'){
+        } elseif ($etat === 'P') {
             return 'Note payée';
         } else {
             return 'Inconnu';

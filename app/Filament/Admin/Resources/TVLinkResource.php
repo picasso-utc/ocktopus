@@ -24,40 +24,55 @@ class TVLinkResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(50),
                 Forms\Components\TextInput::make('url')
                     ->required()
                     ->url(),
-            ]);
+                ]
+            );
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('url')
-                    ->formatStateUsing(function ($state) {
-                        return substr($state, 0, 50);
-                    })
-            ])
-            ->filters([
+                    ->formatStateUsing(
+                        function ($state) {
+                            return substr($state, 0, 50);
+                        }
+                    )
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                ]
+            )
+            ->bulkActions(
+                [
+                Tables\Actions\BulkActionGroup::make(
+                    [
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    ]
+                ),
+                ]
+            )
+            ->emptyStateHeading('Aucun lien de télés');
     }
 
 

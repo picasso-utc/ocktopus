@@ -17,39 +17,50 @@ class GoodiesResource extends Resource
 {
     protected static ?string $model = Goodies::class;
     protected static ?string $label = 'Goodies';
-    protected static ?string $navigationGroup = 'General';
-
+    protected static ?string $navigationGroup = 'Général';
     protected static ?string $navigationIcon = 'heroicon-o-gift';
+    protected static ?int $navigationSort = -2;
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 //
-            ]);
+                ]
+            );
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('collected')
                     ->label('Récupéré')
                     ->sortable(),
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 //
-            ])
-            ->bulkActions([
+                ]
+            )
+            ->bulkActions(
+                [
                 //
-            ])
-            ->paginated([20]);
+                ]
+            )
+            ->paginated([20])
+            ->emptyStateHeading('Aucun goodies généré.');
     }
 
     public static function getPages(): array

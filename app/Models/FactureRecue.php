@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Treso;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ class FactureRecue extends Model
 {
     use HasFactory;
 
-    protected $table ='facture_recues';
+    protected $table = 'facture_recues';
     protected $fillable = [
         'tva', 'prix', 'perm_id', 'state', 'destinataire', 'date',
         'date_created', 'date_paiement', 'date_remboursement', 'moyen_paiement',
@@ -19,13 +19,13 @@ class FactureRecue extends Model
 
     public function getStateLabel(string $etat)
     {
-        if ($etat === 'D'){
+        if ($etat === 'D') {
             return 'Facture à payer';
-        } elseif ($etat === 'R'){
+        } elseif ($etat === 'R') {
             return 'Facture à rembourser';
-        } elseif ($etat === 'E'){
+        } elseif ($etat === 'E') {
             return 'Facture en attente';
-        } elseif ($etat === 'P'){
+        } elseif ($etat === 'P') {
             return 'Facture payée';
         } else {
             return 'Inconnu';
@@ -49,7 +49,7 @@ class FactureRecue extends Model
     {
         $price = 0;
 
-        foreach ($this->categoriePrix as $cat){
+        foreach ($this->categoriePrix as $cat) {
             $price += $cat->prix;
         }
 
@@ -65,6 +65,4 @@ class FactureRecue extends Model
     {
         return $this->hasMany(MontantCategorie::class, 'facture_id');
     }
-
-
 }

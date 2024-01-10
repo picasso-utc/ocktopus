@@ -31,7 +31,6 @@ class ListPerms extends ListRecords
         return [
             Actions\CreateAction::make()
             ->label('Nouvelle perm')
-
         ];
     }
 
@@ -45,32 +44,38 @@ class ListPerms extends ListRecords
         return [
             // Élément pour les éléments en attente
             'waiting' => Tab::make('En attente')
-                ->modifyQueryUsing(function (Builder $query) {
-                    // Obtient l'ID du semestre actif
-                    $semestreActifId = Semestre::where('activated', true)->value('id');
-                    // Modifie la requête pour avoir les perms du semestre actif et non validées
-                    return $query->where('validated', 0)
-                        ->where('semestre', $semestreActifId);
-                }),
+                ->modifyQueryUsing(
+                    function (Builder $query) {
+                        // Obtient l'ID du semestre actif
+                        $semestreActifId = Semestre::where('activated', true)->value('id');
+                        // Modifie la requête pour avoir les perms du semestre actif et non validées
+                        return $query->where('validated', 0)
+                            ->where('semestre', $semestreActifId);
+                    }
+                ),
 
             // Élément pour les éléments validés
             'validated' => Tab::make('Validées')
-                ->modifyQueryUsing(function (Builder $query) {
-                    // Obtient l'ID du semestre actif
-                    $semestreActifId = Semestre::where('activated', true)->value('id');
-                    // Modifie la requête pour avoir les perms du semestre actif et validées
-                    return $query->where('validated', 1)
-                        ->where('semestre', $semestreActifId);
-                }),
+                ->modifyQueryUsing(
+                    function (Builder $query) {
+                        // Obtient l'ID du semestre actif
+                        $semestreActifId = Semestre::where('activated', true)->value('id');
+                        // Modifie la requête pour avoir les perms du semestre actif et validées
+                        return $query->where('validated', 1)
+                            ->where('semestre', $semestreActifId);
+                    }
+                ),
 
             // Élément pour tous les éléments
             'all' => Tab::make('Toutes')
-                ->modifyQueryUsing(function (Builder $query) {
-                    // Obtient l'ID du semestre actif
-                    $semestreActifId = Semestre::where('activated', true)->value('id');
-                    // Modifie la requête pour avoir les perms du semestre actif
-                    return $query->where('semestre', $semestreActifId);
-                }),
+                ->modifyQueryUsing(
+                    function (Builder $query) {
+                        // Obtient l'ID du semestre actif
+                        $semestreActifId = Semestre::where('activated', true)->value('id');
+                        // Modifie la requête pour avoir les perms du semestre actif
+                        return $query->where('semestre', $semestreActifId);
+                    }
+                ),
         ];
     }
 }

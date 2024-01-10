@@ -31,7 +31,8 @@ class PermResource extends Resource
     {
         $semestreActif = Semestre::where('activated', true)->first();
         return $form
-            ->schema([
+            ->schema(
+                [
                 Forms\Components\TextInput::make('nom')
                     ->required()
                     ->unique('perms', 'nom')
@@ -72,15 +73,19 @@ class PermResource extends Resource
                     ->columnSpan(2)
                     ->reactive(),
                 Forms\Components\TextInput::make('mail_asso')
-                    ->required(function (Forms\Get $get) {
-                        return $get('asso');
-                    })
+                    ->required(
+                        function (Forms\Get $get) {
+                            return $get('asso');
+                        }
+                    )
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
                     ->columnSpan(4)
-                    ->disabled(function (Forms\Get $get) {
-                        return !$get('asso');
-                    }),
+                    ->disabled(
+                        function (Forms\Get $get) {
+                            return !$get('asso');
+                        }
+                    ),
                 Forms\Components\RichEditor::make('description')
                     ->required()
                     ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'unorderedList', 'undo', 'redo'])
@@ -109,7 +114,8 @@ class PermResource extends Resource
                     ->columnSpan(3),
                 Forms\Components\Hidden::make('semestre')->default($semestreActif->id),
 
-            ])
+                ]
+            )
             ->columns(6);
     }
 
@@ -118,7 +124,8 @@ class PermResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\ToggleColumn::make('validated')
                     ->label('Validation'),
                 Tables\Columns\TextColumn::make('nom')
@@ -140,24 +147,33 @@ class PermResource extends Resource
                 Tables\Columns\TextColumn::make('creneaux_count')->counts("creneaux")
                     ->label('Nombre de créneaux')
                     ->sortable(),
-                    ])
+                ]
+            )
 
-            ->filters([
+            ->filters(
+                [
                 //
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\ViewAction::make()
 
-            ])
-            ->bulkActions([
+                ]
+            )
+            ->bulkActions(
+                [
 
-            ]);
+                ]
+            )
+            ->emptyStateHeading('Aucune permanence');
     }
 
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->schema([
+            ->schema(
+                [
                 TextEntry::make('nom'),
                 TextEntry::make('theme'),
                 TextEntry::make('description'),
@@ -168,7 +184,8 @@ class PermResource extends Resource
                 TextEntry::make('nom_resp_2'),
                 TextEntry::make('mail_resp'),
                 TextEntry::make('mail_resp_2'),
-            ]);
+                ]
+            );
     }
 
     public static function getRelations(): array

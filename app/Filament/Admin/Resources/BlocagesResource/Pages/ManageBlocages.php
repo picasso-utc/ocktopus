@@ -13,7 +13,8 @@ class ManageBlocages extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+            ->label('Bloquer un utilisateur'),
         ];
     }
 }

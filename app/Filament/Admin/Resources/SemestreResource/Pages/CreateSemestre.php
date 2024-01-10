@@ -16,7 +16,8 @@ class CreateSemestre extends CreateRecord
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
                 TextInput::make('state')
                     ->label('Nom'),
                 DatePicker::make('startOfSemestre')
@@ -26,8 +27,7 @@ class CreateSemestre extends CreateRecord
                     ->label('End of Semestre')
                     ->required(),
 
-            ]);
-
+                ]
+            );
     }
-
 }
