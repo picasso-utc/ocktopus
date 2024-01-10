@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\TodayConsumptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +43,5 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
+
+Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
