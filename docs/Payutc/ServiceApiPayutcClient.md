@@ -2,16 +2,16 @@
 
 **Il est important de lire tout la doc payutc pour comprendre comment marche le service et quels sont les problèmes rencontrés (pour ne pas les rerecontrés)**
 
-Le service ApiPayutc permet d'interagir avec l'API Payutc de weez pour obtenir des informations sur les utilisateurs et les badges. Cette documentation explique les méthodes disponibles dans ce service, ainsi que la manière de l'utiliser dans des contrôleurs.
+Le service PayutcClient permet d'interagir avec l'API Payutc de weez pour obtenir des informations sur les utilisateurs et les badges. Cette documentation explique les méthodes disponibles dans ce service, ainsi que la manière de l'utiliser dans des contrôleurs.
 
-**Vous pouvez trouver le code ici : app/Services/ApiPayutcClient.php**
+**Vous pouvez trouver le code ici : app/Services/PayutcClient.php**
 ### Initialisation du Service
 Le service nécessite l'initialisation avec les informations APP_KEY, SYSTEM_ID, PASSWORD, LOGIN, FUNDATION_ID, API_URL. Ces informations sont récupérées à partir des variables d'environnement. Assurez-vous que ces variables d'environnement sont définies dans votre configuration (fichier .env).
 
 ```php
 use App\Services\PayUtcClient;
 
-// Initialisation du service GingerClient
+// Initialisation du service PayutcClient
 
     private ApiPayutcClient $client;
 
@@ -60,7 +60,7 @@ $session_id = $this->getSession();
 ```
 
 ### Utilisation dans un Contrôleur
-Voici comment vous pouvez utiliser le service GingerClient dans un contrôleur Laravel.
+Voici comment vous pouvez utiliser le service PayutcClient dans un contrôleur Laravel.
 
 ```php
 use App\Services\PayUtcClient;
