@@ -2,17 +2,23 @@
 
 namespace App\Filament\Treso\Resources;
 
-use App\Filament\Treso\Resources\NoteDeFraisResource\Pages;
-use App\Filament\Treso\Resources\NoteDeFraisResource\RelationManagers;
+use App\Filament\Treso\Resources\FactureEmiseResource\Pages;
+use App\Filament\Treso\Resources\FactureEmiseResource\RelationManagers;
 use App\Models\CategorieFacture;
-use App\Models\ElementNoteDeFrais;
+use App\Models\ElementFacture;
+use App\Models\FactureEmise;
 use App\Models\NoteDeFrais;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -20,23 +26,24 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Blade;
 
-class NoteDeFraisResource extends Resource
+class FactureEmiseResource extends Resource
 {
-    protected static ?string $model = NoteDeFrais::class;
+    protected static ?string $model = FactureEmise::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-up';
+
+    protected static ?string $navigationGroup = 'Factures';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Fieldset::make('Coordonnées')
+                Fieldset::make('Adresse de facturation')
                     ->schema([
                         TextInput::make('prenom')
                             ->required()
@@ -52,7 +59,9 @@ class NoteDeFraisResource extends Resource
                             ->maxLength(255),
                         TextInput::make('code_postal')
                             ->required()
-                            ->numeric(),
+                            ->numeric()
+                            ->maxLength(5)
+                            ->minLength(5),
                         TextInput::make('ville')
                             ->required()
                             ->maxLength(255),
@@ -64,25 +73,40 @@ class NoteDeFraisResource extends Resource
                     ]),
                 Fieldset::make('Informations')
                     ->schema([
-                        DatePicker::make('date_facturation')
-                            ->label('Date de facturation')
+                        DatePicker::make('date_due')
+                            ->label('Date dûe')
                             ->required()
                             ->date()
+                            ->columnSpan(2)
+                            ->timezone('Europe/Paris'),
+                        DatePicker::make('date_paiement')
+                            ->label('Date paiement')
+                            ->date()
+                            ->columnSpan(2)
                             ->timezone('Europe/Paris'),
                         Select::make('state')
                             ->label('État')
                             ->required()
+                            ->columnSpan(2)
                             ->options([
-                                'D' => 'Note à payer',
-                                'R' => 'Note à rembourser',
-                                'E' => 'Note en attente',
-                                'P' => 'Note payée',
-                            ])
-                    ]),
-                Repeater::make('elementNote')
-                    ->label('Element(s) de la note')
+                                'D' => 'Dûe',
+                                'T' => 'Partiellement payée',
+                                'P' => 'Payée',
+                                'A' => 'Annulée',
+                            ]),
+                        TextInput::make('destinataire')
+                            ->required()
+                            ->columnSpan(3)
+                            ->maxLength(255),
+                        TextInput::make('nom_createur')
+                            ->required()
+                            ->columnSpan(3)
+                            ->maxLength(255),
+                    ])->columns(6),
+                Repeater::make('elementFacture')
+                    ->label('Element(s) de la facture')
                     ->relationship()
-                    ->addActionLabel('Ajouter une ligne à la note')
+                    ->addActionLabel('Ajouter une ligne à la facture')
                     ->schema([
                         TextInput::make('description')
                             ->columnSpan(3)
@@ -126,7 +150,7 @@ class NoteDeFraisResource extends Resource
 
     public static function updateTotals(Get $get, Set $set): void
     {
-        $selectedProducts = collect($get('elementNote'))->filter(fn($item) => !empty($item['prix_unitaire_ttc']) && !empty($item['quantite']));
+        $selectedProducts = collect($get('elementFacture'))->filter(fn($item) => !empty($item['prix_unitaire_ttc']) && !empty($item['quantite']));
 
         $total = $selectedProducts->reduce(function ($total, $product) {
             return $total + ($product['prix_unitaire_ttc'] * $product['quantite']);
@@ -135,33 +159,29 @@ class NoteDeFraisResource extends Resource
         $set('total', number_format($total, 2, '.', ''));
     }
 
-
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('prenom'),
-                TextColumn::make('nom'),
-                TextColumn::make('date_facturation'),
+                TextColumn::make('destinataire'),
+                TextColumn::make('date_due'),
                 TextColumn::make('state')
                     ->label('État')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state){
-                        'D' => 'Note à payer',
-                        'R' => 'Note à rembourser',
-                        'E' => 'Note en attente',
-                        'P' => 'Note payée',
+                        'D' => 'Dûe',
+                        'T' => 'Partiellement payée',
+                        'P' => 'Payée',
+                        'A' => 'Annulée',
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'D' => 'danger',
-                        'R' => 'info',
-                        'E' => 'warning',
+                        'T' => 'info',
                         'P' => 'success',
+                        'A' => 'grey',
                     }),
-                /*TextColumn::make('total')
-                    ->label('Total TTC')
-                    ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €")),*/
+                TextColumn::make('nom_createur'),
+
             ])
             ->filters([
                 //
@@ -172,12 +192,12 @@ class NoteDeFraisResource extends Resource
                     ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function (NoteDeFrais $record) {
+                    ->action(function (FactureEmise $record) {
                         return response()->streamDownload(function () use ($record) {
                             echo Pdf::loadHtml(
-                                Blade::render('pdfNote', ['record' => $record])
+                                Blade::render('pdfFacture', ['record' => $record])
                             )->stream();
-                        }, 'Note-' . $record->id . '.pdf');
+                        }, 'Facture-' . $record->id . '.pdf');
                     }),
             ])
             ->bulkActions([
@@ -197,9 +217,9 @@ class NoteDeFraisResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListNoteDeFrais::route('/'),
-            'create' => Pages\CreateNoteDeFrais::route('/create'),
-            'edit' => Pages\EditNoteDeFrais::route('/{record}/edit'),
+            'index' => Pages\ListFactureEmises::route('/'),
+            'create' => Pages\CreateFactureEmise::route('/create'),
+            'edit' => Pages\EditFactureEmise::route('/{record}/edit'),
         ];
     }
 }
