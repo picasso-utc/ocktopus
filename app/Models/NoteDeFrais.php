@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Treso\ElementNoteDeFrais;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,8 +31,8 @@ class NoteDeFrais extends Model
         }
     }
 
-    public function elementFacture()
+    public function elementNote()
     {
-        return $this->hasMany(ElementFacture::class, 'note_de_frais_id');
+        return $this->hasMany(ElementNoteDeFrais::class, 'note_de_frais_id');
     }
 }

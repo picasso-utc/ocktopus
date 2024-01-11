@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('nom_createur', 255);
             $table->date('date_paiement')->nullable();
             $table->date('date_due');
-            $table->enum('etat', ['D', 'A', 'T', 'P']);
+            $table->string('state', 1);
             $table->timestamps();
         });
     }

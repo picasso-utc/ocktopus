@@ -12,7 +12,7 @@ class FactureEmise extends Model
 
     protected $fillable = [
         'tva', 'prix', 'destinataire', 'date_creation', 'nom_createur',
-        'date_paiement', 'date_due', 'etat', 'semestre_id'
+        'date_paiement', 'date_due', 'state', 'semestre_id'
     ];
 
     // Valeurs possibles pour la colonne 'etat'
@@ -34,5 +34,10 @@ class FactureEmise extends Model
     public function getTotalTaxes()
     {
         return round($this->prix - $this->getPriceWithoutTaxes(), 2);
+    }
+
+    public function elementFacture()
+    {
+        return $this->hasMany(ElementFacture::class, 'facture_id');
     }
 }
