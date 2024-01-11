@@ -23,8 +23,8 @@ class ManageGoodies extends ManageRecords
         $client = new PayUtcClient();
 
         $accumulatedData = [];
-        $dateStart = (new DateTime("2023-12-10"))->format('Y-m-d\TH:i:s.u\Z');
-        $dateEnd = (new DateTime("2023-12-16"))->format('Y-m-d\TH:i:s.u\Z');
+        $dateStart = date('Y-m-d\TH:i:s.u\Z', strtotime('-7 days'));
+        $dateEnd = date('Y-m-d\TH:i:s.u\Z', strtotime('today'));
         $response = $client->makePayutcRequest(
             'GET',
             'transactions',
