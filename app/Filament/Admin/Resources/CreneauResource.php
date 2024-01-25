@@ -24,6 +24,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
@@ -91,8 +92,6 @@ class CreneauResource extends Resource
      */
     public static function table(Table $table): Table
     {
-
-
         return $table
             ->groups([
                 Group::make('date')->date()
@@ -105,7 +104,12 @@ class CreneauResource extends Resource
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('creneau')
-                        ->label('creneau'),
+                        ->label('dd')
+                        ->state(fn ($record) => match ($record->creneau) {
+                            'M' => 'Matin',
+                            'D' => 'Déjeuner',
+                            'S' => 'Soir',
+                        }),
                     Tables\Columns\TextColumn::make('perm.nom')
                         ->label('Perm associée')
                         ->badge(),

@@ -9,7 +9,9 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class   NoteAstreinteOverview extends BaseWidget
 {
-    protected $__name = "test";
+
+    protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
         $userId = 1; //A CHANGER
@@ -48,7 +50,7 @@ class   NoteAstreinteOverview extends BaseWidget
         $totalPointsUtilisateur = User::find($userId)->nombre_points;
         $couleurPoints = $totalPointsUtilisateur < $moyenneGenerale ? 'danger' : 'success';
 
-        $nombreAstreintesNotees = Astreinte::whereNotNull('note_organisation')->count();
+        $nombreAstreintesNotees = Astreinte::whereNotNull('note_orga')->count();
         $pourcentageAstreintesNotees = $totalAstreintes > 0
             ? ($nombreAstreintesNotees / $totalAstreintes) * 100
             : 0;

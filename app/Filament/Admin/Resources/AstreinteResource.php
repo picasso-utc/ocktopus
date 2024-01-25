@@ -37,9 +37,6 @@ class AstreinteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\IconColumn::make('note_orga')
-                    ->label('Notée')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('creneau.perm.nom')
                     ->label('Perm'),
                 Tables\Columns\TextColumn::make('creneau.date')->date()
@@ -53,9 +50,6 @@ class AstreinteResource extends Resource
             ->actions([
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
