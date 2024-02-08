@@ -17,7 +17,7 @@ return new class extends Migration
             $table->float('tva')->default(0);
             $table->float('prix_unitaire_ttc')->default(0);
             $table->integer('quantite')->nullable();
-            $table->foreignId('note_de_frais_id')->constrained('note_de_frais')->onDelete('cascade');
+            $table->foreignId('facture_id')->constrained('facture_emises')->onDelete('cascade');
             $table->timestamps();
         });
     }

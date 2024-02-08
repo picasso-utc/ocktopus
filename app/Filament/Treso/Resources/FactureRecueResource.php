@@ -29,7 +29,7 @@ class FactureRecueResource extends Resource
 
     protected static ?string $navigationLabel = 'Factures Reçues';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-down';
 
     protected static ?string $navigationGroup = 'Factures';
 

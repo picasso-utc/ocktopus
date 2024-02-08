@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facture_emises', function (Blueprint $table) {
+        Schema::create('element_note_de_frais', function (Blueprint $table) {
             $table->id();
+            $table->char('description',255);
             $table->float('tva')->default(0);
-            $table->float('prix')->default(0);
-            $table->string('destinataire', 255);
-            $table->date('date_creation')->nullable()->default(now());
-            $table->string('nom_createur', 255);
-            $table->date('date_paiement')->nullable();
-            $table->date('date_due');
-            $table->string('state', 1);
+            $table->float('prix_unitaire_ttc')->default(0);
+            $table->integer('quantite')->nullable();
+            $table->foreignId('note_de_frais_id')->constrained('note_de_frais')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facture_emises');
+        Schema::dropIfExists('element_note_de_frais');
     }
 };
