@@ -5,9 +5,11 @@ namespace App\Filament\Admin\Resources\AstreinteResource\Pages;
 use App\Filament\Admin\Resources\AstreinteResource;
 use App\Models\Semestre;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * List records page for AstreinteResource.
@@ -29,8 +31,7 @@ class ListAstreintes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-            ->label('Ajouter une astreinte'),
+            Actions\CreateAction::make(),
         ];
     }
 
@@ -43,44 +44,29 @@ class ListAstreintes extends ListRecords
     {
         return [
             'persoNonNoté' => Tab::make('En attente de notation')
-                ->modifyQueryUsing(
-                    function (Builder $query) {
-                        $query->where('member_id', 1)//Filament::auth()->id()
-                            ->whereNull('note_orga')
-                            ->whereHas(
-                                'creneau',
-                                function ($query) {
-                                    $query->whereNotNull('perm_id')
-                                        ->whereHas(
-                                            'perm',
-                                            function ($query) {
-                                                $semestreActifId = Semestre::where('activated', true)->value('id');
-                                                $query->where('semestre', $semestreActifId);
-                                            }
-                                        );
-                                }
-                            );
-                    }
-                ),
+                ->modifyQueryUsing(function (Builder $query) {
+                    $query->where('member_id',1)//Filament::auth()->id()
+                    ->whereNull('note_orga')
+                        ->whereHas('creneau', function ($query) {
+                            $query->whereNotNull('perm_id')
+                                ->whereHas('perm', function ($query) {
+                                    $semestreActifId = Semestre::where('activated', true)->value('id');
+                                    $query->where('semestre', $semestreActifId);
+                                });
+                        });
+                }),
             'perso' => Tab::make('Vos notes')
-                ->modifyQueryUsing(
-                    function (Builder $query) {
-                        $query->where('member_id', 1)//Filament::auth()->id()
-                            ->whereHas(
-                                'creneau',
-                                function ($query) {
-                                    $query->whereNotNull('perm_id')
-                                        ->whereHas(
-                                            'perm',
-                                            function ($query) {
-                                                $semestreActifId = Semestre::where('activated', true)->value('id');
-                                                $query->where('semestre', $semestreActifId);
-                                            }
-                                        );
-                                }
-                            );
-                    }
-                ),
+                ->modifyQueryUsing(function (Builder $query) {
+                    $query->where('member_id', 1) //Filament::auth()->id()
+                    ->whereNotNull('note_orga')
+                        ->whereHas('creneau', function ($query) {
+                            $query->whereNotNull('perm_id')
+                                ->whereHas('perm', function ($query) {
+                                    $semestreActifId = Semestre::where('activated', true)->value('id');
+                                    $query->where('semestre', $semestreActifId);
+                                });
+                        });
+                }),
         ];
     }
 }
