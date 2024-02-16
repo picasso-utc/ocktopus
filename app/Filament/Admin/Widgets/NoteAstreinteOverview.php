@@ -11,7 +11,7 @@ class NoteAstreinteOverview extends BaseWidget
 {
     protected $__name = "test";
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
