@@ -24,8 +24,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-
 use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 /**
@@ -73,145 +73,117 @@ class CreneauResource extends Resource
     /**
      * Define the form structure for creating and editing slots. -> UNUSED
      *
-     * @param  Form $form
+     * @param Form $form
      * @return Form
      */
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(
-                [
+            ->schema([
                 //
-                ]
-            );
+            ]);
     }
 
     /**
      * Define the table structure for listing and managing slots.
      *
-     * @param  Table $table
+     * @param Table $table
      * @return Table
      */
     public static function table(Table $table): Table
     {
-
-
         return $table
-            ->groups(
-                [
+            ->groups([
                 Group::make('date')->date()
                     ->collapsible()
                     ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)->format('l')),
 
                 Group::make('creneau')
-                ]
-            )
+            ])
             ->defaultGroup('date')
-            ->columns(
-                [
-                Tables\Columns\Layout\Stack::make(
-                    [
+            ->columns([
+                Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('creneau')
-                        ->label('creneau'),
+                        ->label('dd')
+                        ->state(fn ($record) => match ($record->creneau) {
+                            'M' => 'Matin',
+                            'D' => 'Déjeuner',
+                            'S' => 'Soir',
+                        }),
                     Tables\Columns\TextColumn::make('perm.nom')
                         ->label('Perm associée')
                         ->badge(),
                     Tables\Columns\SelectColumn::make('perm_id')
                         ->label('Associer une perm')
-                        ->options(
-                            function () {
-                                $semestreActifId = Semestre::where('activated', true)->value('id');
-                                $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre', $semestreActifId)->get();
-                                $filteredPerms = $perms->filter(
-                                    function ($perm) {
-                                        return $perm->creneaux_count < 3;
-                                    }
-                                );
-                                return $filteredPerms->pluck('nom', 'id')->toArray();
-                            }
-                        )
+                        ->options(function () {
+                            $semestreActifId = Semestre::where('activated', true)->value('id');
+                            $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre',$semestreActifId)->get();
+                            $filteredPerms = $perms->filter(function ($perm) {
+                                return $perm->creneaux_count < 3;
+                            });
+                            return $filteredPerms->pluck('nom', 'id')->toArray();
+                        })
                         ->placeholder("Choisir une perm")
                         //(function ($record) {
-                    //                            $associatedPerm = $record->perm;
-                    //                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
-                    //                        })
-                        ->hidden(
-                            function (Creneau $creneau) {
-                                return $creneau->perm_id;
-                            }
-                        ),
+//                            $associatedPerm = $record->perm;
+//                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
+//                        })
+                        ->hidden(function (Creneau $creneau){
+                            return $creneau->perm_id;
+                        }),
                     Tables\Columns\TextColumn::make('creneau')
-                        ->formatStateUsing(
-                            function ($state, Creneau $creneau) {
-                                $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
+                        ->formatStateUsing(function ($state, Creneau $creneau) {
+                            $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
                                 ->pluck('member_id')
                                 ->unique()
                                 ->toArray();
 
-                                $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
-                                    ->map(
-                                        function ($email) {
-                                            return mailToName($email);
-                                        }
-                                    );
+                            $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
+                                ->map(function ($email) {
+                                    return mailToName($email);
+                                });
 
-                                // Join les emails avec une virgule pour les afficher tous
-                                return "Astreinteurs : " . $nomsMembres->implode(', ');
-                            }
-                        ),
-                    ]
-                )
-                ]
-            )
-            ->filters(
-                [
+                            // Join les emails avec une virgule pour les afficher tous
+                            return "Astreinteurs : " . $nomsMembres->implode(', ');
+                        }),
+                ])
+            ])
+            ->filters([
                 Tables\Filters\SelectFilter::make('perm_id')
                     ->options(Perm::pluck('nom', 'id'))
                     ->label('Par perm')
                     ->placeholder('Toutes les perms'),
                 Filter::make('Libre')
                     ->label('Libre')
-                    ->query(
-                        function (Builder $query) {
-                            $query->where('perm_id', null);
-                        }
-                    ),
-                ]
-            )
+                    ->query(function (Builder $query) {
+                        $query->where('perm_id', null);
+                    }),
+            ])
 
-            ->actions(
-                [
+            ->actions([
                 Tables\Actions\Action::make('dissociate')
                     ->label('Libérer')
                     ->button()
                     ->action(fn($record) => self::dissociatePerm($record)),
-                ]
-            )
-            ->bulkActions(
-                [
-                Tables\Actions\BulkActionGroup::make(
-                    [
-                    ]
-                ),
-                ]
-            )
-            ->contentGrid(
-                [
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                ]),
+            ])
+            ->contentGrid([
                 'sm' => 3,
                 'md' => 3,
                 'lg' => 3,
                 'xl' => 3,
                 '2xl' => 3,
-                ]
-            )
-            ->recordUrl(null)
-            ->emptyStateHeading('Aucun créneau');
+            ])
+            ->recordUrl(null);
     }
 
     /**
-     Get the relations associated with the resource. -> UNUSED
-
-     @return array
+     * Get the relations associated with the resource. -> UNUSED
+     *
+     * @return array
      */
     public static function getRelations(): array
     {
@@ -243,7 +215,7 @@ class CreneauResource extends Resource
     /**
      * Dissociate the associated permission from a specific slot.
      *
-     * @param  mixed $record
+     * @param mixed $record
      * @return void
      */
     public static function dissociatePerm($record)
@@ -251,4 +223,6 @@ class CreneauResource extends Resource
         // Dissocier la perm associée du créneau spécifique
         Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
     }
+
 }
+

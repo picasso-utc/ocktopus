@@ -6,6 +6,7 @@ use App\Filament\Public\Resources\RequestedPermsResource\Pages;
 use App\Filament\Public\Resources\RequestedPermsResource\RelationManagers;
 use App\Models\Perm;
 use App\Models\RequestedPerms;
+use App\Models\Semestre;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -27,6 +28,8 @@ class RequestedPermsResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $semestreActif = Semestre::where('activated', true)->first();
+
         return $form
             ->schema(
                 [
@@ -109,6 +112,8 @@ class RequestedPermsResource extends Resource
                     ->separator(' - ')
                     ->splitKeys(['Enter', ',', 'Tab'])
                     ->columnSpan(3),
+                Forms\Components\Hidden::make('semestre')->default($semestreActif->id),
+
                 ]
             )
             ->columns(6);

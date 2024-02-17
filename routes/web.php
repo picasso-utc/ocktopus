@@ -15,6 +15,12 @@ use App\Http\Controllers\TodayConsumptionController;
 |
 */
 
+
+
+
+Route::get('/TV/content', [\App\Http\Controllers\MediaController::class, 'content'])->name('TV.content');
+Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show'])->name('TV.show');
+
 // ---------------------------Téléchargement de fichier image------------------------------------- //
 Route::prefix('/image')->group(function () {
     //get image from ?url=

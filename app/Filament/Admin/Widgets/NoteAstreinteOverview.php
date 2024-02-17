@@ -11,7 +11,7 @@ class NoteAstreinteOverview extends BaseWidget
 {
     protected $__name = "test";
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
@@ -27,7 +27,7 @@ class NoteAstreinteOverview extends BaseWidget
 
         // Nombre moyen d'astreintes par utilisateur
         $totalAstreintes = Astreinte::query()->count();
-        $totalUsers = User::query()->count();
+        $totalUsers = User::query()->where("role", "admin")->count();
         $averageAstreintesPerUser = $totalUsers > 0 ? $totalAstreintes / $totalUsers : 0;
 
         // Somme des astreintes pour les types "Matin 1" et "Matin 2"
