@@ -126,6 +126,9 @@ class MediaResource extends Resource
                     ->label('Type')
                     ->searchable()
                     ->sortable(),
+                    Tables\Columns\TextColumn::make('times')
+                        ->label('durée/nombre de repétitions')
+                        ->sortable(),
                 Tables\Columns\ToggleColumn::make('activated')
                     ->label('Activé')
                     ->sortable(),
