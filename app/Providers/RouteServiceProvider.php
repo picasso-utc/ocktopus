@@ -24,6 +24,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+	if ( env('APP_ENV') != 'local' ) {
+    		\URL::forceRootUrl('https://pic.assos.utc.fr/');
+	}
         RateLimiter::for(
             'api',
             function (Request $request) {

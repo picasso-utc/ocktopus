@@ -80,12 +80,12 @@ class Connexion extends Controller
                 $user->uuid = $userData->toArray()["uuid"];
                 $user->email = $userData->toArray()["email"];
                 $user->role = $adminStatus;
-                if ($adminStatus != MemberRole::None) {
-                    // If the user is a member or administrator of the picasso, save it to the database
-                    if (User::where('uuid', $user->uuid)->doesntExist()) {
+                if(User::where('uuid', $user->uuid)->count() > 0){
+                    $user->update();
+                }
+                else{
+                    if ($adminStatus != MemberRole::None) {
                         $user->save();
-                    } else {
-                        $user->update();
                     }
                 }
                 session(['user' => $user]);

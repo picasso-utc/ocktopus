@@ -35,6 +35,7 @@ Route::prefix('/image')->group(function () {
         if (File::exists($path)) {
             return response()->file($path);
         }
+        
         return response()->json(['message' => 'Image not found'], 404);
     })->name('image');
 });
@@ -44,6 +45,16 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 })->name("test");
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
-Route::get('/userinfo', [\App\Http\Controllers\UserInfoController::class, 'getUserInfo']);
 
 Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+
+// ---------------------------Téléchargement de fichier général------------------------------------- //
+Route::get('/download/{filename}', function ($filename) {
+    $filename = str_replace('..', '', $filename);
+    if (Storage::exists('files/' . $filename)) {
+        return Storage::download('files/' . $filename);
+    } else {
+        return response()->json(['message' => 'Image not found'], 404);
+    }
+})->name('download');
+// ------------------------------------------------------------------------------------------------- //

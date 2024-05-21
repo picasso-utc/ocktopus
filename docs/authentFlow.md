@@ -1,6 +1,6 @@
 # Flow d'authentification
 
-Le flow d'authentification implémenté dans cette application utilise un service créé par le SIMDE basé sur OAuth. L'objectif de ce processus est d'authentifier les utilisateurs via un fournisseur d'identité externe et de générer un JSON Web Token (JWT) pour sécuriser les requêtes subséquentes.
+Le flow d'authentification implémenté dans cette application utilise un service créé par le SIMDE basé sur [OAuth](https://auth.assos.utc.fr/admin). L'objectif de ce processus est d'authentifier les utilisateurs via un fournisseur d'identité externe et de générer un JSON Web Token (JWT) pour sécuriser les requêtes subséquentes.
 
 ## Middleware d'Authentification (Auth.php)
 
@@ -30,7 +30,7 @@ Le contrôleur `Connexion` gère le processus d'authentification avec le fournis
 
 5. **Traitement des Erreurs :** Les erreurs éventuelles, telles que l'échec de récupération des informations utilisateur, sont gérées avec des réponses JSON appropriées.
 
-6. **Enregistrement de l'Utilisateur :** Si l'utilisateur est membre ou administrateur d'une organisation spécifique ('picasso' dans cet exemple), ses informations sont enregistrées localement dans la base de données.
+6. **Enregistrement de l'Utilisateur :** Si l'utilisateur est membre ou administrateur d'une organisation spécifique ('picasso' dans cet exemple), ses informations sont enregistrées localement dans la base de données. Si il exist déjà mais n'est plus membre sa le mets a jour automatiquement.
 
 7. **Création du Cookie JWT :** Un cookie contenant le jeton d'accès est créé et renvoyé avec une expiration de 24 heures.
 

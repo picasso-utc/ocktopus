@@ -11,9 +11,9 @@ Le service nécessite l'initialisation avec les informations APP_KEY, SYSTEM_ID,
 ```php
 use App\Services\PayUtcClient;
 
-// Initialisation du service PayutcClient
+// Initialisation du service PayUtcClient
 
-    private PayutcClient $client;
+    private PayUtcClient $client;
 
     public function __construct(PayUtcClient $client)
     {

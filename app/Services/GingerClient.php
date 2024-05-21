@@ -12,8 +12,8 @@ class GingerClient
     public function __construct()
     {
         $this->config = [
-            'url' => env('GINGER_URI'),
-            'key' => env('GINGER_KEY'),
+            'url' => config('app.ginger_uri'),
+            'key' => config('app.ginger_key'),
         ];
     }
 

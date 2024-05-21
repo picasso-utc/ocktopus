@@ -196,4 +196,22 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'oauth_client_id'=>env('OAUTH_CLIENT_ID'),
+    'oauth_client_secret'=>env('OAUTH_CLIENT_SECRET'),
+    'oauth_redirect_uri'=>env('OAUTH_REDIRECT_URI'),
+
+    'ginger_uri' => env('GINGER_URI'),
+    'ginger_key' => env('GINGER_KEY'),
+
+    'payutc_app_key'=>env('PAYUTC_APP_KEY'),
+    'payutc_system_id'=>env('PAYUTC_SYSTEM_ID'),
+    'payutc_fundation_id'=>env('PAYUTC_FUNDATION_ID'),
+    'payutc_api_url'=>env('PAYUTC_API_URL'),
+    'payutc_password'=>env('PAYUTC_PASSWORD'),
+    'payutc_login'=>env('PAYUTC_LOGIN'),
+
+    'nemopay_api_url'=>env('NEMOPAY_API_URL'),
+
+    'proxy_url'=>env('PROXY_URL'),
+    'proxy_key'=>env('PROXY_KEY'),
 ];

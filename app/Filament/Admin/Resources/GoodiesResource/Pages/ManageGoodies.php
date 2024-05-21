@@ -68,10 +68,10 @@ class ManageGoodies extends ManageRecords
             [
             'X-Return-Structure' => 'array',
             'Content-Type' => 'application/json',
-            'X-API-KEY' => env('PROXY_KEY')
+            'X-API-KEY' => config('app.proxy_key')
             ]
         )->post(
-            env('PROXY_URL'),
+            config('app.proxy_url'),
             [
                 'wallets' => $winners,
                 ]
