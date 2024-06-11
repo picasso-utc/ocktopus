@@ -44,4 +44,4 @@ sudo systemctl start jcapuchino.service
 sudo systemctl status jcapuchino.service
 
 # add chromium to the autostart of "https://pic.assos.utc.fr/bach/" raspbian os (start in kiosk mode incognito)
-sudo echo "chromium-browser --kiosk --incognito https://pic.assos.utc.fr/bach/" >> /etc/xdg/lxsession/LXDE-pi/autostart
+sudo echo "chromium-browser https://pic.assos.utc.fr/bach/" >> /etc/xdg/lxsession/LXDE-pi/autostart
