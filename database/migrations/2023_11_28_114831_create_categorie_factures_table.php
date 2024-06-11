@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('categorie_factures', function (Blueprint $table) {
             $table->id();
             $table->string('nom', 255)->unique();
+            $table->string('code',1);
             $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unique(['code', 'parent_id']);
             $table->timestamps();
         });
     }

@@ -25,6 +25,8 @@ return new class extends Migration
             $table->boolean('immobilisation')->default(False);
             $table->text('remarque')->nullable();
             $table->string('pdf_path')->nullable();
+            $table->foreignId('semestre_id')->constrained();
+            $table->char('facture_number',255)->unique()->nullable();
             $table->timestamps();
         });
     }

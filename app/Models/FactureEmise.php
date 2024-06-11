@@ -10,6 +10,7 @@ class FactureEmise extends Model
     use HasFactory;
 
     protected $fillable = [
+        'nom','prenom','numero_voie','rue','code_postal','ville','email',
         'tva', 'prix', 'destinataire', 'date_creation', 'nom_createur',
         'date_paiement', 'date_due', 'state', 'semestre_id'
     ];

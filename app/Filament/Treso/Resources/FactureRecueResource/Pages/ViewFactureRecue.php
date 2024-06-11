@@ -42,9 +42,8 @@ class ViewFactureRecue extends ViewRecord
                                     [
                                     Infolists\Components\Group::make(
                                         [
-                                        Infolists\Components\TextEntry::make('id')
+                                        Infolists\Components\TextEntry::make('facture_number')
                                             ->label('Numéro Facture')
-                                            ->formatStateUsing(fn (string $state): string => __("Fact. {$state}"))
                                             ->color('info'),
                                         ]
                                     ),
@@ -171,7 +170,7 @@ class ViewFactureRecue extends ViewRecord
                             ->label('Montant de la catégorie')
                             ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €")),
                         ]
-                    )->columns(2),
+                    )->columns(2)->columnSpan('full'),
                 ]
             );
     }
