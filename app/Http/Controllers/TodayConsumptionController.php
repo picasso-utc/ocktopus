@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\PayutcClient;
+use App\Services\PayUtcClient;
 use Illuminate\Support\Facades\Http;
 
 class TodayConsumptionController extends Controller
 {
-    private PayutcClient $client;
+    private PayUtcClient $client;
 
-    public function __construct(PayutcClient $client)
+    public function __construct(PayUtcClient $client)
     {
         $this->client = $client;
     }

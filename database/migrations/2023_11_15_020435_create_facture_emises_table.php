@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Semestre;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,13 @@ return new class extends Migration
     {
         Schema::create('facture_emises', function (Blueprint $table) {
             $table->id();
+            $table->char('nom',255)->nullable();
+            $table->char('prenom',255)->nullable();
+            $table->char('numero_voie',255)->nullable();
+            $table->char('rue',255)->nullable();
+            $table->char('code_postal',5)->nullable();
+            $table->char('ville',255)->nullable();
+            $table->char('email',255)->nullable();
             $table->float('tva')->default(0);
             $table->float('prix')->default(0);
             $table->string('destinataire', 255);
@@ -21,6 +29,7 @@ return new class extends Migration
             $table->date('date_paiement')->nullable();
             $table->date('date_due');
             $table->string('state', 1);
+            $table->foreignId('semestre_id')->constrained();
             $table->timestamps();
         });
     }

@@ -36,7 +36,8 @@ class RankingAstreintes extends BaseWidget
     {
         $semestreActif = Semestre::where('activated', true)->first();
         return $table
-            ->query(PermResource::getEloquentQuery()->where('validated',true)->where('semestre',$semestreActif->id)
+            ->emptyStateHeading('Pas de semestre actif/ Pas de perms validé')
+            ->query(PermResource::getEloquentQuery()->where('validated',true)->where('semestre',$semestreActif?->id)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('nom')

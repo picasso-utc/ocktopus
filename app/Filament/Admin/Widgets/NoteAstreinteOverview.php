@@ -51,7 +51,7 @@ class NoteAstreinteOverview extends BaseWidget
         $totalPointsUtilisateur = User::find($userId)->nombre_points;
         $couleurPoints = $totalPointsUtilisateur < $moyenneGenerale ? 'danger' : 'success';
 
-        $nombreAstreintesNotees = Astreinte::whereNotNull('note_organisation')->count();
+        $nombreAstreintesNotees = Astreinte::whereNotNull('note_orga')->count();
         $pourcentageAstreintesNotees = $totalAstreintes > 0
             ? ($nombreAstreintesNotees / $totalAstreintes) * 100
             : 0;
@@ -66,11 +66,11 @@ class NoteAstreinteOverview extends BaseWidget
                 ->description('Votre nombre d\'astreintes'),
             Stat::make('Astreintes matin', $sumMatin1Matin2)
                 ->description('Votre nombre d\'astreintes du matin'),
-            Stat::make('Astreintes déjeuner', $sumMidi1Midi2)
-                ->description('Votre nombre d\'astreintes du déjeuner'),
+            Stat::make('Astreintes midi', $sumMidi1Midi2)
+                ->description('Votre nombre d\'astreintes du midi'),
             Stat::make('Astreintes soir', $sumSoir1Soir2)
                 ->description('Votre nombre d\'astreintes du soir'),
-            Stat::make('Astreintes', round($averageAstreintesPerUser, 2))
+            Stat::make('Astreintes moyenne', round($averageAstreintesPerUser, 2))
                 ->description('Nombre moyen d\'astreintes par utilisateur'),
             Stat::make('Nombre total de points', $totalPointsUtilisateur)
                 ->color($couleurPoints)

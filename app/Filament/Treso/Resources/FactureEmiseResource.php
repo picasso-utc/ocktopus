@@ -8,6 +8,7 @@ use App\Models\CategorieFacture;
 use App\Models\ElementFacture;
 use App\Models\FactureEmise;
 use App\Models\NoteDeFrais;
+use App\Models\Semestre;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -41,6 +42,7 @@ class FactureEmiseResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $form
             ->schema([
                 Fieldset::make('Adresse de facturation')
@@ -70,7 +72,7 @@ class FactureEmiseResource extends Resource
                             ->maxLength(255)
                             ->email()
                             ->suffixIcon('heroicon-m-at-symbol'),
-                    ]),
+                    ])->columnSpan(6),
                 Fieldset::make('Informations')
                     ->schema([
                         DatePicker::make('date_due')
@@ -102,7 +104,7 @@ class FactureEmiseResource extends Resource
                             ->required()
                             ->columnSpan(3)
                             ->maxLength(255),
-                    ])->columns(6),
+                    ])->columns(6)->columnSpan(6),
                 Repeater::make('elementFacture')
                     ->label('Element(s) de la facture')
                     ->relationship()
@@ -129,11 +131,12 @@ class FactureEmiseResource extends Resource
                     ])
                     ->defaultItems(1)
                     ->columns(6)
-                    ->columnSpan('full')
+                    ->columnSpan(6)
                     ->live()
                     // After adding a new row, we need to update the totals
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         self::updateTotals($get, $set);
+                        self::updateTVA($get, $set);
                     })
                     // After deleting a row, we need to update the totals
                     ->deleteAction(
@@ -141,11 +144,24 @@ class FactureEmiseResource extends Resource
                     )
                     // Disable reordering
                     ->reorderable(false),
-                TextInput::make('total')
+                TextInput::make('prix')
                     ->label('Total TTC (€)')
                     ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
-            ]);
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->columnSpan(3),
+                TextInput::make('tva')
+                    ->label('Total TVA (€)')
+                    ->numeric()
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->columnSpan(3),
+                Select::make('semestre_id')
+                    ->label('Semestre')
+                    ->options(Semestre::all()->pluck('state', 'id'))
+                    ->searchable()
+                    ->default($semestreActif->id)
+                    ->required()
+                    ->columnSpan(6)
+            ])->columns(6);
     }
 
     public static function updateTotals(Get $get, Set $set): void
@@ -156,7 +172,18 @@ class FactureEmiseResource extends Resource
             return $total + ($product['prix_unitaire_ttc'] * $product['quantite']);
         }, 0);
 
-        $set('total', number_format($total, 2, '.', ''));
+        $set('prix', number_format($total, 2, '.', ''));
+    }
+
+    public static function updateTVA(Get $get, Set $set): void
+    {
+        $selectedProducts = collect($get('elementFacture'))->filter(fn($item) => !empty($item['prix_unitaire_ttc']) && !empty($item['quantite']) && !empty($item['tva']));
+
+        $total = $selectedProducts->reduce(function ($total, $product) {
+            return $total + ($product['prix_unitaire_ttc'] * $product['quantite'] * $product['tva']/100);
+        }, 0);
+
+        $set('tva', number_format($total, 2, '.', ''));
     }
 
     public static function table(Table $table): Table
@@ -164,6 +191,14 @@ class FactureEmiseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('destinataire'),
+                TextColumn::make('prix')
+                    ->label('Prix TTC')
+                    ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €"))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tva')
+                    ->label('TVA')
+                    ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €"))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_due'),
                 TextColumn::make('state')
                     ->label('État')
@@ -184,8 +219,12 @@ class FactureEmiseResource extends Resource
 
             ])
             ->filters([
-                //
-            ])
+                Tables\Filters\SelectFilter::make('semestre_id')
+                        ->options(Semestre::all()->pluck('state', 'id'))
+                        ->label('Semestre')
+                        ->placeholder('Tous les semestre')
+                ]
+            )
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('pdf')

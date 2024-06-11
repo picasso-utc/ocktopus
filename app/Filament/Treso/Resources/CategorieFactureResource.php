@@ -41,6 +41,10 @@ class CategorieFactureResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->columnSpan(3),
+                                TextInput::make('code')
+                                    ->required()
+                                    ->maxLength(1)
+                                    ->columnSpan(3),
                                 Toggle::make('Sous_catégorie_?')
                                     ->live()
                                     ->columnSpan(3),
@@ -67,6 +71,7 @@ class CategorieFactureResource extends Resource
             ->columns(
                 [
                 TextColumn::make('nom'),
+                TextColumn::make('code'),
                 ]
             )
             ->filters(

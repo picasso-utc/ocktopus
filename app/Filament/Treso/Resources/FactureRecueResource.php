@@ -5,8 +5,10 @@ namespace App\Filament\Treso\Resources;
 use App\Filament\Treso\Resources\FactureRecueResource\Pages;
 use App\Models\CategorieFacture;
 use App\Models\FactureRecue;
+use App\Models\Semestre;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -20,6 +22,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -35,6 +38,7 @@ class FactureRecueResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $form
             ->schema(
                 [
@@ -121,6 +125,14 @@ class FactureRecueResource extends Resource
                     ->addActionLabel('Ajouter une catégorie')
                     ->columns(6)
                     ->columnSpan('full'),
+                    Select::make('semestre_id')
+                        ->label('Semestre')
+                        ->options(Semestre::all()->pluck('state', 'id'))
+                        ->searchable()
+                        ->default($semestreActif->id)
+                        ->required()
+                        ->columnSpan(6),
+                    Hidden::make('facture_number')->default(""),
                 ]
             )
             ->columns(6);
@@ -131,9 +143,9 @@ class FactureRecueResource extends Resource
         return $table
             ->columns(
                 [
-                TextColumn::make('id')
+                TextColumn::make('facture_number')
                     ->label('Réf.')
-                    ->formatStateUsing(fn (string $state): string => __("Fact. {$state}"))
+                    ->searchable()
                     ->color('info'),
                 TextColumn::make('destinataire'),
                 TextColumn::make('date')
@@ -177,7 +189,6 @@ class FactureRecueResource extends Resource
                     ->default('--'),
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
-                    ->searchable()
                     ->formatStateUsing(
                         function ($state) {
                             return $state->categorie->nom;
@@ -189,6 +200,10 @@ class FactureRecueResource extends Resource
             )
             ->filters(
                 [
+                SelectFilter::make('semestre_id')
+                    ->options(Semestre::all()->pluck('state', 'id'))
+                    ->label('Semestre')
+                    ->placeholder('Tous les semestre'),
                 Filter::make('date')
                     ->form(
                         [

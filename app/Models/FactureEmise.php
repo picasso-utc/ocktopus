@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Treso\Semestre;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +10,7 @@ class FactureEmise extends Model
     use HasFactory;
 
     protected $fillable = [
+        'nom','prenom','numero_voie','rue','code_postal','ville','email',
         'tva', 'prix', 'destinataire', 'date_creation', 'nom_createur',
         'date_paiement', 'date_due', 'state', 'semestre_id'
     ];
