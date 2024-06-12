@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('astreintes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id');
-            $table->foreignId('creneau_id');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('creneau_id')->constrained('creneau');
             $table->enum('astreinte_type', AstreinteType::choices());
             $table->integer('note_deco')->nullable();
             $table->integer('note_orga')->nullable();
