@@ -57,7 +57,7 @@ class ListCreneaus extends ListRecords
     public function getTabs(): array
     {
         return [
-            'semestre' => Tab::make(self::getStateSemester())
+            'semestre_id' => Tab::make(self::getStateSemester())
                 ->modifyQueryUsing(
                     function (Builder $query) {
                         // Les créneaux qui se situent entre le début et la fin du semestre actif

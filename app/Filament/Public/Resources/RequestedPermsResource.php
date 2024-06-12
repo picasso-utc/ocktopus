@@ -112,7 +112,7 @@ class RequestedPermsResource extends Resource
                     ->separator(' - ')
                     ->splitKeys(['Enter', ',', 'Tab'])
                     ->columnSpan(3),
-                Forms\Components\Hidden::make('semestre')->default($semestreActif->id),
+                Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
 
                 ]
             )

@@ -9,7 +9,7 @@ use App\Enums\AstreinteType;
 class Astreinte extends Model
 {
     protected $fillable = [
-        'member_id',
+        'user_id',
         'creneau_id',
         'astreinte_type',
         'note_deco',

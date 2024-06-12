@@ -50,7 +50,7 @@ class ListPerms extends ListRecords
                         $semestreActifId = Semestre::where('activated', true)->value('id');
                         // Modifie la requête pour avoir les perms du semestre actif et non validées
                         return $query->where('validated', 0)
-                            ->where('semestre', $semestreActifId);
+                            ->where('semestre_id', $semestreActifId);
                     }
                 ),
 
@@ -62,7 +62,7 @@ class ListPerms extends ListRecords
                         $semestreActifId = Semestre::where('activated', true)->value('id');
                         // Modifie la requête pour avoir les perms du semestre actif et validées
                         return $query->where('validated', 1)
-                            ->where('semestre', $semestreActifId);
+                            ->where('semestre_id', $semestreActifId);
                     }
                 ),
 
@@ -73,7 +73,7 @@ class ListPerms extends ListRecords
                         // Obtient l'ID du semestre actif
                         $semestreActifId = Semestre::where('activated', true)->value('id');
                         // Modifie la requête pour avoir les perms du semestre actif
-                        return $query->where('semestre', $semestreActifId);
+                        return $query->where('semestre_id', $semestreActifId);
                     }
                 ),
         ];
