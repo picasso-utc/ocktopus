@@ -3,7 +3,9 @@
 namespace App\Filament\Treso\Resources\FactureRecueResource\Pages;
 
 use App\Filament\Treso\Resources\FactureRecueResource;
+use App\Models\FactureRecue;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Pages\ViewRecord;
@@ -24,6 +26,11 @@ class ViewFactureRecue extends ViewRecord
             Actions\DeleteAction::make(),
             Actions\EditAction::make()
                 ->color('warning'),
+            Action::make('ViewPdf')
+                ->url(fn (FactureRecue $record): string => route('image', ['url'=>$record->pdf_path]))
+                ->openUrlInNewTab()
+                ->visible(fn ($record) => $record->pdf_path)
+                ->color('info'),
         ];
     }
 

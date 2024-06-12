@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -25,6 +26,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class FactureRecueResource extends Resource
 {
@@ -231,13 +233,18 @@ class FactureRecueResource extends Resource
             )
             ->actions(
                 [
-                ActionGroup::make(
-                    [
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
-                    ]
-                ),
+                    Action::make('ViewPdf')
+                        ->url(fn (FactureRecue $record): string => route('image', ['url'=>$record->pdf_path]))
+                        ->openUrlInNewTab()
+                        ->visible(fn ($record) => $record->pdf_path)
+                        ->icon('heroicon-o-eye'),
+                    ActionGroup::make(
+                        [
+                        ViewAction::make(),
+                        EditAction::make(),
+                        DeleteAction::make(),
+                        ]
+                    )
                 ]
             )
             ->bulkActions(
