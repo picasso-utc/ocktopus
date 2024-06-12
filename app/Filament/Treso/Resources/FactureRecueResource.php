@@ -247,7 +247,8 @@ class FactureRecueResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),*/
                 ]
-            );
+            )
+            ->defaultSort('date', 'desc');
     }
 
     public static function getRelations(): array

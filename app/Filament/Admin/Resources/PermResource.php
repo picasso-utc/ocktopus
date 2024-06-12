@@ -13,8 +13,13 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PermResource extends Resource
@@ -123,6 +128,7 @@ class PermResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $table
             ->columns(
                 [
@@ -152,19 +158,28 @@ class PermResource extends Resource
 
             ->filters(
                 [
-                //
+                    SelectFilter::make('semestre_id')
+                        ->options(Semestre::all()->pluck('state', 'id'))
+                        ->label('Semestre')
+                        ->default($semestreActif->id)
+                        ->placeholder('Tous les semestre'),
                 ]
             )
             ->actions(
                 [
-                Tables\Actions\ViewAction::make()
-
+                Tables\Actions\ViewAction::make(),
+                DeleteAction::make()->visible(fn ($record) => !$record->validated || $record->semestre_id !== $semestreActif->id),
                 ]
             )
             ->bulkActions(
                 [
-
+                    BulkAction::make('delete')
+                        ->requiresConfirmation()
+                        ->action(fn (Collection $records) => $records->each->delete())
                 ]
+            )
+            ->checkIfRecordIsSelectableUsing(
+                fn (Model $record): bool => !$record->validated || $record->semestre_id !== $semestreActif->id,
             )
             ->emptyStateHeading('Aucune permanence');
     }
