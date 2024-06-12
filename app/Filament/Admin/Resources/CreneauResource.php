@@ -117,7 +117,7 @@ class CreneauResource extends Resource
                         ->label('Associer une perm')
                         ->options(function () {
                             $semestreActifId = Semestre::where('activated', true)->value('id');
-                            $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre',$semestreActifId)->get();
+                            $perms = Perm::withCount('creneaux')->where('validated', true)->where('semestre_id',$semestreActifId)->get();
                             $filteredPerms = $perms->filter(function ($perm) {
                                 return $perm->creneaux_count < 3;
                             });
@@ -134,7 +134,7 @@ class CreneauResource extends Resource
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
-                                ->pluck('member_id')
+                                ->pluck('user_id')
                                 ->unique()
                                 ->toArray();
 

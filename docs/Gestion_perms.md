@@ -61,7 +61,7 @@ Schema::create('perms', function (Blueprint $table) {
     $table->string('mail_resp_2', 255)->nullable();
     $table->string('mail_asso', 255)->nullable();
     $table->boolean('validated')->default(false);
-    $table->foreignIdFor(\App\Models\Semestre::class, 'semestre');
+    $table->foreignIdFor(\App\Models\Semestre::class, 'semestre_id');
     $table->timestamps();
 });
 ```
@@ -244,7 +244,7 @@ Une astreinte a besoin de ces infos de bases pour être créée : un id d'un mem
 ```php=
 Schema::create('astreintes', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('member_id');
+    $table->foreignId('user_id');
     $table->foreignId('creneau_id');
     $table->enum('astreinte_type', AstreinteType::choices());
     $table->integer('note_deco')->default(0);

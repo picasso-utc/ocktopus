@@ -140,6 +140,7 @@ class FactureRecueResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $table
             ->columns(
                 [
@@ -186,6 +187,7 @@ class FactureRecueResource extends Resource
                     ),
                 TextColumn::make('personne_a_rembourser')
                     ->label('Personne à rembourser')
+                    ->searchable()
                     ->default('--'),
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
@@ -203,6 +205,7 @@ class FactureRecueResource extends Resource
                 SelectFilter::make('semestre_id')
                     ->options(Semestre::all()->pluck('state', 'id'))
                     ->label('Semestre')
+                    ->default($semestreActif->id)
                     ->placeholder('Tous les semestre'),
                 Filter::make('date')
                     ->form(

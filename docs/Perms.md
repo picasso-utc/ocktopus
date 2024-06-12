@@ -242,7 +242,7 @@ Dans l'exemple suivant
                 "name": "Noam SEURET"
             }
         },
-        "member_id": 253,
+        "user_id": 253,
         "astreinte_type": "S2",
         "note_deco": 0,
         "note_orga": 0,

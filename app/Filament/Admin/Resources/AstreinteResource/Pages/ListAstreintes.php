@@ -45,25 +45,25 @@ class ListAstreintes extends ListRecords
         return [
             'persoNonNoté' => Tab::make('En attente de notation')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('member_id',1)//Filament::auth()->id()
+                    $query->where('user_id',1)//Filament::auth()->id()
                     ->whereNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
                                 ->whereHas('perm', function ($query) {
                                     $semestreActifId = Semestre::where('activated', true)->value('id');
-                                    $query->where('semestre', $semestreActifId);
+                                    $query->where('semestre_id', $semestreActifId);
                                 });
                         });
                 }),
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('member_id', 1) //Filament::auth()->id()
+                    $query->where('user_id', 1) //Filament::auth()->id()
                     ->whereNotNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
                                 ->whereHas('perm', function ($query) {
                                     $semestreActifId = Semestre::where('activated', true)->value('id');
-                                    $query->where('semestre', $semestreActifId);
+                                    $query->where('semestre_id', $semestreActifId);
                                 });
                         });
                 }),

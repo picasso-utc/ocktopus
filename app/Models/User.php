@@ -55,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function getNombrePointsAttribute()
     {
         // Récupérer toutes les astreintes de l'utilisateur
-        $astreintes = Astreinte::where('member_id', $this->id)->get();
+        $astreintes = Astreinte::where('user_id', $this->id)->get();
 
         // Calculer le nombre total de points en utilisant la fonction définie
         $nombrePoints = $astreintes->sum(

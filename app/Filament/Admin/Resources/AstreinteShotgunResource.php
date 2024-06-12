@@ -86,7 +86,7 @@ class AstreinteShotgunResource extends Resource
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
-                                ->pluck('member_id')
+                                ->pluck('user_id')
                                 ->unique()
                                 ->toArray();
                             $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
@@ -169,7 +169,7 @@ class AstreinteShotgunResource extends Resource
         }
         if ($astreinteType) {
             $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                ->where('member_id', $userUuid)
+                ->where('user_id', $userUuid)
                 ->where('astreinte_type', $astreinteType)
                 ->first();
             if ($astreinteType == "Soir 1") {
@@ -181,7 +181,7 @@ class AstreinteShotgunResource extends Resource
             }
             if (!$existingAstreinte) {
                 $astreinte = new Astreinte([
-                    'member_id' =>$userUuid,
+                    'user_id' =>$userUuid,
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
                 ]);
@@ -190,7 +190,7 @@ class AstreinteShotgunResource extends Resource
                 $astreinte->save();
             } else {
                 if ($astreinteUser) Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', $userUuid) //A changer
+                    ->where('user_id', $userUuid) //A changer
                     ->where('astreinte_type', $astreinteType)
                     ->first()
                     ->delete();
@@ -224,23 +224,23 @@ class AstreinteShotgunResource extends Resource
             if ($astreinteType == "Soir 2") {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id',$userUuid) //A changer Filament::auth()->id()
+                    ->where('user_id',$userUuid) //A changer Filament::auth()->id()
                     ->where('astreinte_type', $astreinteType)
                     ->first();
                 $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id',$userUuid) //A changer Filament::auth()->id()
+                    ->where('user_id',$userUuid) //A changer Filament::auth()->id()
                     ->first();
             } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                         ->where('astreinte_type', $astreinteType)->first() != null;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('member_id', $userUuid)
+                    ->where('user_id', $userUuid)
                     ->where('astreinte_type', $astreinteType)//A changer Filament::auth()->id()
                     ->first();
             }
             if (!$existingAstreinte && !$astreinteUser && !$astreinteUserOther) {
                 $astreinte = new Astreinte([
-                    'member_id' => $userUuid,
+                    'user_id' => $userUuid,
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
                 ]);
@@ -249,7 +249,7 @@ class AstreinteShotgunResource extends Resource
             } else {
                 if ($astreinteUser) {
                     Astreinte::where('creneau_id', $record->id)
-                        ->where('member_id', $userUuid)
+                        ->where('user_id', $userUuid)
                         ->where('astreinte_type', $astreinteType)
                         ->first()
                         ->delete();
@@ -285,7 +285,7 @@ class AstreinteShotgunResource extends Resource
             $astreinteType = "Soir 1";
         }
         if (Astreinte::where('creneau_id', $record->id)
-            ->where('member_id', $userUuid)
+            ->where('user_id', $userUuid)
             ->where('astreinte_type', $astreinteType)
             ->first())
             return 'success';
@@ -312,7 +312,7 @@ class AstreinteShotgunResource extends Resource
             $astreinteType = "Soir 2";
         }
         if (Astreinte::where('creneau_id', $record->id)
-            ->where('member_id', $userUuid)
+            ->where('user_id', $userUuid)
             ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
             ->first()) return 'success';
         if (($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)

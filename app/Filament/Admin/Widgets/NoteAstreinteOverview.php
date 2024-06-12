@@ -19,7 +19,7 @@ class NoteAstreinteOverview extends BaseWidget
 
         // Nombre d'astreintes par type pour l'utilisateur spécifié
         $astreintesByType = Astreinte::query()
-            ->where('member_id', $userId)
+            ->where('user_id', $userId)
             ->selectRaw('astreinte_type, COUNT(*) as count')
             ->groupBy('astreinte_type')
             ->get()
@@ -62,7 +62,7 @@ class NoteAstreinteOverview extends BaseWidget
             $couleurPourcentage = 'success';
         }
         return [
-            Stat::make('Astreintes', Astreinte::query()->where('member_id', 1)->count()) //Filament Auth
+            Stat::make('Astreintes', Astreinte::query()->where('user_id', 1)->count()) //Filament Auth
                 ->description('Votre nombre d\'astreintes'),
             Stat::make('Astreintes matin', $sumMatin1Matin2)
                 ->description('Votre nombre d\'astreintes du matin'),
