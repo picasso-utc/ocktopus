@@ -67,7 +67,7 @@ class Connexion extends Controller
                 foreach ($userAssos as $asso) {
                     if ($asso['login'] == 'picasso') {
                         $adminStatus = MemberRole::Member;
-                        $acceptedRoles = ['developer', 'resp informatique', 'president'];
+                        $acceptedRoles = ['developer', 'resp informatique', 'president', 'treasury', 'vice-treasury', 'secretaire general', 'vice-president'];
                         if (in_array($asso['user_role']['type'], $acceptedRoles)) {
                             $adminStatus = MemberRole::Administrator;
                         }
