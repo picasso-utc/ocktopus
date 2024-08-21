@@ -15,7 +15,7 @@ class NoteAstreinteOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $userId = 1; //A CHANGER
+        $userId = User::where('uuid', session('user')->uuid)->pluck('id')->first(); //A CHANGER
 
         // Nombre d'astreintes par type pour l'utilisateur spécifié
         $astreintesByType = Astreinte::query()
@@ -62,7 +62,7 @@ class NoteAstreinteOverview extends BaseWidget
             $couleurPourcentage = 'success';
         }
         return [
-            Stat::make('Astreintes', Astreinte::query()->where('user_id', 1)->count()) //Filament Auth
+            Stat::make('Astreintes', Astreinte::query()->where('user_id', $userId)->count()) //Filament Auth
                 ->description('Votre nombre d\'astreintes'),
             Stat::make('Astreintes matin', $sumMatin1Matin2)
                 ->description('Votre nombre d\'astreintes du matin'),

@@ -61,8 +61,9 @@ class AstreinteShotgunResource extends Resource
 
     public static function table(Table $table): Table
     {
-
-        $userUuid = 1; //Filament::auth()->id()
+        $user = session('user');
+        $userUuid = $user->uuid;
+        $userId = User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
             ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]))
             ->groups([
@@ -118,8 +119,8 @@ class AstreinteShotgunResource extends Resource
                         'S' => '17h30-23h',
                     })
                     ->button()
-                    ->color(fn($record) => self::determineColor1($record, $userUuid))
-                    ->action(fn($record) => self::handleshotgun1($record, $userUuid)),
+                    ->color(fn($record) => self::determineColor1($record, $userId))
+                    ->action(fn($record) => self::handleshotgun1($record, $userId)),
                 Tables\Actions\Action::make('shotgun2')
                     ->label(fn($record) => match ($record->creneau) {
                         'M' => '10h-12h',
@@ -127,8 +128,8 @@ class AstreinteShotgunResource extends Resource
                         'S' => '18h30-23h',
                     })
                     ->button()
-                    ->color(fn($record) => self::determineColor2($record, $userUuid))
-                    ->action(fn($record) => self::handleshotgun2($record, $userUuid)),
+                    ->color(fn($record) => self::determineColor2($record, $userId))
+                    ->action(fn($record) => self::handleshotgun2($record, $userId)),
                 //->disabled(true), -> à creuser pour etre encore mieux
             ])
             ->bulkActions([
@@ -156,7 +157,7 @@ class AstreinteShotgunResource extends Resource
      * @param mixed $record
      * @return void
      */
-    private static function handleshotgun1($record, $userUuid)
+    private static function handleshotgun1($record, $userId)
     {
 
         $astreinteType = null;
@@ -169,7 +170,7 @@ class AstreinteShotgunResource extends Resource
         }
         if ($astreinteType) {
             $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                ->where('user_id', $userUuid)
+                ->where('user_id', $userId)
                 ->where('astreinte_type', $astreinteType)
                 ->first();
             if ($astreinteType == "Soir 1") {
@@ -181,7 +182,7 @@ class AstreinteShotgunResource extends Resource
             }
             if (!$existingAstreinte) {
                 $astreinte = new Astreinte([
-                    'user_id' =>$userUuid,
+                    'user_id' =>$userId,
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
                 ]);
@@ -190,7 +191,7 @@ class AstreinteShotgunResource extends Resource
                 $astreinte->save();
             } else {
                 if ($astreinteUser) Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id', $userUuid) //A changer
+                    ->where('user_id', $userId) //A changer
                     ->where('astreinte_type', $astreinteType)
                     ->first()
                     ->delete();
@@ -209,7 +210,7 @@ class AstreinteShotgunResource extends Resource
      * @return void
      */
 
-    private static function handleshotgun2($record , $userUuid)
+    private static function handleshotgun2($record , $userId)
     {
         $astreinteType = null;
         $astreinteUserOther = null;
@@ -224,23 +225,23 @@ class AstreinteShotgunResource extends Resource
             if ($astreinteType == "Soir 2") {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id',$userUuid) //A changer Filament::auth()->id()
+                    ->where('user_id',$userId) //A changer Filament::auth()->id()
                     ->where('astreinte_type', $astreinteType)
                     ->first();
                 $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id',$userUuid) //A changer Filament::auth()->id()
+                    ->where('user_id',$userId) //A changer Filament::auth()->id()
                     ->first();
             } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                         ->where('astreinte_type', $astreinteType)->first() != null;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id', $userUuid)
+                    ->where('user_id', $userId)
                     ->where('astreinte_type', $astreinteType)//A changer Filament::auth()->id()
                     ->first();
             }
             if (!$existingAstreinte && !$astreinteUser && !$astreinteUserOther) {
                 $astreinte = new Astreinte([
-                    'user_id' => $userUuid,
+                    'user_id' => $userId,
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
                 ]);
@@ -249,7 +250,7 @@ class AstreinteShotgunResource extends Resource
             } else {
                 if ($astreinteUser) {
                     Astreinte::where('creneau_id', $record->id)
-                        ->where('user_id', $userUuid)
+                        ->where('user_id', $userId)
                         ->where('astreinte_type', $astreinteType)
                         ->first()
                         ->delete();
@@ -274,7 +275,7 @@ class AstreinteShotgunResource extends Resource
      * @param mixed $record
      * @return string|null
      */
-    private static function determineColor1($record, $userUuid)
+    private static function determineColor1($record, $userId)
     {
 
         if ($record->creneau == "M") {
@@ -285,7 +286,7 @@ class AstreinteShotgunResource extends Resource
             $astreinteType = "Soir 1";
         }
         if (Astreinte::where('creneau_id', $record->id)
-            ->where('user_id', $userUuid)
+            ->where('user_id', $userId)
             ->where('astreinte_type', $astreinteType)
             ->first())
             return 'success';
@@ -302,7 +303,7 @@ class AstreinteShotgunResource extends Resource
      * @param mixed $record
      * @return string|null
      */
-    private static function determineColor2($record, $userUuid)
+    private static function determineColor2($record, $userId)
     {
         if ($record->creneau == "M") {
             $astreinteType = "Matin 2";
@@ -312,7 +313,7 @@ class AstreinteShotgunResource extends Resource
             $astreinteType = "Soir 2";
         }
         if (Astreinte::where('creneau_id', $record->id)
-            ->where('user_id', $userUuid)
+            ->where('user_id', $userId)
             ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
             ->first()) return 'success';
         if (($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)

@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\AstreinteResource\Pages;
 
 use App\Filament\Admin\Resources\AstreinteResource;
 use App\Models\Semestre;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Components\Tab;
@@ -45,7 +46,7 @@ class ListAstreintes extends ListRecords
         return [
             'persoNonNoté' => Tab::make('En attente de notation')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('user_id',1)//Filament::auth()->id()
+                    $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
                     ->whereNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
@@ -57,7 +58,7 @@ class ListAstreintes extends ListRecords
                 }),
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('user_id', 1) //Filament::auth()->id()
+                    $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
                     ->whereNotNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
