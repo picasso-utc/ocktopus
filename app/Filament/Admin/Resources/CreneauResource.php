@@ -93,10 +93,13 @@ class CreneauResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->paginated([15, 30, 45, 60, 'all'])
             ->groups([
                 Group::make('date')->date()
                     ->collapsible()
-                    ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)->format('l')),
+                    ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)
+                        ->locale('fr')
+                        ->translatedFormat('l')),
 
                 Group::make('creneau')
             ])
