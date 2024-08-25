@@ -40,6 +40,10 @@ class EditAstreinte extends EditRecord
      * @param Form $form
      * @return Form
      */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
     protected function formMatin(Form $form): Form
     {
         return $form
