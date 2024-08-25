@@ -162,8 +162,10 @@ class CreneauResource extends Resource
 
             ->actions([
                 Tables\Actions\Action::make('dissociate')
-                    ->label('Libérer')
+                    ->label('Supprimer perm')
+                    ->color("danger")
                     ->button()
+                    ->visible(fn($record) => $record->perm_id !== null)
                     ->action(fn($record) => self::dissociatePerm($record)),
             ])
             ->bulkActions([
