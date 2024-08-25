@@ -17,6 +17,8 @@ class MembersResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Admin';
     protected static ?string $navigationLabel = 'Gestion des membres';
+    public static ?string $pluralLabel = "Gestion des membres";
+
     protected static ?int $navigationSort = -3;
 
     public static function form(Form $form): Form
