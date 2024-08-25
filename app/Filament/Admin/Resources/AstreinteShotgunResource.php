@@ -65,6 +65,7 @@ class AstreinteShotgunResource extends Resource
         $userUuid = $user->uuid;
         $userId = User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
+            ->paginated(false)
             ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]))
             ->groups([
                 Group::make('date')->date()

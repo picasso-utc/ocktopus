@@ -11,9 +11,15 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateSemestre extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
     protected static string $resource = SemestreResource::class;
 
-    public function form(Form $form): Form
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+public function form(Form $form): Form
     {
         return $form
             ->schema(

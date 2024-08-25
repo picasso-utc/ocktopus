@@ -10,4 +10,9 @@ class CreateRequestedPerms extends CreateRecord
 {
     protected static string $resource = RequestedPermsResource::class;
     protected static ?string $title = 'Demander une permanence';
+    protected static bool $canCreateAnother = false;
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
