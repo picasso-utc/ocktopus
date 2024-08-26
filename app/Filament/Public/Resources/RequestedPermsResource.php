@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -125,22 +126,19 @@ class RequestedPermsResource extends Resource
             ->columns(
                 [
                 Tables\Columns\TextColumn::make('nom')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('theme')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('validated')
                     ->label('Validée')
-                    ->boolean()
-                    ->sortable(),
+                    ->boolean(),
+                    Tables\Columns\TextColumn::make('semestre.state')
+                        ->label('Semestre')
+                        ->searchable(),
                 ]
             )
-            ->filters(
-                [
-                //
-                ]
-            )
+            ->filters([
+            ])
             ->actions(
                 [
                 //
