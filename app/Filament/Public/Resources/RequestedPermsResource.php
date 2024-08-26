@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Validation\Rules\Unique;
 
 class RequestedPermsResource extends Resource
 {
@@ -36,7 +37,11 @@ class RequestedPermsResource extends Resource
                 [
                 Forms\Components\TextInput::make('nom')
                     ->required()
-                    ->unique('perms', 'nom')
+                    ->unique(modifyRuleUsing: function (Unique $rule, callable $get) {
+                        return $rule
+                        ->where('nom', $get('nom'))
+                        ->where('semestre_id', $get('semestre_id'));
+                    }, ignoreRecord: true)
                     ->placeholder('Nom de la permanence')
                     ->label('Nom')
                     ->columnSpan(4),
