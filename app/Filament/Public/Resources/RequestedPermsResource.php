@@ -33,96 +33,229 @@ class RequestedPermsResource extends Resource
         $semestreActif = Semestre::where('activated', true)->first();
 
         return $form
-            ->schema(
-                [
+            ->schema([
                 Forms\Components\TextInput::make('nom')
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule, callable $get) {
                         return $rule
-                        ->where('nom', $get('nom'))
-                        ->where('semestre_id', $get('semestre_id'));
+                            ->where('nom', $get('nom'))
+                            ->where('semestre_id', $get('semestre_id'));
                     }, ignoreRecord: true)
                     ->placeholder('Nom de la permanence')
                     ->label('Nom')
-                    ->columnSpan(4),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TextInput::make('theme')
                     ->required()
                     ->placeholder('Thème de la permanence')
                     ->label('Thème')
-                    ->columnSpan(2),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
+                Forms\Components\RichEditor::make('description')
+                    ->required()
+                    ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'unorderedList', 'undo', 'redo'])
+                    ->placeholder("Donne nous des détails sur la permanence que vous voulez organiser")
+                    ->label('Description (anims du jour et du soir, ambiance, musique)')
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
+                Forms\Components\Placeholder::make('Le Pic est là pour vous !')
+                    ->content("N'oubliez pas que la team animation du pic est là pour vous aider à organiser vos anims si besoin ! ")
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
+                Forms\Components\Toggle::make('teddy')
+                    ->required()
+                    ->label('Habillerez-vous Teddy ?')
+                    ->inline(false)
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
+                Forms\Components\Toggle::make('repas')
+                    ->required()
+                    ->label('Repas prévu ?')
+                    ->inline(false)
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ]),
+                Forms\Components\TextInput::make('idea_repas')
+                    ->label('Idée du repas')
+                    ->placeholder('Des idées du repas ?')
+                    ->disabled(fn (callable $get) => !$get('repas'))
+                    ->required(fn (callable $get) => $get('repas'))
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 4,
+                        'xl' => 4,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\TextInput::make('nom_resp')
                     ->required()
                     ->placeholder('Nom du responsable de la permanence')
                     ->label('Nom du responsable')
                     ->default(mailToName(auth()->user()?->email))
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TextInput::make('mail_resp')
                     ->required()
                     ->placeholder('Adresse mail du responsable de la permanence')
                     ->label('Adresse mail du responsable')
                     ->default(auth()->user()?->email)
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TextInput::make('nom_resp_2')
                     ->required()
                     ->placeholder('Nom du sous-responsable')
                     ->label('Nom du sous-responsable')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TextInput::make('mail_resp_2')
                     ->required()
                     ->placeholder('Adresse mail du sous-responsable')
                     ->label('Adresse mail du sous-responsable')
-                    ->columnSpan(3),
-                Forms\Components\RichEditor::make('description')
-                    ->required()
-                    ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'unorderedList', 'undo', 'redo'])
-                    ->placeholder('Description de la permanence')
-                    ->label('Description')
-                    ->columnSpan(6),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\Toggle::make('asso')
                     ->required()
                     ->label('Géré par une asso ?')
                     ->inline(false)
-                    ->columnSpan(1)
-                    ->reactive(),
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ]),
                 Forms\Components\TextInput::make('mail_asso')
-                    ->required(
-                        function (Forms\Get $get) {
-                            return $get('asso');
-                        }
-                    )
+                    ->required(fn (Forms\Get $get) => $get('asso'))
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
-                    ->columnSpan(4)
-                    ->disabled(
-                        function (Forms\Get $get) {
-                            return !$get('asso');
-                        }
-                    ),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 4,
+                        'xl' => 4,
+                        '2xl' => 4,
+                    ])
+                    ->disabled(fn (Forms\Get $get) => !$get('asso')),
                 Forms\Components\TextInput::make('ambiance')
                     ->required()
-                    ->label('Ambiance de la perm')
+                    ->label('Ambiance (1 chill - 5 dancefloor endiablé)')
                     ->placeholder('Entre 1 et 5')
                     ->integer()
                     ->minValue(1)
                     ->maxValue(5)
-                    ->columnSpan(1),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TextInput::make('periode')
                     ->required()
-                    ->placeholder('Période souhaitée pour la permanence')
+                    ->placeholder('Période souhaitée et contraintes')
                     ->label('Période')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 2,
+                        'xl' => 2,
+                        '2xl' => 3,
+                    ]),
+                Forms\Components\Select::make('jour')
+                    ->multiple()
+                    ->options([
+                        'lundi' => 'Lundi',
+                        'mardi' => 'Mardi',
+                        'mercredi' => 'Mercredi',
+                        'jeudi' => 'Jeudi',
+                        'vendredi' => 'Vendredi',
+                    ])
+                    ->label('Jours de la semaine préférentiels')
+                    ->required()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
                 Forms\Components\TagsInput::make('membres')
                     ->required()
                     ->placeholder('Appuyez sur Entrée pour ajouter un membre')
-                    ->label('Membres')
+                    ->label('Membres de la permanence')
                     ->separator(' - ')
                     ->splitKeys(['Enter', ',', 'Tab'])
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 4,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ]),
+                Forms\Components\TextInput::make('remarques')
+                    ->placeholder('Donnez nous les informations qui vous semblent importantes')
+                    ->label('Remarque supplémentaires')
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
                 Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
-
-                ]
-            )
-            ->columns(6);
+            ])
+            ->columns(6); // Définit le nombre de colonnes global pour le formulaire
     }
 
     public static function table(Table $table): Table
@@ -137,9 +270,9 @@ class RequestedPermsResource extends Resource
                 Tables\Columns\IconColumn::make('validated')
                     ->label('Validée')
                     ->boolean(),
-                    Tables\Columns\TextColumn::make('semestre.state')
-                        ->label('Semestre')
-                        ->searchable(),
+                Tables\Columns\TextColumn::make('semestre.state')
+                    ->label('Semestre')
+                    ->searchable(),
                 ]
             )
             ->filters([
