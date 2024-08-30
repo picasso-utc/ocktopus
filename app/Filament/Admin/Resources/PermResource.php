@@ -9,6 +9,7 @@ use App\Models\Semestre;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -248,6 +249,17 @@ class PermResource extends Resource
                         'xl' => 3,
                         '2xl' => 3,
                     ]),
+                Forms\Components\Toggle::make('artiste')
+                    ->required()
+                    ->label('Souhaitez-vous accueillir des artistes ?')
+                    ->inline(false)
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
                 Forms\Components\TextInput::make('remarques')
                     ->placeholder('Donnez nous les informations qui vous semblent importantes')
                     ->label('Remarque supplémentaires')
@@ -355,7 +367,20 @@ class PermResource extends Resource
                     ->label("Mail de l'asso")
                     ->visible(fn ($record) => $record->asso)
                     ->copyable(),
+                TextEntry::make('remarques')
+                    ->label('Remarques')
+                    ->visible(fn ($record) => $record->remarques !==null),
+                TextEntry::make('idea_repas')
+                    ->label('Repas prévu')
+                    ->visible(fn ($record) => $record->idea_repas !==null),
+                IconEntry::make('teddy')
+                    ->label("Teddy habillé")
+                    ->boolean(),
+                IconEntry::make('artiste')
+                    ->label("Accueil d'artistes")
+                    ->boolean(),
                 ]
+
             );
     }
 

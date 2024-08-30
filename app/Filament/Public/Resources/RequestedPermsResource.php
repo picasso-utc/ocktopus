@@ -243,6 +243,17 @@ class RequestedPermsResource extends Resource
                         'xl' => 3,
                         '2xl' => 3,
                     ]),
+                Forms\Components\Toggle::make('artiste')
+                    ->required()
+                    ->label('Souhaitez-vous accueillir des artistes ?')
+                    ->inline(false)
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
                 Forms\Components\TextInput::make('remarques')
                     ->placeholder('Donnez nous les informations qui vous semblent importantes')
                     ->label('Remarque supplémentaires')

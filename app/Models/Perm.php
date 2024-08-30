@@ -14,7 +14,7 @@ class Perm extends Model
     protected $fillable = [
         'nom', 'theme', 'description', 'periode', 'ambiance', 'membres',
         'asso', 'nom_resp', 'mail_resp', 'nom_resp_2', 'mail_resp_2', 'mail_asso', 'validated','semestre_id','jour',
-        'repas', 'idea_repas',
+        'repas', 'idea_repas', 'remarques', 'teddy', 'artiste'
     ];
 
     public function creneaux()

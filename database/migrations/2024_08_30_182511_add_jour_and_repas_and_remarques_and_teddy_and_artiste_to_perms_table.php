@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('idea_repas')->nullable();
             $table->string('remarques')->nullable();
             $table->boolean('teddy')->default(false);
+            $table->boolean('artiste')->default(false);
         });
     }
 
@@ -27,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('perms', function (Blueprint $table) {
-            $table->dropColumn(['jour','repas','idea_repas', 'remarques','teddy']);
+            $table->dropColumn(['jour','repas','idea_repas', 'remarques','teddy','artiste']);
         });
     }
 };
