@@ -295,12 +295,6 @@ class PermResource extends Resource
                     ->boolean()
                     ->label('Asso')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ambiance')
-                    ->label('Ambiance')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('periode')
-                    ->label('Periode')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('creneaux_count')->counts("creneaux")
                     ->label('Nombre de créneaux')
                     ->sortable(),
