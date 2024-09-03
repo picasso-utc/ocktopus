@@ -70,8 +70,10 @@ class AstreinteShotgunResource extends Resource
             ->groups([
                 Group::make('date')->date()
                     ->collapsible()
-                    ->getDescriptionFromRecordUsing(fn(Creneau $record): string => Carbon::parse($record->date)->format('l')),
-            ])
+                    ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)
+                        ->locale('fr')
+                        ->translatedFormat('l')),
+                ])
             ->defaultGroup('date')
             ->columns([
                 Tables\Columns\Layout\Stack::make([
