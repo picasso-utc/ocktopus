@@ -24,6 +24,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use function Webmozart\Assert\Tests\StaticAnalysis\null;
@@ -94,6 +95,11 @@ class CreneauResource extends Resource
     {
         return $table
             ->paginated([15, 30, 45, 60, 'all'])
+            ->recordClasses(fn (Model $record) => match ($record->perm_id) {
+                'null' => '!opacity-30',
+                '6' => '!border-s-2 !border-green-600 !dark:border-green-300',
+                default => '!border-s-2 !border-orange-600 dark:border-orange-300',
+            })
             ->groups([
                 Group::make('date')->date()
                     ->collapsible()
@@ -170,6 +176,12 @@ class CreneauResource extends Resource
                     ->button()
                     ->visible(fn($record) => $record->perm_id !== null)
                     ->action(fn($record) => self::dissociatePerm($record)),
+                Tables\Actions\Action::make('confirm')
+                    ->label('Confirmer perm')
+                    ->color("success")
+                    ->button()
+                    ->visible(fn($record) => $record->perm_id !== null && $record->confirmed==false)
+                    ->action(fn($record) => self::confirmPerm($record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -226,7 +238,19 @@ class CreneauResource extends Resource
     public static function dissociatePerm($record)
     {
         // Dissocier la perm associée du créneau spécifique
-        Creneau::where('id', '=', $record->id)->update(['perm_id' => null]);
+        Creneau::where('id', '=', $record->id)->update(['perm_id' => null, 'confirmed' => false]);
+    }
+
+    /**
+     * Confirm
+     *
+     * @param mixed $record
+     * @return void
+     */
+    public static function confirmPerm($record)
+    {
+        // Dissocier la perm associée du créneau spécifique
+        Creneau::where('id', '=', $record->id)->update(['confirmed' => true]);
     }
 
 }

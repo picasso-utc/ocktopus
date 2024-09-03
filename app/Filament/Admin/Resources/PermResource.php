@@ -318,9 +318,6 @@ class PermResource extends Resource
             )
             ->bulkActions(
                 [
-                    BulkAction::make('delete')
-                        ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->delete())
                 ]
             )
             ->checkIfRecordIsSelectableUsing(

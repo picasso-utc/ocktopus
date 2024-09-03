@@ -7,9 +7,13 @@ use App\Filament\Public\Resources\RequestedPermsResource\RelationManagers;
 use App\Models\Perm;
 use App\Models\RequestedPerms;
 use App\Models\Semestre;
+use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
@@ -18,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ViewAction;
 
 class RequestedPermsResource extends Resource
 {
@@ -275,24 +281,41 @@ class RequestedPermsResource extends Resource
             ->columns(
                 [
                 Tables\Columns\TextColumn::make('nom')
+                    ->label('Nom')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('theme')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('validated')
-                    ->label('Validée')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('creneau_matin')
+                    ->label('Créneau Matin')
+                    ->getStateUsing(function ($record) {
+                        $creneauMatin = $record->creneaux->first(function ($creneau) {
+                            return $creneau->creneau === 'M' && $creneau->confirmed;
+                        });
+                        return $creneauMatin ? Carbon::parse($creneauMatin->date)->translatedFormat('d F Y') : 'Pas attribué';
+                    }),
+                Tables\Columns\TextColumn::make('creneau_dej')
+                    ->label('Créneau Déjeuner')
+                    ->getStateUsing(function ($record) {
+                        $creneauDej = $record->creneaux->first(function ($creneau) {
+                            return $creneau->creneau === 'D' && $creneau->confirmed;
+                        });
+                        return $creneauDej ? Carbon::parse($creneauDej->date)->translatedFormat('d F Y') : 'Pas attribué';
+                    }),
+                Tables\Columns\TextColumn::make('creneau_soir')
+                    ->label('Créneau Soir')
+                    ->getStateUsing(function ($record) {
+                        $creneauSoir = $record->creneaux->first(function ($creneau) {
+                            return $creneau->creneau === 'S' && $creneau->confirmed;
+                        });
+                        return $creneauSoir ? Carbon::parse($creneauSoir->date)->translatedFormat('d F Y') : 'Pas attribué';
+                    }),
                 Tables\Columns\TextColumn::make('semestre.state')
                     ->label('Semestre')
                     ->searchable(),
-                ]
+            ]
             )
             ->filters([
             ])
-            ->actions(
-                [
-                //
-                ]
-            )
+            ->actions([
+            ])
             ->bulkActions(
                 [
                 //
