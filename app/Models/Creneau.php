@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Creneau extends Model
 {
     protected $table = 'creneau';
-    protected $fillable = ['date', 'creneau'];
+    protected $fillable = ['date', 'creneau','perm_id', 'confirmed'];
 
     public function perm()
     {
