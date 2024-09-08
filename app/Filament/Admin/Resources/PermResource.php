@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PermResource\Pages;
 use App\Filament\Admin\Resources\PermResource\RelationManagers;
+use App\Mail\MailPerm;
 use App\Models\Perm;
 use App\Models\Semestre;
 use Filament\Forms;
@@ -14,6 +15,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Unique;
 
 class PermResource extends Resource
@@ -314,14 +317,36 @@ class PermResource extends Resource
                 [
                 Tables\Actions\ViewAction::make(),
                 DeleteAction::make()->visible(fn ($record) => !$record->validated || $record->semestre_id !== $semestreActif->id),
-                ]
-            )
+                Action::make('sendEmail')
+                    ->label('Envoyer Email')
+                    ->action(function ($record) {
+                        $mailResp1 = $record->mail_resp;
+                        $mailResp2 = $record->mail_resp2;
+                        $mailAsso = $record->mail_asso;
+                        $email = Mail::to($mailResp1);
+                        if ($mailResp2) {
+                            $email->cc($mailResp2);
+                        }
+                        if ($mailAsso) {
+                            $email->cc($mailAsso);
+                        }
+                        $email->send(new MailPerm($record));
+                    }),
+            ])
             ->bulkActions(
                 [
+                    BulkAction::make('envoyer_email')
+                        ->label('Envoyer Email')
+                        ->action(function (array $records) {
+                            foreach ($records as $record) {
+                                $recipients = [$record->mail_resp];
+                                Mail::to($recipients)
+                                    ->send(new MailPerm($record));
+                            }
+                        })
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion(),
                 ]
-            )
-            ->checkIfRecordIsSelectableUsing(
-                fn (Model $record): bool => !$record->validated || $record->semestre_id !== $semestreActif->id,
             )
             ->emptyStateHeading('Aucune permanence');
     }
