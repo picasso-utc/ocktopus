@@ -63,7 +63,7 @@ class AstreinteShotgunResource extends Resource
     {
         $user = session('user');
         $userUuid = $user->uuid;
-        $userId = User::where('uuid', $userUuid)->pluck('id')->first();
+        $userId =2; // User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
             ->paginated(false)
             ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]))
@@ -226,7 +226,7 @@ class AstreinteShotgunResource extends Resource
         }
         if ($astreinteType) {
             if ($astreinteType == "Soir 2") {
-                $existingAstreinte = Astreinte::where('creneau_id', $record->id)->count() >= 3;
+                $existingAstreinte = Astreinte::where('creneau_id', $record->id && 'astreinte_type', $astreinteType )->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
                     ->where('user_id',$userId) //A changer Filament::auth()->id()
                     ->where('astreinte_type', $astreinteType)
@@ -319,7 +319,7 @@ class AstreinteShotgunResource extends Resource
             ->where('user_id', $userId)
             ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
             ->first()) return 'success';
-        if (($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)
+        if (($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id  && 'astreinte_type', $astreinteType)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)
                     ->where('astreinte_type', $astreinteType)->first())) {
             return 'danger';
         }
