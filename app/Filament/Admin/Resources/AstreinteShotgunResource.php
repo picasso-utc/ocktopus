@@ -117,7 +117,7 @@ class AstreinteShotgunResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('shotgun1')
                     ->label(fn($record) => match ($record->creneau) {
-                        'M' => '9h30-10h',
+                        'M' => '9h30-10h15',
                         'D' => '11h45-13h',
                         'S' => '17h30-23h',
                     })
@@ -127,7 +127,7 @@ class AstreinteShotgunResource extends Resource
                 Tables\Actions\Action::make('shotgun2')
                     ->label(fn($record) => match ($record->creneau) {
                         'M' => '10h-12h',
-                        'D' => '13h-14h30',
+                        'D' => '12h45h-14h15',
                         'S' => '18h30-23h',
                     })
                     ->button()
