@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TodayConsumptionController;
+use App\Http\Controllers\GetSalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,9 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 
-Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+Route::get(uri: '/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+
+Route::get(uri: '/get-sales/{productNames}', [GetSalesController::class, 'getSales']);
 
 // ---------------------------Téléchargement de fichier général------------------------------------- //
 Route::get('/download/{filename}', function ($filename) {
