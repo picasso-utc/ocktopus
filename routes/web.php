@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TodayConsumptionController;
+use App\Http\Controllers\GetSalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,7 @@ Route::prefix('/image')->group(function () {
         if (File::exists($path)) {
             return response()->file($path);
         }
-        
+
         return response()->json(['message' => 'Image not found'], 404);
     })->name('image');
 });
@@ -47,6 +48,7 @@ Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 
 Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
 
 // ---------------------------Téléchargement de fichier général------------------------------------- //
 Route::get('/download/{filename}', function ($filename) {
