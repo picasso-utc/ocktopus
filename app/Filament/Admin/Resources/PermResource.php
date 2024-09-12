@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Unique;
 
@@ -117,8 +118,8 @@ class PermResource extends Resource
                 Forms\Components\TextInput::make('idea_repas')
                     ->label('Idée du repas')
                     ->placeholder('Des idées du repas ?')
-                    ->disabled(fn (callable $get) => !$get('repas'))
-                    ->required(fn (callable $get) => $get('repas'))
+                    ->disabled(fn(callable $get) => !$get('repas'))
+                    ->required(fn(callable $get) => $get('repas'))
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 6,
@@ -185,7 +186,7 @@ class PermResource extends Resource
                         '2xl' => 2,
                     ]),
                 Forms\Components\TextInput::make('mail_asso')
-                    ->required(fn (Forms\Get $get) => $get('asso'))
+                    ->required(fn(Forms\Get $get) => $get('asso'))
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
                     ->columnSpan([
@@ -195,7 +196,7 @@ class PermResource extends Resource
                         'xl' => 4,
                         '2xl' => 4,
                     ])
-                    ->disabled(fn (Forms\Get $get) => !$get('asso')),
+                    ->disabled(fn(Forms\Get $get) => !$get('asso')),
                 Forms\Components\TextInput::make('ambiance')
                     ->required()
                     ->label('Ambiance (1 chill - 5 dancefloor endiablé)')
@@ -279,31 +280,29 @@ class PermResource extends Resource
     }
 
 
-
     public static function table(Table $table): Table
     {
         $semestreActif = Semestre::where('activated', true)->first();
         return $table
             ->columns(
                 [
-                Tables\Columns\ToggleColumn::make('validated')
-                    ->label('Validation'),
-                Tables\Columns\TextColumn::make('nom')
-                    ->label('Nom')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('theme')
-                    ->label('Thème'),
-                Tables\Columns\IconColumn::make('asso')
-                    ->boolean()
-                    ->label('Asso')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('creneaux_count')->counts("creneaux")
-                    ->label('Nombre de créneaux')
-                    ->sortable(),
+                    Tables\Columns\ToggleColumn::make('validated')
+                        ->label('Validation'),
+                    Tables\Columns\TextColumn::make('nom')
+                        ->label('Nom')
+                        ->searchable()
+                        ->sortable(),
+                    Tables\Columns\TextColumn::make('theme')
+                        ->label('Thème'),
+                    Tables\Columns\IconColumn::make('asso')
+                        ->boolean()
+                        ->label('Asso')
+                        ->sortable(),
+                    Tables\Columns\TextColumn::make('creneaux_count')->counts("creneaux")
+                        ->label('Nombre de créneaux')
+                        ->sortable(),
                 ]
             )
-
             ->filters(
                 [
                     SelectFilter::make('semestre_id')
@@ -315,39 +314,30 @@ class PermResource extends Resource
             )
             ->actions(
                 [
-                Tables\Actions\ViewAction::make(),
-                DeleteAction::make()->visible(fn ($record) => !$record->validated || $record->semestre_id !== $semestreActif->id),
-                Action::make('sendEmail')
-                    ->label('Envoyer Email')
-                    ->action(function ($record) {
-                        $mailResp1 = $record->mail_resp;
-                        $mailResp2 = $record->mail_resp2;
-                        $mailAsso = $record->mail_asso;
-                        $email = Mail::to($mailResp1);
-                        if ($mailResp2) {
-                            $email->cc($mailResp2);
-                        }
-                        if ($mailAsso) {
-                            $email->cc($mailAsso);
-                        }
-                        $email->send(new MailPerm($record));
-                    }),
-            ])
+                    Tables\Actions\ViewAction::make(),
+                    DeleteAction::make()->visible(fn($record) => !$record->validated || $record->semestre_id !== $semestreActif->id),
+                    Action::make('sendEmail')
+                        ->label('Envoyer Email')
+                        ->visible(fn ($record) => !$record->mailed)
+                        ->action(function ($record) {
+                            self::sendMail($record);
+                        }),
+                ])
             ->bulkActions(
                 [
                     BulkAction::make('envoyer_email')
                         ->label('Envoyer Email')
-                        ->action(function (array $records) {
+                        ->action(function (Collection $records) {
                             foreach ($records as $record) {
-                                $recipients = [$record->mail_resp];
-                                Mail::to($recipients)
-                                    ->send(new MailPerm($record));
+                                self::sendMail($record);
                             }
                         })
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion(),
                 ]
             )
+            ->checkIfRecordIsSelectableUsing(
+                fn (Model $record): bool => !$record->mailed     )
             ->emptyStateHeading('Aucune permanence');
     }
 
@@ -356,45 +346,45 @@ class PermResource extends Resource
         return $infolist
             ->schema(
                 [
-                TextEntry::make('nom')
-                    ->label('Nom'),
-                TextEntry::make('theme')
-                    ->label('Thème'),
-                TextEntry::make('description')
-                    ->label('Description')
-                    ->html(),
-                TextEntry::make('periode')
-                    ->label('Infos sur la période'),
-                TextEntry::make('jour')
-                    ->label('Jours souhaités'),
-                TextEntry::make('membres')
-                    ->label('Membres'),
-                TextEntry::make('ambiance')
-                    ->label('Ambiance '),
-                TextEntry::make('nom_resp')
-                    ->label('Responsable n°1'),
-                TextEntry::make('nom_resp_2')
-                    ->label('Responsable n°2'),
-                TextEntry::make('mail_resp')
-                    ->label('Mail resp n°1'),
-                TextEntry::make('mail_resp_2')
-                    ->label('Mail resp n°2'),
-                TextEntry::make('mail_asso')
-                    ->label("Mail de l'asso")
-                    ->visible(fn ($record) => $record->asso)
-                    ->copyable(),
-                TextEntry::make('remarques')
-                    ->label('Remarques')
-                    ->visible(fn ($record) => $record->remarques !==null),
-                TextEntry::make('idea_repas')
-                    ->label('Repas prévu')
-                    ->visible(fn ($record) => $record->idea_repas !==null),
-                IconEntry::make('teddy')
-                    ->label("Teddy habillé")
-                    ->boolean(),
-                IconEntry::make('artiste')
-                    ->label("Accueil d'artistes")
-                    ->boolean(),
+                    TextEntry::make('nom')
+                        ->label('Nom'),
+                    TextEntry::make('theme')
+                        ->label('Thème'),
+                    TextEntry::make('description')
+                        ->label('Description')
+                        ->html(),
+                    TextEntry::make('periode')
+                        ->label('Infos sur la période'),
+                    TextEntry::make('jour')
+                        ->label('Jours souhaités'),
+                    TextEntry::make('membres')
+                        ->label('Membres'),
+                    TextEntry::make('ambiance')
+                        ->label('Ambiance '),
+                    TextEntry::make('nom_resp')
+                        ->label('Responsable n°1'),
+                    TextEntry::make('nom_resp_2')
+                        ->label('Responsable n°2'),
+                    TextEntry::make('mail_resp')
+                        ->label('Mail resp n°1'),
+                    TextEntry::make('mail_resp_2')
+                        ->label('Mail resp n°2'),
+                    TextEntry::make('mail_asso')
+                        ->label("Mail de l'asso")
+                        ->visible(fn($record) => $record->asso)
+                        ->copyable(),
+                    TextEntry::make('remarques')
+                        ->label('Remarques')
+                        ->visible(fn($record) => $record->remarques !== null),
+                    TextEntry::make('idea_repas')
+                        ->label('Repas prévu')
+                        ->visible(fn($record) => $record->idea_repas !== null),
+                    IconEntry::make('teddy')
+                        ->label("Teddy habillé")
+                        ->boolean(),
+                    IconEntry::make('artiste')
+                        ->label("Accueil d'artistes")
+                        ->boolean(),
                 ]
 
             );
@@ -414,4 +404,40 @@ class PermResource extends Resource
             'create' => Pages\CreatePerm::route('/create'),
         ];
     }
+
+
+    public static function sendMail($record)
+    {
+        DB::beginTransaction();
+
+        try {
+            $mailResp1 = $record->mail_resp;
+            $mailResp2 = $record->mail_resp_2;
+            $mailAsso = $record->mail_asso;
+
+            $email = Mail::to($mailResp1);
+            if ($mailResp2 && $mailAsso) {
+                $email->cc([$mailResp2, $mailAsso]);
+            } elseif ($mailResp2) {
+                $email->cc($mailResp2);
+            } elseif ($mailAsso) {
+                $email->cc($mailAsso);
+            }
+
+            $nombreCreneaux = $record->nombre_creaneaux;
+            if ($nombreCreneaux > 1) {
+                $email->send(new MailPerm($record));
+            } else {
+                $email->send(new MailPerm($record));
+            }
+
+            $record->mailed = 1;
+            $record->save();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
 }
+
