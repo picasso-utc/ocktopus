@@ -36,7 +36,7 @@ Route::prefix('/image')->group(function () {
         if (File::exists($path)) {
             return response()->file($path);
         }
-        
+
         return response()->json(['message' => 'Image not found'], 404);
     })->name('image');
 });
@@ -47,9 +47,8 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 
-Route::get(uri: '/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
-
-Route::get(uri: '/get-sales/{productNames}', [GetSalesController::class, 'getSales']);
+Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
 
 // ---------------------------Téléchargement de fichier général------------------------------------- //
 Route::get('/download/{filename}', function ($filename) {
