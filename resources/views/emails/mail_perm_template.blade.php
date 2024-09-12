@@ -1,4 +1,3 @@
-<!-- resources/views/emails/perm.blade.php -->
 @php
     use \Carbon\Carbon;
 @endphp
@@ -8,126 +7,49 @@
     <title>Informations de la Perm</title>
 </head>
 <body>
-<p>
-    Hellloooo!
-    <br><br>
-    Si vous recevez ce mail c’est que vous avez réussi à passer la première étape pour devenir permanenciers du PIC !!!!!
-    <br><br>
-    <br><br>
-    Vous avez demandé à l'équipe animation du Pic'Asso de tenir des permanences ce semestre. Le Pic'Asso est un foyer étudiant et est donc ouvert toute la journée. Vouloir tenir une perm le soir implique d'assurer également des perms du <strong>matin et du midi.</strong> Nous avons essayé de respecter au maximum vos voeux et nous avons décidé de vous attribuer les permanences suivantes :
-    <br><br>
-<h1>Détails de la Perm</h1>
-<p><strong>Nom :</strong> {{ $record->nom }}</p>
-<p><strong>Thème :</strong> {{ $record->theme }}</p>
-<p><strong>Semestre :</strong> {{ $record->semestre->state }}</p>
-<p><strong>Nombre de créneaux :</strong> {{ $record->creneaux_count }}</p>
+<p>Yeehhaaaa !</p>
 
-<h2>Créneaux</h2>
-@if($creneaux->isEmpty())
-    <p>Aucun créneau assigné.</p>
-@else
-    <ul>
-        @foreach($creneaux as $creneau)
-            <li>
-                <strong>Date :</strong> {{ Carbon::parse($creneau->date)->translatedFormat('d F Y') }}<br>
-                <strong>Type :</strong>
-                {{$creneau->creneau == 'M' ? 'Matin' :
-                ($creneau->creneau == 'D' ? 'Déjeuner' :
-                ($creneau->creneau == 'S' ? 'Soir' : 'Autre'))
-                }}<br>
-                <strong>Confirmé :</strong> {{ $creneau->confirmed ? 'Oui' : 'Non' }}
-            </li>
-        @endforeach
-    </ul>
-@endif
+<p>Si vous lisez ce mail, c’est que vous avez franchi la première étape pour devenir de super permanencier.e.s du PIC ! 🎉 Votre perm <strong>{{ $record->nom }}</strong> a été sélectionnée !</p>
 
-<br><br>
-Pour rappel, vous n'avez pas de repas à préparer pour les perms du midi (sauf si vous êtes un mercredi/jeudi où que vous en avez envie) et du soir! Le matin, votre rôle sera tout simplement de servir le petit déjeuner aux étudiants.
-<br><br>
-Si vous tenez une Perm du soir dans le semestre, il faut absolument ramener un <strong>chèque de caution de 200€</strong> à l'ordre de <strong>PVDC PICASSO</strong> le jour de votre permanence du soir!
-<br><br>
-Quelques petits points importants à rappeler :
+<p>Vous avez demandé à l'équipe animation du Pic'Asso de tenir des permanences ce semestre. Petit rappel : le Pic'Asso est un foyer étudiant, ouvert toute la journée, et tenir une perm signifie être présent matin, midi et soir. On a fait de notre mieux pour respecter vos préférences et voici les créneaux qui vous sont attribués :</p>
+
+<h3>Votre journée : </h3>{{ Carbon::parse($creneaux->first()->date)->translatedFormat('d F Y') }}<br>
+
+
+
+<h3>Quelques petits rappels pour que tout roule :</h3>
+
 <ol>
-    <li>
-        La <strong>vente d'alcool hors celui fourni par le Pic'asso est strictement INTERDITE</strong>,
-        une autorisation du Pic'Asso est nécessaire et celle-ci ne sera attribuée que
-        très exceptionnellement. Les bouteilles sont consignées et <strong>AUCUNE bière ou
-            Ecocup ne doit sortir de l'enceinte du PICASSO</strong>.
-    </li>
-    <br>
-    <li>
-        Votre présence est obligatoire au Pic pour vous faire briefer par l'astreinteur.
-        Voici les horaires auxquels on t'attend : <strong>9h45</strong> (perm du matin), <strong>12h00</strong> (perm du midi, voir 11h30 si vous faites un repas),
-        <strong>17h30-18h00 max</strong> (perm du soir, soyez là le plus tôt possible pour pouvoir installer
-        la déco et recevoir les consignes et formations de l'astreinteur).
-    </li>
-    <br>
-    <li>
-        Un permanencier est un étudiant <strong>SOBRE</strong> et <strong>RESPECTUEUX</strong> envers les locaux et les étudiants,
-        tout comportement irresponsable sera directement et sévèrement sanctionné.
-    </li>
-    <li>
-        La vente d'alcool est autorisée de 18h30 à 21h30, la Traviata doit être lancée à 21h57,
-        22h allumage des lumières et évacuation de la salle et de la terrasse, 23h tout le monde dehors.
-        Pendant l'évacuation du PIC : gardez votre calme et n'oubliez pas le gilet
-        jaune qui vous sera remis par l'astreinteur. Les abords du Pic doivent être dégagés très rapidement
-        (sur le trottoir tout le long et sur le parvis de BF) pour éviter le bruit et ainsi les plaintes des voisins.
-    </li>
-    <br>
-    <li>
-        L'objectif d'une perm est de dynamiser la vie de notre cher foyer donc on s'attend à ce que vous proposiez
-        des <strong>animations</strong> et de la <strong>décoration</strong>. Pour cela vous disposez d'un budget de 20€ voire 30 si vous prévoyiez
-        vraiment quelque chose de fat. Que vous soyez une asso ou un groupe de pote, la facture doit être faite à
-        l'ordre de <strong>PVDC PICASSO</strong>.
-    </li>
-    <br>
-    <li>
-        A la fin du semestre les assos qui auront fait des permanences de qualité seront récompensées via un repas des permanenciers. Au cours de ce dernier, des prix seront remis aux assos qui se `sont les plus chauffées donc n'hésitez pas à proposer une lourde déco, de lourdes anims et un super menu. A la fin du semestre les assos qui auront fait des permanences de qualité seront récompensées via un repas des permanenciers. Au cours de ce dernier, des prix seront remis aux assos qui se sont les plus chauffées donc n'hésitez pas à proposer une lourde déco, de lourdes anims et un super menu.
-    </li>
-</ol>
-<br>
-Après avoir lu ces 7 points importants, tu vas aussi trouver en pièce jointe un excel.
-Cet excel pourra te permettre de mettre en place un planning avec les tâches que
-toi et toute ta team auront à faire pendant ta perm du soir, organisées sous
-forme de "créneaux" affectés à chaque permanencier. Tu pourras modifier les
-cases à ta guise en cliquant dessus.
-<br><br>
-Quelques conseils :
-<ul>
-    <li>
-        <strong class="red">TOUJOURS</strong> mettre 2 personnes en sécu pente et 2 sécu escalier durant tout
-        le long de la soirée. (c’est pas vraiment un conseil mais bon)
-    </li>
-    <br>
-    <li>
-        Une fois la traviata passée, mettre au moins 2 personnes en sécu trottoir (en plus des autres sécu)
-        dépendant du monde au pic attendu ce jour là
-    </li>
-    <br>
-    <li>
-        Toujours avoir un permanencier en Perm caisse pour ramasser les écocups et les bouteilles qui traînent
-    <li>
-        <br>
-    <li>
-        Imprimer le planning en au moins 4 exemplaires pour que les permanenciers qui sont au bar et
-        aux sécu puissent bien se repérer.
-        L'impression des plannings peut se faire au Picasso désormais (on a acheté une super imprimante !)
-    </li>
-    <br>
-    <li>
-        Prendre le planning en photo pour que tu puisses te repérer à la fin de ton  repos
-    </li>
-    <br>
-    <li>
-        N’hésite pas à demander à tout moment l’aide d’un astreinteur si tu as un doute ou une question pendant la perm.
-    </li>
-</ul>
-<br>
-Enfin une dernière chose très importante pour nous : <strong class="red">MERCI DE NOUS CONFIRMER PAR RETOUR DE MAIL QUE VOUS AVEZ BIEN RECU ET LU CE MESSAGE !!!</strong>
-<br><br>
-Voilà pour toi, si jamais tu as des questions, requêtes, propositions… Envoie nous un mail: team.anim.picasso@gmail.com
-<br><br>
-Le PIC’ASSO qui vous aime &lt;3
+    <li><strong>La bouffe, c’est banger :</strong> En vrai y’a pas d’obligation de préparer un repas pour les perms du midi (sauf si c’est un mercredi, jeudi). Maiiiis si vous êtes motivés faites vous plaisir ! Il faudra juste nous dire à l’avance ce que vous voulez qu’on puisse le commander 😉</li>
 
+    <li><strong>Perm du soir, point crucial :</strong> N'oubliez pas de ramener un chèque de caution de 200€ à l’ordre de PVDC PICASSO le jour de votre perm.</li>
+
+    <li><strong>On ne rigole pas avec ça :</strong> La vente d’alcool autre que celui fourni par le Pic'Asso est strictement interdite, sauf autorisation (et c’est rare !). Les bouteilles sont consignées et AUCUNE bière ou Ecocup ne doit sortir de l'enceinte du PICASSO. 🍻🚫</li>
+
+    <li><strong>La ponctualité, c’est la clé :</strong> Votre présence est obligatoire pour le briefing de l'astreinteur ou de l’astreintrice, aux horaires suivants : 9h45 (perm du matin), 12h00 (perm du midi, ou 11h30 si vous préparez un repas (ça dépend du repas évidemment)), et 17h30-18h00 max (perm du soir). Soyez là à l’heure pour installer la déco et recevoir les consignes !</li>
+
+    <li><strong>Comportement exemplaire :</strong> Un permanencier est toujours sobre et respectueux. Tout dérapage sera sévèrement sanctionné. On compte sur vous pour garder le Pic en bon état et préserver l'ambiance. ✌️</li>
+
+    <li><strong>L’heure c’est l’heure :</strong> La vente d’alcool est autorisée de 18h30 à 21h30. À 21h56, on lance la Traviata et l’allumage des lumières, puis on évacue la salle et la terrasse. À 23h, tout doit être nettoyé et tout le monde dehors. Pendant l'évacuation du pic : gardez votre calme et n'oubliez pas le gilet jaune qui vous sera remis par l'astreintrice. Les abords du Pic doivent être dégagés très rapidement (sur le trottoir tout le long et sur le parvis de BF) pour éviter le bruit et ainsi les plaintes des voisins.</li>
+
+    <li><strong>Lâchez-vous sur la déco et les animations ! :</strong> Vous avez un budget de 20€ pour dynamiser notre cher foyer. Que vous soyez une asso ou juste un groupe de potes, éclatez-vous, faites-nous rêver, et n’oubliez pas de mettre la facture à l’ordre de PVDC PICASSO.</li>
+    <li><strong>Concours de qualité :</strong> À la fin du semestre, les assos les plus créatives et engagées seront récompensées lors du repas des permanenciers (RDP). Des prix seront remis, alors faites chauffer la déco, les animations et le menu ! 🔥🏆</li>
+</ol>
+    <h3>En plus, voici quelques conseils pratiques :</h3>
+
+    <ul>
+        <li><strong>Sécurité d’abord !:</strong> Toujours mettre 2 personnes en sécu pente et 2 en sécu escaliers tout au long de la soirée (les gens peuvent changer, pas de stress).</li>
+        <li><strong>Traviata en vue :</strong> Après la Traviata, ajoutez 3-4 personnes en sécu trottoir, en fonction de l'affluence attendue.</li>
+        <li><strong>Perm caisse :</strong> Gardez toujours un permanencier à la caisse pour ramasser les écocups et bouteilles.</li>
+        <li><strong>Imprimez et partagez :</strong> Un planning vous a été mis en pièce jointe, celui-ci doit être rempli en tenant compte des remarques ci-dessus. Le planning doit être imprimé en 4 exemplaires (possible avec notre super imprimante !) et n’oubliez pas de le prendre en photo pour bien vous repérer. Partagez-le aussi dans votre groupe !</li>
+    </ul>
+
+    <p>N’oubliez pas qu’en cas de doute, vous pouvez demander de l’aide à l’astreinteur ou à l’astreintrice, on est là pour ça.</p>
+
+    <p><strong>Dernière chose ultra importante:</strong> CONFIRMEZ-NOUS par retour de mail que vous avez bien reçu et lu ce message !</p>
+
+    <p>Voilà, c’est tout pour le moment. Si vous avez des questions, des requêtes ou des propositions, foncez et envoyez-nous un petit mail à <a href="mailto:team.anim.picasso@gmail.com">team.anim.picasso@gmail.com</a>.</p>
+
+    <p>Le PIC’ASSO qui vous aime ❤️</p>
 </body>
 </html>
