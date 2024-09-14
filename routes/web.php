@@ -48,7 +48,7 @@ Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 
 Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
-Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
+Route::get('/api/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
 
 // ---------------------------Téléchargement de fichier général------------------------------------- //
 Route::get('/download/{filename}', function ($filename) {
