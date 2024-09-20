@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BachController;
+use App\Http\Controllers\ExonerationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,5 @@ Route::post('bach/login/cas',[BachController::class, 'loginCas']);
 Route::post('bach/login/badge',[BachController::class, 'loginBadge']);
 
 Route::get('blocages',[\App\Http\Controllers\BlocageController::class, 'getBlocages']);
+
+Route::post('/exonerations', [ExonerationController::class, 'storeExonerations']);
