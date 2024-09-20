@@ -44,8 +44,8 @@ class AstreinteResource extends Resource
                 Tables\Columns\TextColumn::make('astreinte_type')
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
-                            'Matin 1' => 'Martin 9h30-10h',
-                            'Matin 2' => 'Martin 10h-12h',
+                            'Matin 1' => 'Matin 9h30-10h',
+                            'Matin 2' => 'Matin 10h-12h',
                             'Déjeuner 1' => 'Midi 11h45-13h',
                             'Déjeuner 2' => 'Midi 13h-14h30',
                             'Soir 1' => 'Soir 17h30-23h',
