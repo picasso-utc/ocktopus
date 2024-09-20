@@ -176,13 +176,8 @@ class AstreinteShotgunResource extends Resource
                 ->where('user_id', $userId)
                 ->where('astreinte_type', $astreinteType)
                 ->first();
-            if ($astreinteType == "Soir 1") {
-                $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->first() != null;
-            } else {
-                $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->where('astreinte_type', $astreinteType)->first() != null;
-            }
+            $existingAstreinte = Astreinte::where('creneau_id', $record->id)
+                    ->where('astreinte_type', $astreinteType)->first() != null;
             if (!$existingAstreinte) {
                 $astreinte = new Astreinte([
                     'user_id' =>$userId,
