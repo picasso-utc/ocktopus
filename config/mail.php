@@ -45,6 +45,15 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
+        'second_smtp' => [ // Deuxième profil de mail
+            'transport' => 'smtp',
+            'host' => env('SECOND_MAIL_HOST', 'smtp.gmail.com'),
+            'port' => env('SECOND_MAIL_PORT', 587),
+            'encryption' => env('SECOND_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('SECOND_MAIL_USERNAME'),
+            'password' => env('SECOND_MAIL_PASSWORD'),
+            'timeout' => null,
+        ],
 
         'ses' => [
             'transport' => 'ses',
