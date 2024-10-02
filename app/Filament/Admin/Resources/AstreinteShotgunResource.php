@@ -90,17 +90,20 @@ class AstreinteShotgunResource extends Resource
                         ->badge(),
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
+                            
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
-                                ->pluck('user_id')
-                                ->unique()
-                                ->toArray();
-                            $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
-                                ->map(function ($email) {
-                                    return mailToName($email);
+                                // Jointure interne avec la table users
+                                ->join('users', 'astreintes.user_id', '=', 'users.id') 
+                                // Trier pour obtenir un affichage chronologique cohérent  
+                                ->orderBy('astreinte_type')
+                                ->select('users.email') 
+                                ->distinct() 
+                                ->get()
+                                ->map(function ($user) {
+                                    return mailToName($user->email); 
                                 });
 
-                            // Join les emails avec une virgule pour les afficher tous
-                            return "Astreinteurs : " . $nomsMembres->implode(', ');
+                            return "Astreinteurs : " . $membresDuCreneau->implode(', ');
                         }),
                 ])
             ])
