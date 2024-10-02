@@ -167,6 +167,13 @@ class CreneauResource extends Resource
                     ->query(function (Builder $query) {
                         $query->where('perm_id', null);
                     }),
+                Filter::make('Semaine actuelle')
+                    ->label('Semaine actuelle')
+                    ->toggle()
+                    ->default()
+                    ->query(function (Builder $query) {
+                        $query->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]);
+                    }),
             ])
 
             ->actions([
@@ -253,5 +260,24 @@ class CreneauResource extends Resource
         Creneau::where('id', '=', $record->id)->update(['confirmed' => true]);
     }
 
+    
+    private static function getDateSamediAvant(): Carbon
+    {
+        $aujourdHui = Carbon::now();
+
+        // Trouver le samedi précédent
+        return $aujourdHui->copy()->previous(Carbon::SATURDAY);
+
+    }
+
+    private static function getDateSamediApres(): Carbon
+    {
+        $aujourdHui = Carbon::now();
+
+        // Trouver le samedi précédent
+        return $aujourdHui->copy()->next(Carbon::SATURDAY);
+    }
+
+    
 }
 
