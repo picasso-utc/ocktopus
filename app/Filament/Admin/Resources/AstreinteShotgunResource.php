@@ -65,10 +65,11 @@ class AstreinteShotgunResource extends Resource
         $userUuid = $user->uuid;
         $userId =User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
-            ->paginated(false)
-            ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]))
+            ->paginated([15]) // 15 éléments par page (3 créneaux x 5 jours)
+                ->query(CreneauResource::getEloquentQuery())
             ->groups([
-                Group::make('date')->date()
+                Group::make('date')
+                    ->date()
                     ->collapsible()
                     ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)
                         ->locale('fr')
@@ -112,6 +113,13 @@ class AstreinteShotgunResource extends Resource
                     ->label('Libre')
                     ->query(function (Builder $query) {
                         $query->where('perm_id', null);
+                    }),
+                Filter::make('Semaine actuelle')
+                    ->label('Semaine actuelle')
+                    ->toggle()
+                    ->default()
+                    ->query(function (Builder $query) {
+                        $query->whereBetween('date', [self::getDateSamediAvant(), self::getDateSamediApres()]);
                     }),
             ])
             ->actions([
