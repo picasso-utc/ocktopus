@@ -15,7 +15,7 @@ class NoteAstreinteOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $userId = User::where('uuid', session('user')->uuid)->pluck('id')->first(); //A CHANGER
+        $userId = User::where('uuid', session('user')->uuid)->pluck('id')->first();
 
         // Nombre d'astreintes par type pour l'utilisateur spécifié
         $astreintesByType = Astreinte::query()
