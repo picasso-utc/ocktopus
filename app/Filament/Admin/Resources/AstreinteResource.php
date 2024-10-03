@@ -22,7 +22,7 @@ class AstreinteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 
-    protected static ?string $navigationGroup = 'Gestion des perms';
+    protected static ?string $navigationGroup = 'Astreintes';
 
     protected static ?string $navigationLabel = 'Notation';
 
