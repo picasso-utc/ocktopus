@@ -34,7 +34,7 @@ class Astreinte extends Model
     {
         switch ($this->astreinte_type) {
             case 'Matin 1':
-            case 'Matin 1':
+            case 'Matin 2':
             case 'Déjeuner 1':
             case 'Déjeuner 2':
             case 'Autre':
