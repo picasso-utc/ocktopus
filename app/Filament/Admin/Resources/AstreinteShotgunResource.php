@@ -35,7 +35,7 @@ class AstreinteShotgunResource extends Resource
      *
      * @var string|null
      */
-    protected static ?string $navigationGroup = '';
+    protected static ?string $navigationGroup = 'Astreintes';
 
     /**
      * The label to be used in the navigation menu.
@@ -90,17 +90,17 @@ class AstreinteShotgunResource extends Resource
                         ->badge(),
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
-                            
+
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
                                 // Jointure interne avec la table users
-                                ->join('users', 'astreintes.user_id', '=', 'users.id') 
-                                // Trier pour obtenir un affichage chronologique cohérent  
+                                ->join('users', 'astreintes.user_id', '=', 'users.id')
+                                // Trier pour obtenir un affichage chronologique cohérent
                                 ->orderBy('astreinte_type')
-                                ->select('users.email') 
-                                ->distinct() 
+                                ->select('users.email')
+                                ->distinct()
                                 ->get()
                                 ->map(function ($user) {
-                                    return mailToName($user->email); 
+                                    return mailToName($user->email);
                                 });
 
                             return "Astreinteurs : " . $membresDuCreneau->implode(', ');
