@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\AstreinteShotgunResource\Pages;
 use App\Filament\Admin\Resources\AstreinteShotgunResource\RelationManagers;
 use App\Models\Astreinte;
+use App\Models\Semestre;
 use App\Models\Creneau;
 use App\Models\Perm;
 use App\Models\User;
@@ -66,7 +67,7 @@ class AstreinteShotgunResource extends Resource
         $userId =User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
             ->paginated([15]) // 15 éléments par page (3 créneaux x 5 jours)
-                ->query(CreneauResource::getEloquentQuery())
+                ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]))
             ->groups([
                 Group::make('date')
                     ->date()
@@ -90,17 +91,17 @@ class AstreinteShotgunResource extends Resource
                         ->badge(),
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
-
+                            
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
                                 // Jointure interne avec la table users
-                                ->join('users', 'astreintes.user_id', '=', 'users.id')
-                                // Trier pour obtenir un affichage chronologique cohérent
+                                ->join('users', 'astreintes.user_id', '=', 'users.id') 
+                                // Trier pour obtenir un affichage chronologique cohérent  
                                 ->orderBy('astreinte_type')
-                                ->select('users.email')
-                                ->distinct()
+                                ->select('users.email') 
+                                ->distinct() 
                                 ->get()
                                 ->map(function ($user) {
-                                    return mailToName($user->email);
+                                    return mailToName($user->email); 
                                 });
 
                             return "Astreinteurs : " . $membresDuCreneau->implode(', ');
@@ -348,6 +349,31 @@ class AstreinteShotgunResource extends Resource
 
         // Trouver le samedi précédent
         return $aujourdHui->copy()->next(Carbon::SATURDAY);
+    }
+
+
+    /**
+     * Get the start date of the active semester.
+     *
+     * @return mixed
+     */
+    protected static function getStartSemester(): string
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->startOfSemestre : now();
+    }
+
+    /**
+     * Get the end date of the active semester.
+     *
+     * @return mixed
+     */
+    protected static function getEndSemester(): mixed //string ou carbon
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->endOfSemestre : now()->addMonth();
     }
 
     public static function getRelations(): array

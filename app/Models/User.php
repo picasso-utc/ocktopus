@@ -52,10 +52,33 @@ class User extends Authenticatable implements FilamentUser, HasName
         return mailToName($this->email);
     }
 
+    protected static function getStartSemester(): string
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->startOfSemestre : now();
+    }
+
+    /**
+     * Get the end date of the active semester.
+     *
+     * @return mixed
+     */
+    protected static function getEndSemester(): mixed //string ou carbon
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->endOfSemestre : now()->addMonth();
+    }
+
+
     public function getNombrePointsAttribute()
     {
         // Récupérer toutes les astreintes de l'utilisateur
-        $astreintes = Astreinte::where('user_id', $this->id)->get();
+        $astreintes = Astreinte::where('user_id', $this->id)
+            ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
+            ->get();
 
         // Calculer le nombre total de points en utilisant la fonction définie
         $nombrePoints = $astreintes->sum(

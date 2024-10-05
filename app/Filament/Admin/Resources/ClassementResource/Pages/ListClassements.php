@@ -17,7 +17,7 @@ class ListClassements extends ListRecords
     public function getTabs(): array
     {
         return [
-            'high_scores' => Tab::make('Les best    ')
+            'high_scores' => Tab::make('Les bests    ')
                 ->modifyQueryUsing(
                     function (Builder $query) {
                         return $query->selectRaw('users.*,
