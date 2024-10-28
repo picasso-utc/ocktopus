@@ -37,17 +37,17 @@ class RankingAstreintes extends BaseWidget
         $semestreActif = Semestre::where('activated', true)->first();
         return $table
             ->emptyStateHeading('Pas de semestre actif/ Pas de perms validé')
-            ->query(PermResource::getEloquentQuery()->where('validated',true)->where('semestre_id',$semestreActif?->id)
+            ->query(PermResource::getEloquentQuery()
+                ->where('validated',true)
+                ->where('semestre_id',$semestreActif?->id)
             )
             ->columns([
-                Tables\Columns\TextColumn::make('nom')
-                    ->label('Nom')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Note')
-                    ->color(fn($record) => $this->handlColorNoted($record))
-                    ->formatStateUsing(fn ($record) => $this->nbNotation($record)),
+                    ->label('Note (/5)')
+                    ->formatStateUsing(fn ($record) => $this->nbNotation($record))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('nom')
+                    ->label('Nom'),
                 Tables\Columns\IconColumn::make('creneaux')
                     ->label('Note orga')
                     ->Icon(fn ($record) => $this->noteIcon($record, 'note_orga'))
@@ -59,13 +59,13 @@ class RankingAstreintes extends BaseWidget
                 Tables\Columns\IconColumn::make('periode')
                     ->label('Note anim')
                     ->Icon(fn ($record) => $this->noteIcon($record, 'note_anim'))
-                    ->color(fn ($record) => $this->noteColor($record, 'note_anim')),
+                    ->color(fn ($record): string => $this->noteColor($record, 'note_anim')),
                 Tables\Columns\IconColumn::make('membres')
                     ->label('Note menu')
                     ->Icon(fn ($record) => $this->noteIcon($record, 'note_menu'))
                     ->color(fn ($record) => $this->noteColor($record, 'note_menu')),
             ]);
-    }
+        }
 
 
 
@@ -84,11 +84,29 @@ class RankingAstreintes extends BaseWidget
         // Count the total number of Astreintes associated with the creneau IDs
         $nbAstreintes = Astreinte::whereIn('creneau_id', $creneauIds)->count();
 
-        // Count the number of Astreintes with a non-null 'note_orga' associated with the creneau IDs
-        $nbAstreintesNotees = Astreinte::whereIn('creneau_id', $creneauIds)->whereNotNull('note_orga')->count();
+        // Compute the average note of Astreintes for all types of notes
+        $averageTotal = 0;
+        $nbTypesNotNull = 0;  // Represent the number of types of notes that are inside the total note
+        foreach (['note_orga', 'note_deco', 'note_anim', 'note_menu'] as $type) {
+            $nbAstreintesNotees = Astreinte::whereIn('creneau_id', $creneauIds)->whereNotNull($type)->count();
+            if ($nbAstreintesNotees > 0) {
+                $nbTypesNotNull += 1;
+                $totalNote = Astreinte::whereIn('creneau_id', $creneauIds)->whereNotNull($type)->sum($type);
+                $averageNote = $totalNote / $nbAstreintesNotees;
+            }
+            else {
+                $averageNote = 0;
+            }
+            $averageTotal += $averageNote;
+        }
+
+        if ($nbTypesNotNull != 0) {
+            $averageTotal = $averageTotal / $nbTypesNotNull;
+        }
+        
 
         // Return the formatted string representing the number of notations with 'note_orga' on the total number of notations
-        return $nbAstreintesNotees . '/' . $nbAstreintes;
+        return round($averageTotal * 5 / 3.75, 1);
     }
 
     /**
@@ -160,6 +178,7 @@ class RankingAstreintes extends BaseWidget
         else if ($averageNote > 1) return 'heroicon-o-face-frown';
         else return 'heroicon-o-trash';
     }
+
 
     /**
      * Determine the color to be applied based on the average note for the specified type.
