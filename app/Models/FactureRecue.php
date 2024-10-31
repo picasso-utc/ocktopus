@@ -14,7 +14,7 @@ class FactureRecue extends Model
     protected $fillable = [
         'tva', 'prix', 'perm_id', 'state', 'destinataire', 'date',
         'date_created', 'date_paiement', 'date_remboursement', 'moyen_paiement',
-        'personne_a_rembourser', 'immobilisation', 'remarque', 'semestre_id', 'facture_number','pdf_path'
+        'personne_a_rembourser', 'immobilisation', 'remarque', 'semestre_id', 'facture_number','pdf_path','signed',
     ];
 
     public function getStateLabel(string $etat)

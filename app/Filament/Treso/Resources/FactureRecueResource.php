@@ -22,6 +22,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -200,6 +201,11 @@ class FactureRecueResource extends Resource
                     )
                     ->color('gray')
                     ->badge(),
+                ToggleColumn::make('signed')
+                    ->label('Signée ?   ')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->inline(false),
                 ]
             )
             ->filters(
