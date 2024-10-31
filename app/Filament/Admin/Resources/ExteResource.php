@@ -68,9 +68,9 @@ class ExteResource extends Resource
                     ->label('Envoyer Mail')
                     ->visible(fn ($record) => !$record->mailed)
                     ->action(function ($record) {
+                        Mail::to($record->etu_mail)->send(new ExteConfirmation($record));
                         $record->mailed = 1;
                         $record->save();
-                        Mail::mailer('second_smtp')->to($record->etu_mail)->send(new ExteConfirmation($record));
                     })
             ])
             ->bulkActions([
@@ -78,9 +78,9 @@ class ExteResource extends Resource
                     ->label('Envoyer Email')
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
+                            Mail::to($record->etu_mail)->send(new ExteConfirmation($record));
                             $record->mailed = 1;
                             $record->save();
-                            Mail::to($record->etu_mail)->send(new ExteConfirmation($record));
                         }
                     })
                     ->requiresConfirmation()
