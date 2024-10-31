@@ -3,15 +3,32 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Models\Astreinte;
+use App\Models\Semestre;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class NoteAstreinteOverview extends BaseWidget
 {
-    protected $__name = "test";
 
-    protected static ?int $sort = 1;
+    protected static function getStartSemester(): string
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->startOfSemestre : now();
+    }
+
+    /**
+     * Get the end date of the active semester.
+     *
+     * @return mixed
+     */
+    protected static function getEndSemester(): mixed //string ou carbon
+    {
+        $semestre = Semestre::where('activated', true)->first();
+
+        return $semestre ? $semestre->endOfSemestre : now()->addMonth();
+    }
 
     protected function getStats(): array
     {
@@ -20,13 +37,18 @@ class NoteAstreinteOverview extends BaseWidget
         // Nombre d'astreintes par type pour l'utilisateur spécifié
         $astreintesByType = Astreinte::query()
             ->where('user_id', $userId)
+            ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
             ->selectRaw('astreinte_type, COUNT(*) as count')
             ->groupBy('astreinte_type')
             ->get()
             ->pluck('count', 'astreinte_type');
 
         // Nombre moyen d'astreintes par utilisateur
-        $totalAstreintes = Astreinte::query()->count();
+        $totalAstreintes = Astreinte::query()
+            ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
+            ->count();
         $totalUsers = User::query()->where("role", "admin")->count();
         $averageAstreintesPerUser = $totalUsers > 0 ? $totalAstreintes / $totalUsers : 0;
 
@@ -38,18 +60,7 @@ class NoteAstreinteOverview extends BaseWidget
         $sumSoir1Soir2 = $astreintesByType->get('Soir 1', 0) + $astreintesByType->get('Soir 2', 0);
 
 
-        $astreintes = Astreinte::all();
-        // Initialiser le total des points
-        $totalPoints = 0;
-        // Calculer le nombre total de points pour toutes les astreintes
-        foreach ($astreintes as $astreinte) {
-            $totalPoints += $astreinte->points;
-        }
-        $moyenneGenerale = $totalPoints / User::query()->count();
-
-
         $totalPointsUtilisateur = User::find($userId)->nombre_points;
-        $couleurPoints = $totalPointsUtilisateur < $moyenneGenerale ? 'danger' : 'success';
 
         $nombreAstreintesNotees = Astreinte::whereNotNull('note_orga')->count();
         $pourcentageAstreintesNotees = $totalAstreintes > 0
@@ -62,7 +73,11 @@ class NoteAstreinteOverview extends BaseWidget
             $couleurPourcentage = 'success';
         }
         return [
-            Stat::make('Astreintes', Astreinte::query()->where('user_id', $userId)->count()) //Filament Auth
+            Stat::make('Astreintes', Astreinte::query()
+                ->where('user_id', $userId) 
+                ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+                ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
+                ->count()) 
                 ->description('Votre nombre d\'astreintes'),
             Stat::make('Astreintes matin', $sumMatin1Matin2)
                 ->description('Votre nombre d\'astreintes du matin'),
@@ -73,10 +88,7 @@ class NoteAstreinteOverview extends BaseWidget
             Stat::make('Astreintes moyenne', round($averageAstreintesPerUser, 2))
                 ->description('Nombre moyen d\'astreintes par utilisateur'),
             Stat::make('Nombre total de points', $totalPointsUtilisateur)
-                ->color($couleurPoints)
                 ->description('Total des points basé sur les astreintes'),
-            Stat::make('Moyenne générale des points par utilisateur', round($moyenneGenerale, 2))
-                ->description('Moyenne basée sur les astreintes de tous les utilisateurs'),
             Stat::make('Astreintes notées', round($pourcentageAstreintesNotees, 2) . '%')
                 ->description('Pourcentage d\'astreintes notée')
                 ->color($couleurPourcentage),
@@ -84,3 +96,4 @@ class NoteAstreinteOverview extends BaseWidget
         ];
     }
 }
+
