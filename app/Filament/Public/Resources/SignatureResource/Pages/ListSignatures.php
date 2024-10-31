@@ -17,7 +17,6 @@ class ListSignatures extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Signer la charte')
-                    ->createAnother(false),
         ];
     }
 

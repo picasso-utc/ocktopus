@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\PermResource\RelationManagers;
 use App\Mail\MailPerm;
 use App\Models\Perm;
 use App\Models\Semestre;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -274,7 +275,6 @@ class PermResource extends Resource
                         'xl' => 6,
                         '2xl' => 6,
                     ]),
-                Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
             ])
             ->columns(6); // Définit le nombre de colonnes global pour le formulaire
     }
@@ -337,7 +337,8 @@ class PermResource extends Resource
                 ]
             )
             ->checkIfRecordIsSelectableUsing(
-                fn (Model $record): bool => !$record->mailed     )
+                fn (Model $record): bool => !$record->mailed
+            )
             ->emptyStateHeading('Aucune permanence');
     }
 
