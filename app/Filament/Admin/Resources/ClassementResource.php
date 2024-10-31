@@ -64,7 +64,7 @@ class ClassementResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return mailToName($state);
                     }),
-                Tables\Columns\TextColumn::make('nombre_points')
+                Tables\Columns\TextColumn::make('points')
                     ->label('Points')
                     ->sortable()
                 ])
