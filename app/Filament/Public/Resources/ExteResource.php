@@ -40,8 +40,8 @@ class ExteResource extends Resource
                 Forms\Components\DatePicker::make('exte_date_debut')
                     ->label('Date début')
                     ->helperText("A partir de quelle date viendrait-il ? (au moins une semaine à l'avance)")
-                    ->required()
-                    ->afterOrEqual(Carbon::now()),
+                    ->required(),
+//                    ->afterOrEqual(Carbon::now()),
                 Forms\Components\DatePicker::make('exte_date_fin')
                     ->label('Date fin')
                     ->required()

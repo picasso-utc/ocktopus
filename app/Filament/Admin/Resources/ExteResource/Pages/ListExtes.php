@@ -59,7 +59,7 @@ protected function getHeaderActions(): array
                 ->color('success')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->action(function (array $data) {
-                    $requests = Exte::where('mailed', 0)
+                    $requests = Exte::where('mailed', 1)
                         ->where(function ($query) use ($data) {
                             $query->whereBetween('exte_date_debut', [$data['date_debut'], $data['date_fin']])
                                 ->orWhereBetween('exte_date_fin', [$data['date_debut'], $data['date_fin']])
