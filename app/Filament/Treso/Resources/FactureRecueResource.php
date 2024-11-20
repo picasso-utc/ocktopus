@@ -151,7 +151,8 @@ class FactureRecueResource extends Resource
                     ->label('Réf.')
                     ->searchable()
                     ->color('info'),
-                TextColumn::make('destinataire'),
+                TextColumn::make('destinataire')
+                     ->searchable(),
                 TextColumn::make('date')
                     ->date('M d, Y')
                     ->searchable(),
@@ -192,6 +193,7 @@ class FactureRecueResource extends Resource
                     ->label('Personne à rembourser')
                     ->searchable()
                     ->default('--'),
+
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
                     ->formatStateUsing(
