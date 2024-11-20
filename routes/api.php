@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BachController;
 use App\Http\Controllers\ExonerationController;
+use App\Http\Controllers\TodayConsumptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,13 +17,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Configuration du middleware 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('bach/login/cas',[BachController::class, 'loginCas']);
-Route::post('bach/login/badge',[BachController::class, 'loginBadge']);
+// Authentification via CAS
+Route::post('/bach/login/cas',[BachController::class, 'loginCas']);
 
-Route::get('blocages',[\App\Http\Controllers\BlocageController::class, 'getBlocages']);
+// Authentification via badgeuse
+Route::post('/bach/login/badge',[BachController::class, 'loginBadge']);
 
-Route::post('/exonerations', [ExonerationController::class, 'storeExonerations']);
+// Récupération des ventes journalières d'un ou plusieurs produits
+Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
+
+// Récupération des id d'utilisateurs bloqués
+Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlocages']);
+
+// Exoneration d'un achat
+Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
