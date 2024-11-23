@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('exonerations', function (Blueprint $table) {
             $table->id();
             $table->integer('article_id');
+            $table->integer('quantity');
             $table->date('date');
             $table->timestamps();
         });

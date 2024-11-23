@@ -10,6 +10,7 @@ class Exoneration extends Model
 
     protected $fillable = [
         'article_id',
+        'quantity',
         'date'
     ];
 
