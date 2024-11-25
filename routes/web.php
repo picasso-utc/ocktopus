@@ -16,13 +16,17 @@ use App\Http\Controllers\GetSalesController;
 |
 */
 
+// Configuration du middleware
+Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
+    return view('welcome');
+})->name("test");
 
 
-
+// Gestion des télés
 Route::get('/TV/content', [\App\Http\Controllers\MediaController::class, 'content'])->name('TV.content');
 Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show'])->name('TV.show');
 
-// ---------------------------Téléchargement de fichier image------------------------------------- //
+// Téléchargement de fichier image
 Route::prefix('/image')->group(function () {
     //get image from ?url=
     Route::get('/', function (Request $request) {
@@ -41,16 +45,11 @@ Route::prefix('/image')->group(function () {
     })->name('image');
 });
 
-Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
-    return view('welcome');
-})->name("test");
+// Gestion de l'authentification
 Route::get('/auth',[\App\Http\Controllers\Connexion::class,'auth'])->name('auth_route');
 Route::get('/logout',[\App\Http\Controllers\Connexion::class,'logout'])->name('logout_route');
 
-Route::get('/get-today-consumption/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
-Route::get('/api/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
-
-// ---------------------------Téléchargement de fichier général------------------------------------- //
+// Téléchargement de fichier général
 Route::get('/download/{filename}', function ($filename) {
     $filename = str_replace('..', '', $filename);
     if (Storage::exists('files/' . $filename)) {
@@ -59,4 +58,3 @@ Route::get('/download/{filename}', function ($filename) {
         return response()->json(['message' => 'Image not found'], 404);
     }
 })->name('download');
-// ------------------------------------------------------------------------------------------------- //
