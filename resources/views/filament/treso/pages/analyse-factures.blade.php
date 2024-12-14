@@ -45,4 +45,23 @@
             </table>
         </div>
     @endif
+
+    <style>
+        table {
+            border-collapse: separate; /* Permet d'appliquer le border-radius */
+            border-spacing: 0; /* Supprime les espaces entre les cellules */
+            border: 1px solid #ccc; /* Ajoute une bordure autour du tableau */
+            border-radius: 10px; /* Arrondit les coins du tableau */
+            overflow: hidden; /* Cache les débordements pour un rendu net */
+        }
+
+        th, td {
+            border: 1px solid #ccc; /* Bordures internes des cellules */
+            padding: 10px; /* Ajoute de l'espace interne */
+            text-align: center; /* Centre le contenu */
+        }
+
+    </style>
 </x-filament::page>
+
+
