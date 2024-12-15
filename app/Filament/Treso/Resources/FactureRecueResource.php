@@ -236,7 +236,25 @@ class FactureRecueResource extends Resource
                                     fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                                 );
                         }
-                    )
+                    ),
+                    Filter::make('categorie')
+                        ->form([
+                            Select::make('categorie_id')
+                                ->label('Catégorie')
+                                ->options(
+                                    \App\Models\CategorieFacture::pluck('nom', 'id')->toArray() // Récupère les catégories disponibles
+                                )
+                                ->placeholder('Choisir une catégorie'),
+                        ])
+                        ->query(function (Builder $query, array $data): Builder {
+                            return $query->when(
+                                $data['categorie_id'] ?? null, // Vérifie si une catégorie est sélectionnée
+                                fn (Builder $query, $categorieId): Builder => $query->whereHas(
+                                    'categoriePrix', // Relation dans le modèle FactureRecue
+                                    fn (Builder $subQuery) => $subQuery->where('categorie_id', $categorieId)
+                                )
+                            );
+                        }),
                 ]
             )
             ->actions(

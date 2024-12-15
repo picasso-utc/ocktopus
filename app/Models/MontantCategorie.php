@@ -23,4 +23,11 @@ class MontantCategorie extends Model
     {
         return $this->unique(['categorie_id', 'facture_id'], 'unique_categorie_for_facture');
     }
+
+    public function facture()
+    {
+        return $this->belongsTo(FactureRecue::class, 'facture_id');
+    }
+
+
 }
