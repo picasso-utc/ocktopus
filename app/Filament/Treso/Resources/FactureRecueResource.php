@@ -6,6 +6,7 @@ use App\Filament\Treso\Resources\FactureRecueResource\Pages;
 use App\Models\CategorieFacture;
 use App\Models\FactureRecue;
 use App\Models\Semestre;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -42,6 +43,11 @@ class FactureRecueResource extends Resource
     public static function form(Form $form): Form
     {
         $semestreActif = Semestre::where('activated', true)->first();
+
+        $user = session('user');
+        $userUuid = $user->uuid;
+        $userId =User::where('uuid', $userUuid)->pluck('id')->first();
+
         return $form
             ->schema(
                 [
@@ -135,6 +141,7 @@ class FactureRecueResource extends Resource
                         ->default($semestreActif->id)
                         ->required()
                         ->columnSpan(6),
+                    Hidden::make('author_id')->default($userId),
                     Hidden::make('facture_number')->default(""),
                 ]
             )
@@ -193,7 +200,20 @@ class FactureRecueResource extends Resource
                     ->label('Personne à rembourser')
                     ->searchable()
                     ->default('--'),
-
+                TextColumn::make('author_id')
+                    ->label('Auteur.ice')
+                    ->formatStateUsing(
+                        function ($state) {
+                            $user = User::find($state);
+                            if ($user && $user->email) {
+                                list($name, ) = explode('@', $user->email);
+                                list($firstName, $lastName) = array_pad(explode('.', $name), 2, null);
+                                return ucfirst($firstName) . ' ' . ucfirst($lastName);
+                            }
+                            return '';
+                        }
+                    )
+                    ->searchable(),
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
                     ->formatStateUsing(
