@@ -34,7 +34,8 @@ public function form(Form $form): Form
                     ->required(),
                 DatePicker::make('endOfSemestre')
                     ->label('End of Semestre')
-                    ->required(),
+                    ->required()
+                    ->after('startOfSemestre'),
                 ]
             );
     }
