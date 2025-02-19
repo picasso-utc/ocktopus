@@ -68,6 +68,9 @@ class ClassementResource extends Resource
                     ->label('Points')
                     ->sortable()
                 ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('role', '!=', 'none');
+            })
             ->filters([
                 //
             ])

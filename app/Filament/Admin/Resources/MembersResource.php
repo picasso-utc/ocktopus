@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 
 class MembersResource extends Resource
 {
@@ -53,14 +55,19 @@ class MembersResource extends Resource
                     )
                 ]
             )
-            ->filters(
-                [
+            ->filters([
                 Tables\Filters\SelectFilter::make('role')
                     ->options(enum_pluck(MemberRole::class))
                     ->label('Rôle')
-                    ->placeholder('Tous les rôles')
-                ]
-            )
+                    ->placeholder('Tous les rôles'),
+                Filter::make('Pic actuel')
+                    ->label('Pic actuel')
+                    ->toggle()
+                    ->default()
+                    ->query(function (Builder $query) {
+                        $query->where('role', '!=', 'none');
+                    }),
+            ])
             ->actions(
                 [
                 Tables\Actions\EditAction::make(),
