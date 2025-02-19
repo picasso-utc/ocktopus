@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('date_remboursement')->nullable();
             $table->char('moyen_paiement',255)->nullable();
             $table->char('personne_a_rembourser',255)->nullable();
+            $table->foreignId('author_id')->constrained();
             $table->boolean('immobilisation')->default(False);
             $table->text('remarque')->nullable();
             $table->string('pdf_path')->nullable();
