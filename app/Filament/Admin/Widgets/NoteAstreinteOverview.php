@@ -49,7 +49,7 @@ class NoteAstreinteOverview extends BaseWidget
             ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
             ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
             ->count();
-        $totalUsers = User::query()->where("role", "admin")->count();
+        $totalUsers = User::query()->where("role", "!=", "none")->count();
         $averageAstreintesPerUser = $totalUsers > 0 ? $totalAstreintes / $totalUsers : 0;
 
         // Somme des astreintes pour les types "Matin 1" et "Matin 2"
