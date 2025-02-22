@@ -14,9 +14,9 @@
 <p>Bonne journée</p>
 <strong>
 
-    <p>Discart Pol & Wallon Thomas <br>
-        07.67.24.05.07 & 06.33.77.01.53 <br>
-        Présidence du Pic'Asso A24 - Foyer étudiant UTC</p>
+    <p>Saglio Geo & Sinoquet Hugo <br>
+        07.69.22.41.99 & 06.18.84.37.66 <br>
+        Présidence du Pic'Asso P25 - Foyer étudiant UTC</p>
 </strong>
 </body>
 </html>
