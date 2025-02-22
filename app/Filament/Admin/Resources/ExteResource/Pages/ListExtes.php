@@ -46,7 +46,7 @@ class ListExtes extends ListRecords
 protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('pdf')
+            Actions\Action::make('pdf_validés')
                 ->form([
                     DatePicker::make('date_debut')
                         ->label('Date début')
@@ -55,11 +55,42 @@ protected function getHeaderActions(): array
                         ->label('Date fin')
                         ->required(),
                 ])
-                ->label('Générer PDF')
+                ->label('Générer PDF Validés')
                 ->color('success')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->action(function (array $data) {
                     $requests = Exte::where('mailed', 1)
+                        ->where(function ($query) use ($data) {
+                            $query->whereBetween('exte_date_debut', [$data['date_debut'], $data['date_fin']])
+                                ->orWhereBetween('exte_date_fin', [$data['date_debut'], $data['date_fin']])
+                                ->orWhere(function ($query) use ($data) {
+                                    $query->where('exte_date_debut', '<=', $data['date_debut'])
+                                        ->where('exte_date_fin', '>=', $data['date_fin']);
+                                });
+                        })
+                        ->get();
+                    return response()->streamDownload(function () use ($requests) {
+                        echo Pdf::loadHtml(
+                            Blade::render('pdf/exteTab', ['demandes' => $requests])
+                        )
+                            ->setPaper('a4','landscape')
+                            ->stream();
+                    }, 'Demandes-' . now()->format('Y-m-d') . '.pdf');
+                }),
+            Actions\Action::make('pdf_a_validé')
+                ->form([
+                    DatePicker::make('date_debut')
+                        ->label('Date début')
+                        ->required(),
+                    DatePicker::make('date_fin')
+                        ->label('Date fin')
+                        ->required(),
+                ])
+                ->label('Générer PDF A Validé')
+                ->color('warning')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->action(function (array $data) {
+                    $requests = Exte::where('mailed', 0)
                         ->where(function ($query) use ($data) {
                             $query->whereBetween('exte_date_debut', [$data['date_debut'], $data['date_fin']])
                                 ->orWhereBetween('exte_date_fin', [$data['date_debut'], $data['date_fin']])

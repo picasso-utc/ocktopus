@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\ExteResource\Pages;
 use App\Filament\Admin\Resources\ExteResource\RelationManagers;
 use App\Mail\ExteConfirmation;
+use App\Mail\ExteRefus;
 use App\Models\Exte;
 use Filament\Actions\Action;
 use Filament\Forms;
@@ -42,7 +43,7 @@ class ExteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')->label('Date de la demande'),
+                Tables\Columns\TextColumn::make('created_at')->label('Date de la demande')->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('etu_nom_prenom')->label('Nom Prénom Étudiant'),
                 Tables\Columns\TextColumn::make('etu_mail')->label('Mail Étudiant'),
                 Tables\Columns\TextColumn::make('exte_nom_prenom')->label('Nom Prénom Exté'),
@@ -65,22 +66,47 @@ class ExteResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\Action::make('Envoyer Mail')
+                    ->color('success')
                     ->label('Envoyer Mail')
                     ->visible(fn ($record) => !$record->mailed)
+                    ->icon('heroicon-o-envelope-open')
                     ->action(function ($record) {
                         Mail::to($record->etu_mail)->send(new ExteConfirmation($record));
                         $record->mailed = 1;
                         $record->save();
+                    }),
+                Tables\Actions\Action::make('Refuser Demande')
+                    ->color('danger')
+                    ->label('Refuser Demande')
+                    ->icon('heroicon-o-trash')
+                    ->visible(fn ($record) => !$record->mailed)
+                    ->action(function ($record) {
+                        Mail::to($record->etu_mail)->send(new ExteRefus($record));
+                        $record->delete();
                     })
             ])
             ->bulkActions([
                 BulkAction::make('envoyer_email')
-                    ->label('Envoyer Email')
+                    ->label('Envoyer Emails')
+                    ->color('success')
+                    ->icon('heroicon-o-envelope-open')
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
                             Mail::to($record->etu_mail)->send(new ExteConfirmation($record));
                             $record->mailed = 1;
                             $record->save();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('refuser_demande')
+                    ->color('danger')
+                    ->icon('heroicon-o-trash')
+                    ->label('Refuser Demandes')
+                    ->action(function (Collection $records) {
+                        foreach ($records as $record) {
+                            Mail::to($record->etu_mail)->send(new ExteRefus($record));
+                            $record->delete();
                         }
                     })
                     ->requiresConfirmation()
