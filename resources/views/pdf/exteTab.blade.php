@@ -37,8 +37,8 @@
         <tr>
             <td>{{ $demande->exte_date_debut }}</td>
             <td>{{ $demande->exte_date_fin }}</td>
-            <td>{{ $demande->exte_nom_prenom }}</td>
             <td>{{ $demande->etu_nom_prenom }}</td>
+            <td>{{ $demande->exte_nom_prenom }}</td>
             <td>{{ $demande->etu_cas }}</td>
             <!-- Ajoute d'autres champs si nécessaire -->
         </tr>

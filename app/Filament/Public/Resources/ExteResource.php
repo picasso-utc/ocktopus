@@ -67,6 +67,10 @@ class ExteResource extends Resource
                 Tables\Columns\TextColumn::make('exte_nom_prenom')->label('Nom Prénom Exté'),
                 Tables\Columns\TextColumn::make('exte_date_debut')->label('Date début Exté'),
                 Tables\Columns\TextColumn::make('exte_date_fin')->label('Date Fin Exté'),
+                Tables\Columns\IconColumn::make('mailed')->label('Demande Validée')
+                    ->icon(fn($record) => $record->mailed ? 'heroicon-o-check-circle' : 'heroicon-o-clock')->color(
+                        fn($record) => $record->mailed? 'success' : 'warning'
+                    ),
                 ])
             ->filters([
                 //
