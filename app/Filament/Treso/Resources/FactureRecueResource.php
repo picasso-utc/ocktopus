@@ -68,6 +68,7 @@ class FactureRecueResource extends Resource
                     ->required()
                     ->maxLength(255),
                 DatePicker::make('date')
+                    ->label('Date Facturation')
                     ->required()
                     ->timezone('Europe/Paris'),
                 DatePicker::make('date_paiement')
@@ -154,6 +155,7 @@ class FactureRecueResource extends Resource
                 TextColumn::make('destinataire')
                      ->searchable(),
                 TextColumn::make('date')
+                    ->label('Date Facturation')
                     ->date('M d, Y')
                     ->searchable(),
                 TextColumn::make('date_paiement')
