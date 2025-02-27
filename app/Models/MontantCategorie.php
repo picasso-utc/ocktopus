@@ -10,7 +10,7 @@ class MontantCategorie extends Model
     use HasFactory;
 
     protected $table = 'montant_categorie';
-    protected $fillable = ['categorie_id', 'prix', 'facture_id'];
+    protected $fillable = ['categorie_id', 'prix', 'tva', 'facture_id'];
 
     // Ajoutez une relation avec CategorieFactureRecue
     public function categorie()

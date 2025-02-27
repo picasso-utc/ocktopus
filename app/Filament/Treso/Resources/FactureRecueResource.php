@@ -59,7 +59,7 @@ class FactureRecueResource extends Resource
                     ->numeric()
                     ->suffixIcon('heroicon-o-currency-euro'),
                 TextInput::make('tva')
-                    ->label('TVA (€)')
+                    ->label('Total TVA(€)')
                     ->required()
                     ->numeric()
                     ->suffixIcon('heroicon-o-currency-euro'),
@@ -117,12 +117,17 @@ class FactureRecueResource extends Resource
                             ->searchable()
                             ->required()
                             ->distinct()
-                            ->columnSpan(3),
+                            ->columnSpan(2),
                         TextInput::make('prix')
                             ->label('Montant de la catégorie')
                             ->numeric()
                             ->suffixIcon('heroicon-o-currency-euro')
-                            ->columnSpan(3),
+                            ->columnSpan(2),
+                        TextInput::make('tva')
+                            ->label('TVA')
+                            ->numeric()
+                            ->suffixIcon('heroicon-o-currency-euro')
+                            ->columnSpan(2),
                         ]
                     )
                     ->defaultItems(1)
