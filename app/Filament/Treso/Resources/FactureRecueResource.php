@@ -6,6 +6,7 @@ use App\Filament\Treso\Resources\FactureRecueResource\Pages;
 use App\Models\CategorieFacture;
 use App\Models\FactureRecue;
 use App\Models\Semestre;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -57,12 +58,29 @@ class FactureRecueResource extends Resource
                     ->label('Prix Total TTC (€)')
                     ->required()
                     ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $totalCategoriesPrix = array_sum(array_column($get('categoriePrix') ?? [], 'prix'));
+                            if ($value != $totalCategoriesPrix) {
+                                $fail('Le prix total doit correspondre à la somme des montants des catégories.');
+                            }
+                        };
+                    }),
+                
                 TextInput::make('tva')
-                    ->label('Total TVA(€)')
+                    ->label('Total TVA (€)')
                     ->required()
                     ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $totalCategoriesTVA = array_sum(array_column($get('categoriePrix') ?? [], 'tva'));
+                            if ($value != $totalCategoriesTVA) {
+                                $fail('Le total de la TVA doit correspondre à la somme des TVA des catégories.');
+                            }
+                        };
+                    }),                
                 TextInput::make('moyen_paiement')
                     //->label
                     ->required()
