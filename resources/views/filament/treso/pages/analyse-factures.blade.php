@@ -13,8 +13,7 @@
     @if ($totalRecettes !== null || $totalDepenses !== null)
         <div class="p-8 bg-center shadow rounded">
             <h2 class="text-lg font-semibold">Totaux entre les dates sélectionnées :</h2>
-            <p class="text-2xl font-bold my-8">Recettes : {{ number_format($totalRecettes, 2) }} € | Dépenses : {{ number_format($totalDepenses, 2) }} €</p>
-            <p class="text-m italic">* Les calculs se réfèrent à la date de fin des recettes</p>
+            <p class="text-2xl font-bold">Recettes : {{ number_format($totalRecettes, 2) }} € | Dépenses : {{ number_format($totalDepenses, 2) }} €</p>
         </div>
     @endif
 

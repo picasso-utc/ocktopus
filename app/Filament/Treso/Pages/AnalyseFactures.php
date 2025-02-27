@@ -8,6 +8,7 @@ use App\Models\FactureRecue;
 use App\Models\Recettes;
 use Filament\Pages\Page;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 
 class AnalyseFactures extends Page
 {
@@ -17,6 +18,8 @@ class AnalyseFactures extends Page
 
     public $date_debut;
     public $date_fin;
+    public $date_facture = 'date';
+    public $date_recette = 'date_fin';
     public $totalsByCategory = [];
     public $totalRecettes = 0;
     public $totalDepenses = 0;
@@ -30,22 +33,38 @@ class AnalyseFactures extends Page
             DatePicker::make('date_fin')
                 ->label('Date de fin')
                 ->required(),
+            Select::make('date_facture')
+                ->label('Date pour la facture')
+                ->options([
+                    'date' => 'Date de facturation',
+                    'date_paiement' => 'Date de paiement',
+                    'date_remboursement' => 'Date de remboursement',
+                ])
+                ->required(),
+            
+            Select::make('date_recette')
+                ->label('Date pour la recette')
+                ->options([
+                    'date_debut' => 'Date de début',
+                    'date_fin' => 'Date de fin',
+                ])
+                ->required(),            
         ];
     }
 
     public function calculerTotal()
     {
-        $this->totalDepenses = FactureRecue::whereBetween('date', [$this->date_debut, $this->date_fin])
+        $this->totalDepenses = FactureRecue::whereBetween($this->date_facture, [$this->date_debut, $this->date_fin])
             ->sum('prix');
 
-        $this->totalRecettes = Recettes::whereBetween('date_fin', [$this->date_debut, $this->date_fin])  // On se base sur la date de fin de la recette pour savoir si on la prend en compte ou pas
+        $this->totalRecettes = Recettes::whereBetween($this->date_recette, [$this->date_debut, $this->date_fin]) 
             ->sum('valeur');
     }
 
     public function calculerTotaux()
     {
         $recettesByCategory = CategorieFacture::with(['recettes' => function ($query) {  // On crée un array avec la somme des recettes et TVA par catégorie
-                $query->whereBetween('date_fin', [$this->date_debut, $this->date_fin]);
+                $query->whereBetween($this->date_recette, [$this->date_debut, $this->date_fin]);
             }])
             ->get()
             ->mapWithKeys(function ($categorie) {
@@ -65,7 +84,7 @@ class AnalyseFactures extends Page
     
         $depensesByCategory = MontantCategorie::with('categorie')  // idem ici mais avec les dépenses
             ->whereHas('facture', function ($query) {
-                $query->whereBetween('date', [$this->date_debut, $this->date_fin]);
+                $query->whereBetween($this->date_facture, [$this->date_debut, $this->date_fin]);
             })
             ->selectRaw('categorie_id, SUM(prix) as total_prix, SUM(tva) as total_tva')
             ->groupBy('categorie_id')
