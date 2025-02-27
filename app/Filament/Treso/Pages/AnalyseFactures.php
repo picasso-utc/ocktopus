@@ -44,42 +44,48 @@ class AnalyseFactures extends Page
 
     public function calculerTotaux()
     {
-        $recettesByCategory = CategorieFacture::with(['recettes' => function ($query) {  // Calcule les recettes par catégorie
-                $query->whereBetween('date_debut', [$this->date_debut, $this->date_fin]);
+        $recettesByCategory = CategorieFacture::with(['recettes' => function ($query) {  // On crée un array avec la somme des recettes et TVA par catégorie
+                $query->whereBetween('date_fin', [$this->date_debut, $this->date_fin]);
             }])
             ->get()
             ->mapWithKeys(function ($categorie) {
                 $totalRecettes = $categorie->recettes->sum('valeur');
+                $totalTvaRecettes = $categorie->recettes->sum('tva');
                 return [
                     $categorie->id => [
                         'categorie' => $categorie->nom,
                         'totalRecettes' => $totalRecettes,
-                        'totalDepenses' => 0, // On init pour l'instant à 0, le calcul est fait apr.
+                        'totalTvaRecettes' => $totalTvaRecettes,
+                        'totalDepenses' => 0,  // On init les champ pour les dépenses à 0 dans le array pour merge après
+                        'totalTvaDepenses' => 0
                     ],
                 ];
             })
-            ->toArray(); // Convertir en tableau
-
-        $depensesByCategory = MontantCategorie::with('categorie')   // calcule maintenant les dépenses (factures reçues) par catégories
+            ->toArray();
+    
+        $depensesByCategory = MontantCategorie::with('categorie')  // idem ici mais avec les dépenses
             ->whereHas('facture', function ($query) {
                 $query->whereBetween('date', [$this->date_debut, $this->date_fin]);
             })
-            ->selectRaw('categorie_id, SUM(prix) as total_prix')
+            ->selectRaw('categorie_id, SUM(prix) as total_prix, SUM(tva) as total_tva')
             ->groupBy('categorie_id')
             ->get();
-
-        foreach ($depensesByCategory as $depense) {    // fusionner les res dans un array
+    
+        foreach ($depensesByCategory as $depense) {  // on merge les array
             if (isset($recettesByCategory[$depense->categorie_id])) {
                 $recettesByCategory[$depense->categorie_id]['totalDepenses'] = $depense->total_prix;
+                $recettesByCategory[$depense->categorie_id]['totalTvaDepenses'] = $depense->total_tva;
             } else {
                 $recettesByCategory[$depense->categorie_id] = [
                     'categorie' => $depense->categorie->nom,
                     'totalRecettes' => 0,
+                    'totalTvaRecettes' => 0,
                     'totalDepenses' => $depense->total_prix,
+                    'totalTvaDepenses' => $depense->total_tva,
                 ];
             }
         }
-
+    
         $this->totalsByCategory = array_values($recettesByCategory);
-    }
+    }    
 }
