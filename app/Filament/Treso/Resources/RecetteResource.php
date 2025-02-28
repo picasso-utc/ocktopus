@@ -36,7 +36,18 @@ class RecetteResource extends Resource
                     ->searchable()
                     ->required()
                     ->distinct()
-                    ->columnSpan(3),
+                    ->columnSpan(2),
+                TextInput::make('valeur')
+                    ->label('Valeur TTC')
+                    ->required()
+                    ->numeric()
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->columnSpan(2),
+                TextInput::make('tva')
+                    ->label('TVA (€)')
+                    ->numeric()
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->columnSpan(2),
                 DatePicker::make('date_debut')
                     ->label('Date début')
                     ->required()
@@ -48,18 +59,8 @@ class RecetteResource extends Resource
                     ->date()
                     ->columnSpan(2)
                     ->timezone('Europe/Paris'),
-                TextInput::make('valeur')
-                    ->label('Valeur TTC')
-                    ->required()
-                    ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
-                TextInput::make('tva')
-                    ->label('TVA (€)')
-                    ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro')
-                    ->columnSpan(3),
                 TextInput::make('remarque')
-                    ->columnSpan(3)
+                    ->columnSpan(6)
                     ->required()
                     ->maxLength(255),
                 Select::make('semestre_id')

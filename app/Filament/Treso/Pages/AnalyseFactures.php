@@ -9,6 +9,7 @@ use App\Models\Recettes;
 use Filament\Pages\Page;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Grid;
 
 class AnalyseFactures extends Page
 {
@@ -27,30 +28,39 @@ class AnalyseFactures extends Page
     protected function getFormSchema(): array
     {
         return [
-            DatePicker::make('date_debut')
-                ->label('Date de début')
-                ->required(),
-            DatePicker::make('date_fin')
-                ->label('Date de fin')
-                ->required(),
-            Select::make('date_facture')
-                ->label('Date pour la facture')
-                ->options([
-                    'date' => 'Date de facturation',
-                    'date_paiement' => 'Date de paiement',
-                    'date_remboursement' => 'Date de remboursement',
-                ])
-                ->required(),
-            
-            Select::make('date_recette')
-                ->label('Date pour la recette')
-                ->options([
-                    'date_debut' => 'Date de début',
-                    'date_fin' => 'Date de fin',
-                ])
-                ->required(),            
+            Grid::make()
+                ->schema([
+                    DatePicker::make('date_debut')
+                        ->label('Date de début')
+                        ->required()
+                        ->columnSpan(1),
+    
+                    DatePicker::make('date_fin')
+                        ->label('Date de fin')
+                        ->required()
+                        ->columnSpan(1),
+    
+                    Select::make('date_facture')
+                        ->label('Date pour la facture')
+                        ->options([
+                            'date' => 'Date de facturation',
+                            'date_paiement' => 'Date de paiement',
+                            'date_remboursement' => 'Date de remboursement',
+                        ])
+                        ->required()
+                        ->columnSpan(1), 
+    
+                    Select::make('date_recette')
+                        ->label('Date pour la recette')
+                        ->options([
+                            'date_debut' => 'Date de début',
+                            'date_fin' => 'Date de fin',
+                        ])
+                        ->required()
+                        ->columnSpan(1),
+                ]),
         ];
-    }
+    }    
 
     public function calculerTotal()
     {
