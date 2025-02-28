@@ -45,16 +45,12 @@ class NoteDeFraisResource extends Resource
                             ->required()
                             ->maxLength(255),
                         TextInput::make('numero_voie')
-                            ->required()
                             ->numeric(),
                         TextInput::make('rue')
-                            ->required()
                             ->maxLength(255),
                         TextInput::make('code_postal')
-                            ->required()
                             ->numeric(),
                         TextInput::make('ville')
-                            ->required()
                             ->maxLength(255),
                         TextInput::make('email')
                             ->required()
