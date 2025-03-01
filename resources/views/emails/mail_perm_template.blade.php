@@ -14,7 +14,14 @@
 <p>Vous avez demandé à l'équipe animation du Pic'Asso de tenir des permanences ce semestre. Petit rappel : le Pic'Asso est un foyer étudiant, ouvert toute la journée, et tenir une perm signifie être présent matin, midi et soir. On a fait de notre mieux pour respecter vos préférences et voici les créneaux qui vous sont attribués :</p>
 
 <h3>Votre journée : </h3>{{ Carbon::parse($creneaux->first()->date)->translatedFormat('d F Y') }}<br>
+<!-- 
+@if ($creneaux->isNotEmpty())
+    <h3>Votre journée : </h3>{{ Carbon::parse($creneaux->first()->date)->translatedFormat('d F Y') }}<br>
+@else
+    <h3>Votre journée :</h3> Aucune date définie.<br>
+@endif
 
+-->
 
 
 <h3>Quelques petits rappels pour que tout roule :</h3>
