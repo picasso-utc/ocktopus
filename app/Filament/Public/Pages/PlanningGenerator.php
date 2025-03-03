@@ -10,7 +10,7 @@ use App\Exports\PlanningExport;
 
 class PlanningGenerator extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $title = 'Générateur de Planning';
     protected static string $view = 'filament.public.pages.planning';
 
