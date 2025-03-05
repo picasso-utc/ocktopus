@@ -235,12 +235,10 @@ class RequestedPermsResource extends Resource
                         'xl' => 3,
                         '2xl' => 3,
                     ]),
-                Forms\Components\TagsInput::make('membres')
+                Forms\Components\TextInput::make('membres')
+                    ->placeholder('Nombre de membres (approximatif)')
                     ->required()
-                    ->placeholder('Appuyez sur Entrée pour ajouter un membre')
-                    ->label('Membres de la permanence')
-                    ->separator(' - ')
-                    ->splitKeys(['Enter', ',', 'Tab'])
+                    ->label('Nombre de membres')
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 4,
