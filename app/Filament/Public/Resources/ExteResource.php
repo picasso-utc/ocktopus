@@ -50,15 +50,13 @@ class ExteResource extends Resource
                     ->label('Date début')
                     ->helperText("A partir de quelle date viendrait-il ? (au moins une semaine à l'avance)")
                     ->required()
-                    ->native(false)
                     ->disabledDates($disabledDates),
                 Forms\Components\DatePicker::make('exte_date_fin')
                     ->label('Date fin')
                     ->required()
                     ->helperText("Jusqu'à quelle date viendrait-il ?")
                     ->afterOrEqual('exte_date_debut')
-                    ->native(false)
-                    ->disabledDates($disabledDates),                
+                    ->disabledDates($disabledDates),               
                 Forms\Components\Checkbox::make('responsabilite')
                     ->label('En cochant la case ci-dessous, tu prends l\'entière responsabilité des actes de ton exté, et tu certifies ton exté ramènera un document d\'identité physique ainsi qu\'un mail de confirmation venant du Pic\'Asso')
                     ->required(),

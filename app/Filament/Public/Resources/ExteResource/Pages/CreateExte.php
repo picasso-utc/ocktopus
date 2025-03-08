@@ -4,6 +4,7 @@ namespace App\Filament\Public\Resources\ExteResource\Pages;
 
 use App\Models\Exte;
 use App\Filament\Public\Resources\ExteResource;
+use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -19,13 +20,11 @@ class CreateExte extends CreateRecord
             ->label('Demander');
     }
 
-    protected function beforeCreate(): void
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
         $userEmail = session('user')->email;
-        $updates = request()['components'][0]['updates'];
-
-        $startDate = $updates['data.exte_date_debut'];
-        $endDate = $updates['data.exte_date_fin'];        
+        $startDate = $data['exte_date_debut'];
+        $endDate = $data['exte_date_fin'];
 
         $overlappingRequest = Exte::where('etu_mail', $userEmail)
             ->where(function ($query) use ($startDate, $endDate) {
@@ -38,11 +37,19 @@ class CreateExte extends CreateRecord
             })
             ->exists();
 
-            if ($overlappingRequest) {
-                throw ValidationException::withMessages([
-                    'exte_date_debut' => "Vous avez déjà une demande sur cette période.",
-                    'exte_date_fin' => "Vous avez déjà une demande sur cette période.",
-                ]);
-            }            
+        if ($overlappingRequest) {
+            Notification::make()
+            ->title('Erreur de validation')
+            ->body('Vous avez déjà une demande sur cette période.')
+            ->danger()
+            ->send();
+
+            throw ValidationException::withMessages([
+                'exte_date_debut' => "Vous avez déjà une demande sur cette période.",
+                'exte_date_fin' => "Vous avez déjà une demande sur cette période.",
+            ]);
+        }
+
+        return $data;
     }
 }
