@@ -26,6 +26,7 @@ Route::middleware(\App\Http\Middleware\Auth::class)->get('/test', function () {
 Route::get('/TV/content', [\App\Http\Controllers\MediaController::class, 'content'])->name('TV.content');
 Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show'])->name('TV.show');
 
+// Compresseur d'images pour les bornes
 Route::get('/compress', [\App\Http\Controllers\ImageProxyController::class, 'compress']);
 
 // Téléchargement de fichier image

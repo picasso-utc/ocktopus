@@ -24,8 +24,9 @@ class ImageProxyController extends Controller
                 return response()->json(['error' => "Impossible de récupérer l'image"], 500);
             }
 
-            $image = new ImageManager(Driver::class)->read($response->body());
-            $encoded = $image->encodeByMediaType('image/jpeg', quality: 30);
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($response->body());
+            $encoded = $image->encodeByMediaType('image/jpeg', quality: 20);
 
             return response($encoded->toString(), 200)->header('Content-Type', 'image/jpeg');
 
