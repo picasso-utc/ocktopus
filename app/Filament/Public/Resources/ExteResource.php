@@ -18,7 +18,6 @@ class ExteResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?string $label = 'Mes extés';
 
-
     public static function form(Form $form): Form
     {
         $user = session('user');
@@ -50,13 +49,17 @@ class ExteResource extends Resource
                     ->label('Date début')
                     ->helperText("A partir de quelle date viendrait-il ? (au moins une semaine à l'avance)")
                     ->required()
-                    ->disabledDates($disabledDates),
+                    ->disabledDates($disabledDates)
+                    ->reactive()
+                    ->afterOrEqual(fn ($get) => Carbon::parse($get('exte_date_fin'))->addWeek(-1)->toDateString()), 
                 Forms\Components\DatePicker::make('exte_date_fin')
                     ->label('Date fin')
                     ->required()
                     ->helperText("Jusqu'à quelle date viendrait-il ?")
                     ->afterOrEqual('exte_date_debut')
-                    ->disabledDates($disabledDates),               
+                    ->disabledDates($disabledDates)
+                    ->reactive()
+                    ->beforeOrEqual(fn ($get) => Carbon::parse($get('exte_date_debut'))->addWeek()->toDateString()),          
                 Forms\Components\Checkbox::make('responsabilite')
                     ->label('En cochant la case ci-dessous, tu prends l\'entière responsabilité des actes de ton exté, et tu certifies ton exté ramènera un document d\'identité physique ainsi qu\'un mail de confirmation venant du Pic\'Asso')
                     ->required(),

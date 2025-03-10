@@ -4,6 +4,7 @@ namespace App\Filament\Public\Resources\ExteResource\Pages;
 
 use App\Models\Exte;
 use App\Filament\Public\Resources\ExteResource;
+use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use Filament\Resources\Pages\CreateRecord;
@@ -47,6 +48,19 @@ class CreateExte extends CreateRecord
             throw ValidationException::withMessages([
                 'exte_date_debut' => "Vous avez déjà une demande sur cette période.",
                 'exte_date_fin' => "Vous avez déjà une demande sur cette période.",
+            ]);
+        }
+
+        if (Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate)) > 7) {
+            Notification::make()
+            ->title('Erreur de validation')
+            ->body("La durée maximale pour une demande d'exté est d'une semaine")
+            ->danger()
+            ->send();
+
+            throw ValidationException::withMessages([
+                'exte_date_debut' => "Une demande d'exté ne peut pas durer plus d'une semaine.",
+                'exte_date_fin' => "Une demande d'exté ne peut pas durer plus d'une semaine.",
             ]);
         }
 
