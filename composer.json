@@ -17,6 +17,7 @@
         "filament/filament": "^3.1",
         "firebase/php-jwt": "^6.10",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^3.11",
         "james-heinrich/getid3": "^1.9",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
