@@ -19,7 +19,7 @@ class AnalyseFactures extends Page
 
     public $date_debut;
     public $date_fin;
-    public $date_facture = 'date';
+    public $date_facture = 'date_facturation';
     public $date_recette = 'date_fin';
     public $totalsByCategory = [];
     public $totalRecettes = 0;
@@ -43,9 +43,8 @@ class AnalyseFactures extends Page
                     Select::make('date_facture')
                         ->label('Date pour la facture')
                         ->options([
-                            'date' => 'Date de facturation',
-                            'date_paiement' => 'Date de paiement',
-                            'date_remboursement' => 'Date de remboursement',
+                            'date_facturation' => 'Date de facturation',
+                            'date_paiement_remboursement' => 'Date de paiement ou remboursement',
                         ])
                         ->required()
                         ->columnSpan(1), 
@@ -64,8 +63,12 @@ class AnalyseFactures extends Page
 
     public function calculerTotal()
     {
-        $this->totalDepenses = FactureRecue::whereBetween($this->date_facture, [$this->date_debut, $this->date_fin])
-            ->sum('prix');
+        $this->totalDepenses = ($this->date_facture === 'date_facturation' ? 
+            FactureRecue::whereBetween('date', [$this->date_debut, $this->date_fin])
+            :
+            FactureRecue::whereBetween('date_paiement', [$this->date_debut, $this->date_fin])
+                ->orWhere('date_remboursement', [$this->date_debut, $this->date_fin])
+            )->sum('prix');
 
         $this->totalRecettes = Recettes::whereBetween($this->date_recette, [$this->date_debut, $this->date_fin]) 
             ->sum('valeur');
@@ -94,7 +97,12 @@ class AnalyseFactures extends Page
     
         $depensesByCategory = MontantCategorie::with('categorie')  // idem ici mais avec les dépenses
             ->whereHas('facture', function ($query) {
-                $query->whereBetween($this->date_facture, [$this->date_debut, $this->date_fin]);
+                ($this->date_facture === 'date_facturation' ? 
+                $query->whereBetween('date', [$this->date_debut, $this->date_fin])
+                :
+                $query->whereBetween('date_paiement', [$this->date_debut, $this->date_fin])
+                    ->orWhere('date_remboursement', [$this->date_debut, $this->date_fin])
+                );
             })
             ->selectRaw('categorie_id, SUM(prix) as total_prix, SUM(tva) as total_tva')
             ->groupBy('categorie_id')
