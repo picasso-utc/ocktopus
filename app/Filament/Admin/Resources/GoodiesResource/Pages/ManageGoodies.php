@@ -10,6 +10,8 @@ use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class ManageGoodies extends ManageRecords
 {
@@ -84,6 +86,8 @@ class ManageGoodies extends ManageRecords
 
         // clear the database
         Goodies::all()->each->delete();
+
+        Log::info('Gagnant.e.s du '.Carbon::now().' : '.json_encode($winnersName));
 
         // add the winners in the database
         for ($i = 0; $i < 20; $i++) {
