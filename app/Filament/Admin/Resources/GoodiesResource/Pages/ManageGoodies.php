@@ -55,12 +55,16 @@ class ManageGoodies extends ManageRecords
         }
 
         $accumulatedData = array_merge($accumulatedData, $jsonData);
-        $length = count($accumulatedData);
+
+        $wallets=array_map(fn($item)=>$item['rows'][0]['payments'][0]['wallet_id'], $accumulatedData);
+        $uniqueWallets=array_unique($wallets);
+        $uniqueWallets=array_values($uniqueWallets);
+        $length = count($uniqueWallets);
 
         $winners = [];
         while (count($winners) < 20) {
             $randomIndex = rand(0, $length - 1);
-            $walletId = $accumulatedData[$randomIndex]['rows'][0]['payments'][0]['wallet_id'];
+            $walletId = $uniqueWallets[$randomIndex];
             if (!in_array($walletId, $winners)) {
                 $winners[] = $walletId;
             }
