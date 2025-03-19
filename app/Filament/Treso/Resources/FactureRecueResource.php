@@ -62,7 +62,7 @@ class FactureRecueResource extends Resource
                     ->rule(function ($get) {
                         return function (string $attribute, $value, Closure $fail) use ($get) {
                             $totalCategoriesPrix = array_sum(array_column($get('categoriePrix') ?? [], 'prix'));
-                            if ($value != $totalCategoriesPrix) {
+                            if (abs($value - $totalCategoriesPrix) > 0.01) {
                                 $fail('Le prix total doit correspondre à la somme des montants des catégories.');
                             }
                         };
@@ -76,7 +76,7 @@ class FactureRecueResource extends Resource
                     ->rule(function ($get) {
                         return function (string $attribute, $value, Closure $fail) use ($get) {
                             $totalCategoriesTVA = array_sum(array_column($get('categoriePrix') ?? [], 'tva'));
-                            if ($value != $totalCategoriesTVA) {
+                            if (abs($value - $totalCategoriesTVA) > 0.01) {
                                 $fail('Le total de la TVA doit correspondre à la somme des TVA des catégories.');
                             }
                         };
