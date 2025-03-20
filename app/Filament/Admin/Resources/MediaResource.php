@@ -83,7 +83,7 @@ class MediaResource extends Resource
                     ->default(1)
                     ->minValue(1),
                 Forms\Components\FileUpload::make('media_path')
-                    ->label('Média')
+                    ->label('Média (10Mo max)')
                     ->required()
                     ->acceptedFileTypes(
                         function (Forms\Get $get) {
