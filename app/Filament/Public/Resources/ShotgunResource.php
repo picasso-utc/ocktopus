@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -48,7 +49,17 @@ class ShotgunResource extends Resource
                 TextColumn::make('event.debut_event')
                     ->label('Début de l\'évent')    
                     ->formatStateUsing(fn ($state) => Carbon::parse($state)->locale('fr')->translatedFormat('l j F Y à H:i'))
-            ]);
+            ])
+            ->filters([
+                Filter::make('A venir')
+                    ->query(fn ($query) => $query->where('debut_event', '>=', now()))
+                    ->default(),
+            ])
+            ->actions(
+                [
+                Tables\Actions\DeleteAction::make(),
+                ]
+            );
     }    
 
     protected function getHeaderActions(): array
