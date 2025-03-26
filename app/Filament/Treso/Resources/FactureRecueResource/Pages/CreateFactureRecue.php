@@ -23,7 +23,8 @@ class CreateFactureRecue extends CreateRecord
     {
         $semestre = Semestre::find($this->record->semestre_id);
         $annee = date("Y", strtotime($semestre->startOfSemestre));
-        $category_code = CategorieFacture::find($this->record->categoriePrix->first()->categorie_id)->code;
+        $highestCategory = $this->record->categoriePrix->sortByDesc('montant')->first();
+        $category_code = CategorieFacture::find($highestCategory->categorie_id)->code;
         $facture_number = $semestre->state[0] . $annee . "-" . $category_code . $this->record->id;
         FactureRecue::find($this->record->id)->update(['facture_number'=>$facture_number]);
     }
