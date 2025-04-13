@@ -86,6 +86,23 @@ class PlanningGeneratorService
         return $this->assignParticipants($participants);
     }
 
+    private function countConsecutiveSecurity(array $planning, array $horaireKeys, int $index, string $name): int
+    {
+        $count = 0;
+        for ($i = $index; $i >= 0; $i--) {
+            $horaire = $horaireKeys[$i];
+            if (!isset($planning[$horaire][$name])) break;
+
+            $task = $planning[$horaire][$name];
+            if (in_array($task, ['Sécu Pente', 'Sécu Escalier'])) {
+                $count++;
+            } else {
+                break;
+            }
+        }
+        return $count;
+    }
+
     private function assignParticipants(array $participants): array
     {
         $planning = [];
@@ -99,8 +116,10 @@ class PlanningGeneratorService
             $planning[$horaire] = [];
     
             foreach ($this->perms[$horaire] as $task => $count) {
-                $assigned = 0;
-    
+                $assigned = 0; // Nb participants avec déjà une tâche assignée
+                $isSecurity = in_array($task, ['Sécu Pente', 'Sécu Escalier']);
+                $previousHoraire = $horaireKeys[$index - 1] ?? null;
+            
                 // On garde que les participants disponibles pour une perm à cet horaire
                 $sortedParticipants = array_filter($availableParticipants, function ($p) use ($participants, $horaire) {
                     list($permStart, $permEnd) = explode('-', $horaire);
@@ -109,34 +128,64 @@ class PlanningGeneratorService
                     return new \DateTime($participants[$p]['debut']) <= $permStart &&
                            new \DateTime($participants[$p]['fin']) >= $permEnd;
                 });
-    
+            
                 // Tri par nb taches effectuées
                 usort($sortedParticipants, function($a, $b) use ($taskCounts) {
                     return $taskCounts[$a] <=> $taskCounts[$b];
                 });
-    
+            
+                $fallbacks = []; // Participants qu’on a *temporairement* écartés psk ils faisaient déjà une sécu juste avant
                 foreach ($sortedParticipants as $selectedParticipant) {
                     $name = $participants[$selectedParticipant]['nom'];
-                    
-                    $previousHoraire = $horaireKeys[$index - 1] ?? null;
                     if (
-                        ($task === 'Sécu Pente' || $task === 'Sécu Escalier') &&  // Si c'est une sécu
-                        $previousHoraire &&  // Qu'il y a déjà un des perms
-                        isset($planning[$previousHoraire][$name]) && 
-                        in_array($planning[$previousHoraire][$name], ['Sécu Pente', 'Sécu Escalier']) // Et que la personne a déjà fait une sécu avant
+                        $isSecurity &&  // Si la tâche est une sécu
+                        $previousHoraire &&  // Qu'il y a déjà eu une perm
+                        isset($planning[$previousHoraire][$name]) &&
+                        in_array($planning[$previousHoraire][$name], ['Sécu Pente', 'Sécu Escalier']) // Et qu'ielle a déjà fait une sécu
                     ) {
-                        continue; // Ca saute
+                        $fallbacks[] = [$selectedParticipant, $name]; // On le garde sous le coude
+                        continue;
                     }
-    
-                    // On attribue les perms
-                    if (!isset($planning[$horaire][$name])) {  
+            
+                    // On assigne la perm
+                    if (!isset($planning[$horaire][$name])) {
                         $planning[$horaire][$name] = $task;
                         $taskCounts[$selectedParticipant]++;
                         $assigned++;
                         if ($assigned >= $count) break;
                     }
                 }
-            }
+            
+                // Si personne ne peut prendre la sécu, alors une personne doit rester à la sécu
+                if ($assigned < $count && $isSecurity && $previousHoraire) {
+                    // Récupère les personnes qui faisaient la même sécu juste avant
+                    $previousSecus = array_filter($planning[$previousHoraire], function($t) use ($task) {
+                        return $t === $task;
+                    });                
+                    $candidates = array_keys($previousSecus);
+                
+                    // Et on va prendre la personne qui y est resté le moins longtemps
+                    $counts = [];
+                    foreach ($candidates as $name) {
+                        $counts[$name] = $this->countConsecutiveSecurity($planning, $horaireKeys, $index - 1, $name);
+                    }                
+                    uasort($counts, fn($a, $b) => $a <=> $b);
+                
+                    foreach ($counts as $name => $nbSecu) {
+                        foreach ($participants as $key => $info) {
+                            if ($info['nom'] === $name && !isset($planning[$horaire][$name])) {
+                                $planning[$horaire][$name] = $task;
+                                $taskCounts[$key]++;
+                                $assigned++;
+                                break;
+                            }
+                        }
+                    
+                        if ($assigned >= $count) break;
+                    }                    
+                }
+                
+            }            
         }
 
         // Attribution des Sécu Pente et Sécu Escalier de 22h à 22h30
