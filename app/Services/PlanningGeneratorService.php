@@ -90,42 +90,48 @@ class PlanningGeneratorService
     {
         $planning = [];
         $availableParticipants = array_keys($participants);
-        $lastAssignedSecurity = [];
+        $taskCounts = array_fill_keys($availableParticipants, 0); // Tab pour equilibrer le nb perm
         $horaireKeys = array_keys($this->perms);
-
+    
         // Attribution des permanences générales de 18h30 à 22h00
         foreach ($horaireKeys as $index => $horaire) {
             if ($horaire >= '22:00') break;
-            shuffle($availableParticipants);
             $planning[$horaire] = [];
+    
             foreach ($this->perms[$horaire] as $task => $count) {
                 $assigned = 0;
-                shuffle($availableParticipants);
-                foreach ($availableParticipants as $selectedParticipant) {  
-
-                    $participantDebut = new \DateTime($participants[$selectedParticipant]['debut']);  // Vérifie que le participant est dispo pour cette perm
-                    $participantFin = new \DateTime($participants[$selectedParticipant]['fin']);
+    
+                // On garde que les participants disponibles pour une perm à cet horaire
+                $sortedParticipants = array_filter($availableParticipants, function ($p) use ($participants, $horaire) {
                     list($permStart, $permEnd) = explode('-', $horaire);
                     $permStart = new \DateTime($permStart);
                     $permEnd = new \DateTime($permEnd);
-                    if ($participantDebut > $permStart || $participantFin < $permEnd) {
-                        continue; 
-                    }
-                
-                    $previousHoraire = $horaireKeys[$index - 1] ?? null;   // Attribue les Sécu pente et esca en vérifiant que le participant y était pas déjà avant
-                    if (
-                        ($task === 'Sécu Pente' || $task === 'Sécu Escalier') &&
-                        ($previousHoraire && isset($planning[$previousHoraire][$participants[$selectedParticipant]['nom']]) &&
-                        in_array($planning[$previousHoraire][$participants[$selectedParticipant]['nom']], ['Sécu Pente', 'Sécu Escalier']))
-                    ) {
-                        continue;
-                    }
+                    return new \DateTime($participants[$p]['debut']) <= $permStart &&
+                           new \DateTime($participants[$p]['fin']) >= $permEnd;
+                });
+    
+                // Tri par nb taches effectuées
+                usort($sortedParticipants, function($a, $b) use ($taskCounts) {
+                    return $taskCounts[$a] <=> $taskCounts[$b];
+                });
+    
+                foreach ($sortedParticipants as $selectedParticipant) {
+                    $name = $participants[$selectedParticipant]['nom'];
                     
-                    if (!isset($planning[$horaire][$participants[$selectedParticipant]['nom']])) {   // Attribue les autres perms
-                        $planning[$horaire][$participants[$selectedParticipant]['nom']] = $task;
-                        if ($task === 'Sécu Pente' || $task === 'Sécu Escalier') {
-                            $lastAssignedSecurity[$selectedParticipant] = $horaire;
-                        }
+                    $previousHoraire = $horaireKeys[$index - 1] ?? null;
+                    if (
+                        ($task === 'Sécu Pente' || $task === 'Sécu Escalier') &&  // Si c'est une sécu
+                        $previousHoraire &&  // Qu'il y a déjà un des perms
+                        isset($planning[$previousHoraire][$name]) && 
+                        in_array($planning[$previousHoraire][$name], ['Sécu Pente', 'Sécu Escalier']) // Et que la personne a déjà fait une sécu avant
+                    ) {
+                        continue; // Ca saute
+                    }
+    
+                    // On attribue les perms
+                    if (!isset($planning[$horaire][$name])) {  
+                        $planning[$horaire][$name] = $task;
+                        $taskCounts[$selectedParticipant]++;
                         $assigned++;
                         if ($assigned >= $count) break;
                     }
