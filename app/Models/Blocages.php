@@ -12,10 +12,12 @@ class Blocages extends Model
     protected $fillable = [
         'cas',
         'reason',
-        'date'
+        'date',
+        'fin'
     ];
 
     protected $casts = [
-        'date' => 'datetime'
+        'date' => 'datetime',
+        'fin' => 'datetime',
     ];
 }

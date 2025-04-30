@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('cas');
             $table->string('reason');
             $table->dateTime('date');
+            $table->dateTime('fin');
             $table->timestamps();
         });
     }
