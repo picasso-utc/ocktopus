@@ -31,7 +31,7 @@ class FactureRecueExport implements FromCollection, WithHeadings, WithMapping, W
             'Référence',
             'Entreprise',
             'Date',
-            'Date de paiement',
+            'Date de paiement/remboursement',
             'Prix TTC',
             'TVA',
         ];
@@ -43,7 +43,7 @@ class FactureRecueExport implements FromCollection, WithHeadings, WithMapping, W
             $facture->facture_number,
             $facture->destinataire,
             $facture->date ? date('d/m/Y', strtotime($facture->date)) : '',
-            $facture->date_paiement ? date('d/m/Y', strtotime($facture->date_paiement)) : '',
+            $facture->date_paiement ? date('d/m/Y', strtotime($facture->date_paiement)) : date('d/m/Y', strtotime($facture->date_remboursement)),
             number_format($facture->prix, 2, ',', ' ') . ' €',
             number_format($facture->tva, 2, ',', ' ') . ' €',
         ];
