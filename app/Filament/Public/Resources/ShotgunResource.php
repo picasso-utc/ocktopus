@@ -4,10 +4,8 @@ namespace App\Filament\Public\Resources;
 
 use Carbon\Carbon;
 use App\Filament\Public\Resources\ShotgunResource\Pages;
-use App\Filament\Public\Resources\ShotgunResource\RelationManagers;
 use App\Models\Shotgun;
 use Filament\Actions\CreateAction;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -16,8 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ShotgunResource extends Resource
 {
@@ -33,9 +29,12 @@ class ShotgunResource extends Resource
             ->schema([
                 TextInput::make('email')->email()->default($userMail)->required(),
                 Select::make('events_id')
-                ->relationship('event', 'titre', function ($query) {
-                    $query->whereRaw('(SELECT COUNT(*) FROM shotgun WHERE shotgun.events_id = events.id) < events.nombre_places');
-                })
+                    ->relationship('event', 'titre', function ($query) {
+                        $query
+                            ->where('ouverture', '<=', now())
+                            ->where('debut_event', '>=', now())
+                            ->whereRaw('(SELECT COUNT(*) FROM shotgun WHERE shotgun.events_id = events.id) < events.nombre_places');
+                    })
                 ->required()            
             ]);
     }
@@ -52,8 +51,12 @@ class ShotgunResource extends Resource
             ])
             ->filters([
                 Filter::make('A venir')
-                    ->query(fn ($query) => $query->where('debut_event', '>=', now()))
-                    ->default(),
+                ->query(fn ($query) => 
+                    $query->whereHas('event', function ($q) {
+                        $q->where('debut_event', '>=', now());
+                    })
+                )
+                ->default(),            
             ])
             ->actions(
                 [
