@@ -41,7 +41,11 @@ class ShotgunResource extends Resource
     
     public static function table(Table $table): Table
     {
+        $user = session('user');
+        $userMail = $user->email;
+
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->where('email', $userMail))
             ->columns([
                 TextColumn::make('email')->sortable()->searchable(),
                 TextColumn::make('event.titre')->label('Événement')->sortable(),
