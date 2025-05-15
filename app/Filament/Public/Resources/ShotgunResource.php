@@ -4,6 +4,7 @@ namespace App\Filament\Public\Resources;
 
 use Carbon\Carbon;
 use App\Filament\Public\Resources\ShotgunResource\Pages;
+use App\Models\Events;
 use App\Models\Shotgun;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
@@ -22,20 +23,45 @@ class ShotgunResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $user = session('user');
-        $userMail = $user->email;
+        $userMail = session('user')->email;
 
         return $form
             ->schema([
                 TextInput::make('email')->email()->default($userMail)->required(),
                 Select::make('events_id')
-                    ->relationship('event', 'titre', function ($query) {
-                        $query
-                            ->where('ouverture', '<=', now())
+                    ->label('Événement')
+                    ->options(function () {
+                        $userEmail = session('user')->email;
+
+                        return Events::where('ouverture', '<=', now())
                             ->where('debut_event', '>=', now())
-                            ->whereRaw('(SELECT COUNT(*) FROM shotgun WHERE shotgun.events_id = events.id) < events.nombre_places');
+                            ->whereRaw('(SELECT COUNT(*) FROM shotgun WHERE shotgun.events_id = events.id) < events.nombre_places')
+                            ->whereNotExists(function ($query) use ($userEmail) {
+                                $query->selectRaw(1)
+                                    ->from('shotgun')
+                                    ->whereColumn('shotgun.events_id', 'events.id')
+                                    ->where('shotgun.email', $userEmail);
+                            })
+                            ->orderBy('debut_event')
+                            ->get()
+                            ->mapWithKeys(function ($event) {
+                                $debut = Carbon::parse($event->debut_event);
+                                $fin = Carbon::parse($event->fin_event);
+
+                                $label = sprintf(
+                                    '%s : %s %d %s %s-%s',
+                                    $event->titre,
+                                    ucfirst($debut->translatedFormat('l')),
+                                    $debut->day,
+                                    $debut->translatedFormat('F'),
+                                    $debut->format('H:i'),
+                                    $fin->format('H:i')
+                                );
+
+                                return [$event->id => $label];
+                            });
                     })
-                ->required()            
+                    ->required()        
             ]);
     }
     
@@ -51,7 +77,7 @@ class ShotgunResource extends Resource
                 TextColumn::make('event.titre')->label('Événement')->sortable(),
                 TextColumn::make('event.debut_event')
                     ->label('Début de l\'évent')    
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->locale('fr')->translatedFormat('l j F Y à H:i'))
+                    ->formatStateUsing(fn ($state) => ucfirst(Carbon::parse($state)->locale('fr')->translatedFormat('l j F Y à H:i')))
             ])
             ->filters([
                 Filter::make('A venir')
@@ -64,7 +90,8 @@ class ShotgunResource extends Resource
             ])
             ->actions(
                 [
-                Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
                 ]
             );
     }    
