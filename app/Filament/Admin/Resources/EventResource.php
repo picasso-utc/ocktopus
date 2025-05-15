@@ -17,6 +17,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Livewire\Livewire;
 
 class EventResource extends Resource
 {
@@ -55,25 +56,24 @@ class EventResource extends Resource
                     ->default()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Action::make('voir_inscrits')
                     ->label('Voir les inscrit.e.s')
                     ->icon('heroicon-o-eye')
-                    ->modalIcon('heroicon-o-eye')
+                    ->modalIcon('heroicon-o-user-group')
                     ->modalAlignment('center')
                     ->modalHeading('Liste des inscrit.e.s')
-                    ->modalDescription('Voici la liste des participants inscrit.e.s à cet événement.')
+                    ->modalWidth('xl')
+                    ->modalDescription('Liste des participant.e.s inscrit.e.s à cet événement.')
                     ->modalContent(fn ($record) => view('filament.admin.modals.inscrits-event', ['event' => $record]))
                     ->modalFooterActions([
                         Action::make('envoyer_mail_tous')
-                            ->label('Envoyer mail à tous.tes')
+                            ->label('Envoyer mail à tous')
                             ->icon('heroicon-o-envelope')
                             ->action(fn ($record) => static::envoyerMailTous($record))
                             ->requiresConfirmation()
                             ->successNotificationTitle('Emails envoyés !'),
                         Action::make('ajouter_inscrit')
-                            ->label('Ajouter quelqu\'un')
+                            ->label("Ajouter un participant")
                             ->icon('heroicon-o-user-plus')
                             ->form([
                                 TextInput::make('email')
@@ -87,6 +87,8 @@ class EventResource extends Resource
                     ->modalFooterActionsAlignment('center')
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ]);
     }
     
@@ -110,29 +112,6 @@ class EventResource extends Resource
         Notification::make()
             ->title("Emails envoyés")
             ->body("Tous les participants ont reçu un email !")
-            ->success()
-            ->send();
-    }
-
-    public static function envoyerMailPerso($record, $email)
-    {
-        Mail::to($email)->send(new EventMail($record));
-
-        Notification::make()
-            ->title("Email envoyé")
-            ->body("Un email a été envoyé à $email.")
-            ->success()
-            ->send();
-    }
-
-    public static function supprimerInscrit($record, $email)
-    {
-        $inscrit = $record->shotguns()->where('email', $email)->first();
-        $inscrit->delete();
-
-        Notification::make()
-            ->title("Inscription supprimée")
-            ->body("$email a été retiré de l'événement.")
             ->success()
             ->send();
     }
