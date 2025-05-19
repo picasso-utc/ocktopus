@@ -62,7 +62,7 @@ class ManageGoodies extends ManageRecords
         $uniqueWallets=array_values($uniqueWallets);
         $length = count($uniqueWallets);
 
-        $membresPic = User::where('role','!=','none')->get('email')->toArray();
+        $membresPic = User::where('role','!=','none')->pluck('email', 'email')->toArray();
 
         $winners = [];
         $winnersName = [];
