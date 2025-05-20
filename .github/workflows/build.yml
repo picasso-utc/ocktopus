@@ -1,9 +1,5 @@
 name: Build ocktopus
 
-env:
-  ACTIONS_STEP_DEBUG: true
-  ACTIONS_RUNNER_DEBUG: true
-
 on:
   push:
     branches: [ main ]
@@ -35,9 +31,9 @@ jobs:
 
           cd deploy
           tar -czf ../deploy.tar.gz .
-      
+
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: ./.github/actions/upload-artifact
         with:
           name: laravel-deploy-package
           path: deploy.tar.gz
