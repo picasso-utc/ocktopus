@@ -33,7 +33,7 @@ jobs:
           tar -czf ../deploy.tar.gz .
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: laravel-deploy-package
           path: deploy.tar.gz
