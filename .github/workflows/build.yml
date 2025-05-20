@@ -1,5 +1,9 @@
 name: Build ocktopus
 
+env:
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
+
 on:
   push:
     branches: [ main ]
