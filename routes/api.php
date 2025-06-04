@@ -3,6 +3,7 @@
 use App\Http\Controllers\BachController;
 use App\Http\Controllers\ExonerationController;
 use App\Http\Controllers\TodayConsumptionController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,3 +37,5 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 
 // Exoneration d'un achat
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
+
+Route::post('/transaction', [TransactionController::class, 'handle']);
