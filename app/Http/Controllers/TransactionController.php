@@ -6,7 +6,6 @@ use App\Models\Articles;
 use App\Models\MarketPrices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -14,7 +13,7 @@ class TransactionController extends Controller
     {
         $badgeId = $request->input('badge_id');
         $items = $request->input('items'); // [[article_id, quantity], ...]
-        $sessionId = $request->header('session_id');
+        $sessionId = $request->input('session_id');
 
         $systemId = env('WEEZEVENT_SYSTEM_ID');
         $appKey = env('WEEZEVENT_APP_KEY');
@@ -58,35 +57,61 @@ class TransactionController extends Controller
 
     private function mapPriceToBeerArticle($price)
     {
-        $rounded = round($price, 2);
+        $rounded = number_format(round($price, 2), 1, '.', '');
         $priceToId = [
-            0.10 => 20445,
-            0.20 => 20446,
-            0.30 => 21003,
-            0.40 => 20682,
-            0.50 => 23596,
-            0.60 => 23597,
-            0.70 => 23598,
-            0.80 => 23599,
-            0.90 => 23600,
-            1.00 => 23601,
-            1.10 => 23602,
-            1.20 => 23603, 
-            1.30 => 23604,
-            1.40 => 23605,
+            '0.1' => 20445,
+            '0.2' => 20446,
+            '0.3' => 21003,
+            '0.4' => 20682,
+            '0.5' => 23596,
+            '0.6' => 23597,
+            '0.7' => 23598,
+            '0.8' => 23599,
+            '0.9' => 23600,
+            '1.0' => 23601,
+            '1.1' => 23602,
+            '1.2' => 23603, 
+            '1.3' => 23604,
+            '1.4' => 23605,
         ];
         return $priceToId[$rounded] ?? 23601;
     }
 
     private function updateMarket($articleId, $quantity)
     {
-        $lastPrice = $this->getCurrentMarketPrice($articleId);
-        $newPrice = min(1.40, $lastPrice + 0.10 * $quantity);
+        $maxPrice = 1.4;
+        $minPrice = 0.1;
+        $priceStep = 0.05;
+        $fluctuationRange = 0.02;
 
-        MarketPrices::firstOrCreate([
-            'article_id' => $articleId,
-            'price' => $newPrice,
-            'updated_at' => now(),
-        ]);
+        $article = Articles::where('article_id', $articleId)->first();
+        if (!$article) return;
+
+        $categoryId = $article->category_id;
+
+        $allArticles = Articles::where('category_id', $categoryId)->get();
+
+        foreach ($allArticles as $otherArticle) {
+            $currentPrice = MarketPrices::firstOrCreate(
+                ['article_id' => $otherArticle->article_id],
+            );
+
+            $newPrice = $currentPrice->price;
+
+            if ($otherArticle->article_id == $articleId) {
+                $newPrice += $priceStep * $quantity;
+            } else {
+                $newPrice -= $priceStep * 0.5;
+            }
+
+            $fluctuation = rand(-100, 100) / 100 * $fluctuationRange;
+            $newPrice += $fluctuation;
+
+            $newPrice = max($minPrice, min($maxPrice, $newPrice));
+
+            $currentPrice->price = $newPrice;
+            $currentPrice->updated_at = now();
+            $currentPrice->save();
+        }
     }
 }
