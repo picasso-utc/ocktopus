@@ -3,7 +3,7 @@
 # It also creates a user for the service and sets the service to start at boot
 # It install also the chromium browser
 
-# Avant toute chose : installer le pilote du lecteur de carte. Attention a l'arch du rasp
+# Avant toute chose : installer le pilote du lecteur de carte. Attention a l'arch du rasp (pour info, le pilot de la badgeuse 5321CL c'est du 32 bits)
 
 sudo apt update && sudo apt upgrade -y
 
