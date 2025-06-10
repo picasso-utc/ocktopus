@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('market_prices', function (Blueprint $table) {
             $table->integer('article_id')->primary();
-            $table->float('price')->default(1.0);
+            $table->decimal('price', 3, 2)->default(1.00);
             $table->timestamps();
         });
     }
