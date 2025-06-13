@@ -20,18 +20,18 @@ class TransactionController extends Controller
         $appKey = env('WEEZEVENT_APP_KEY');
         $fundId = env('WEEZEVENT_FUND_ID');
 
-        $firstTransaction = Http::withHeaders([
-            'accept-language' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
-        ])->post('https://api.nemopay.net/services/POSS3/transaction?system_id='.$systemId.'&app_key='.$appKey.'&sessionid='.$sessionId, [
-            'badge_id' => $badgeId,
-            'obj_ids' => $items,
-            'fun_id' => $fundId,
-        ])->throw();
-
         $mappedItems = [];
         foreach ($items as [$articleId, $quantity]) {
             $categoryId = $this->getCategoryFromArticle($articleId);
-            if ($categoryId === 11) {    // Si c'est une bière pression, on remplace par le prix du marché
+            if ($categoryId == 11) {    // Si c'est une bière pression, on remplace par le prix du marché
+                $firstTransaction = Http::withHeaders([  // Première transaction de l'article (qui aura été mis à 0e) pour les stats
+                    'accept-language' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+                ])->post('https://api.nemopay.net/services/POSS3/transaction?system_id='.$systemId.'&app_key='.$appKey.'&sessionid='.$sessionId, [
+                    'badge_id' => $badgeId,
+                    'obj_ids' => [[$articleId, $quantity]],
+                    'fun_id' => $fundId,
+                ])->throw();
+
                 $currentPrice = $this->getCurrentMarketPrice($articleId);
                 $replacementArticleId = $this->mapPriceToBeerArticle($currentPrice);
                 $mappedItems[] = [$replacementArticleId, $quantity];
@@ -49,12 +49,13 @@ class TransactionController extends Controller
             'fun_id' => $fundId,
         ])->throw();
 
-        return response()->json($response->json());
+        return response()->json($response->json()); 
     }
 
     private function getCategoryFromArticle($articleId)
     {
-        return Articles::where('article_id', $articleId)->first()->category_id;
+        $article = Articles::where('article_id', $articleId)->first() ?? null;
+        return $article ? $article->category_id : null;
     }
 
     private function getCurrentMarketPrice($articleId)
@@ -125,8 +126,18 @@ class TransactionController extends Controller
             $currentPrice->price = $newPrice;
             $currentPrice->updated_at = now();
             $currentPrice->save();
-
-            Log::info('Article '.$otherArticle->article_id.' => '.$newPrice);
         }
+    }
+
+    public function getPrices()
+    {
+        $articles = MarketPrices::all();
+
+        foreach ($articles as $article) {
+            $articleModel = Articles::where('article_id', $article->article_id)->first();
+            $article->article_name = $articleModel ? $articleModel->article_name : null;
+        }
+
+        return $articles;
     }
 }

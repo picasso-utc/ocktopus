@@ -58,3 +58,5 @@ Route::get('/download/{filename}', function ($filename) {
         return response()->json(['message' => 'Image not found'], 404);
     }
 })->name('download');
+
+Route::get('/bourse',[\App\Http\Controllers\TransactionController::class,'getPrices']);
