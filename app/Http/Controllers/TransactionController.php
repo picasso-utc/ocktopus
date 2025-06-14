@@ -67,34 +67,25 @@ class TransactionController extends Controller
 
     private function mapPriceToBeerArticle($price)
     {
-        $rounded = number_format(round($price / 0.05) * 0.05, 2, '.', '');
-        $priceToId = [
-            '0.60' => 23597,
-            '0.65' => 20445,
-            '0.70' => 23598,
-            '0.75' => 20446,
-            '0.80' => 23599,
-            '0.85' => 21003,
-            '0.90' => 23600,
-            '0.95' => 20682,
-            '1.00' => 23601,
-            '1.05' => 23596,
-            '1.10' => 23602,
-            '1.15' => 23648,
-            '1.20' => 23603, 
-            '1.25' => 23649,
-            '1.30' => 23604,
-            '1.35' => 23650,
-            '1.40' => 23605,
-        ];
-        return $priceToId[$rounded] ?? 23601;
+        $rounded = number_format($price, 2, '.', '');
+        $basePrice = 0.60;
+        $baseId = 23658;
+
+        $diff = ($rounded - $basePrice) * 100; // nb centimes d'écart
+        $id = $baseId + (int)round($diff);  // l'ID part de baseId + centimes d'écart
+
+        if ($id < $baseId || $id > 23658 + 80) {
+            return 23698; // Prix inconnu ? -> 1e
+        }
+
+        return $id;
     }
 
     private function updateMarket($articleId, $quantity)
     {
         $maxPrice = 1.4;
         $minPrice = 0.6;
-        $priceStep = 0.01;
+        $priceStep = 0.03;
         // $fluctuationRange = 0.05;
 
         $article = Articles::where('article_id', $articleId)->first();
