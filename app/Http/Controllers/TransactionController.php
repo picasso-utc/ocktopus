@@ -6,7 +6,6 @@ use App\Models\Articles;
 use App\Models\MarketPrices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -34,8 +33,13 @@ class TransactionController extends Controller
 
                 $currentPrice = $this->getCurrentMarketPrice($articleId);
                 $replacementArticleId = $this->mapPriceToBeerArticle($currentPrice);
-                $mappedItems[] = [$replacementArticleId, $quantity];
-                $this->updateMarket($articleId, $quantity);
+                for ($i = 0; $i < $quantity; $i++) {
+                    $currentPrice = $this->getCurrentMarketPrice($articleId);
+                    $replacementArticleId = $this->mapPriceToBeerArticle($currentPrice);
+                    
+                    $mappedItems[] = [$replacementArticleId, 1];  // On passe les articles 1 par 1 au cas où le prix augmente 
+                    $this->updateMarket($articleId, 1);
+                }
             } else {
                 $mappedItems[] = [$articleId, $quantity];
             }
@@ -86,15 +90,25 @@ class TransactionController extends Controller
         $maxPrice = 1.4;
         $minPrice = 0.6;
         $priceStep = 0.03;
-        // $fluctuationRange = 0.05;
 
         $article = Articles::where('article_id', $articleId)->first();
         if (!$article) return;
 
         $categoryId = $article->category_id;
-
         $allArticles = Articles::where('category_id', $categoryId)->get();
         $nbArticles = $allArticles->count();
+
+        if ($nbArticles <= 1) return;
+
+        $weights = [];
+        $totalWeight = 0;
+        foreach ($allArticles as $otherArticle) {
+            if ($otherArticle->article_id == $articleId) continue;
+
+            $w = mt_rand(50, 150);
+            $weights[$otherArticle->article_id] = $w;
+            $totalWeight += $w;
+        }
 
         foreach ($allArticles as $otherArticle) {
             $currentPrice = MarketPrices::firstOrNew(
@@ -110,13 +124,35 @@ class TransactionController extends Controller
             if ($otherArticle->article_id == $articleId) {
                 $newPrice += $priceStep * $quantity;
             } else {
-                $newPrice -= ($priceStep * $quantity) / ($nbArticles - 1);
+                $weight = $weights[$otherArticle->article_id];
+                $share = ($priceStep * $quantity) * ($weight / $totalWeight);
+                $newPrice -= $share;
             }
 
-            $newPrice = max($minPrice, min($maxPrice, $newPrice));
+            $newPrice = max($minPrice, min($maxPrice, round($newPrice, 2)));
+
             $currentPrice->price = $newPrice;
             $currentPrice->updated_at = now();
             $currentPrice->save();
+        }
+
+        $sum = 0;
+        foreach ($allArticles as $article) {
+            $marketPrice = MarketPrices::where('article_id', $article->article_id)->first();
+            $sum += $marketPrice ? $marketPrice->price : 1.00;
+        }
+
+        $mean = $sum / $nbArticles;
+        $delta = 1.00 - $mean;
+        $correction = round($delta, 4);
+
+        foreach ($allArticles as $article) {
+            $marketPrice = MarketPrices::where('article_id', $article->article_id)->first();
+            if (!$marketPrice) continue;
+
+            $adjusted = max($minPrice, min($maxPrice, round($marketPrice->price + $correction, 2)));
+            $marketPrice->price = $adjusted;
+            $marketPrice->save();
         }
     }
 
@@ -129,6 +165,14 @@ class TransactionController extends Controller
             $article->article_name = $articleModel ? $articleModel->article_name : null;
         }
 
-        return $articles;
+        $response = [
+            'refresh' => 5000,
+            'data' => $articles,
+        ];
+
+        return response()->json($response)
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
 }
