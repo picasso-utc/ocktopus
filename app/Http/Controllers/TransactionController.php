@@ -78,8 +78,8 @@ class TransactionController extends Controller
         $diff = ($rounded - $basePrice) * 100; // nb centimes d'écart
         $id = $baseId + (int)round($diff);  // l'ID part de baseId + centimes d'écart
 
-        if ($id < $baseId || $id > 23658 + 80) {
-            return 23698; // Prix inconnu ? -> 1e
+        if ($id < $baseId || $id > 23658 + 180) {  // Si le prix est inférieur à 0.60 ou spérieur à 2.40
+            return 23778; // Prix inconnu ? -> 1e80
         }
 
         return $id;
@@ -87,9 +87,10 @@ class TransactionController extends Controller
 
     private function updateMarket($articleId, $quantity)
     {
-        $maxPrice = 1.4;
+        $maxPrice = 2.4;
         $minPrice = 0.6;
-        $priceStep = 0.03;
+        $priceStep = 0.07;
+        $balanceMarket = 1.80;   // Le marché se balance autour de cette valeur
 
         $article = Articles::where('article_id', $articleId)->first();
         if (!$article) return;
@@ -143,7 +144,7 @@ class TransactionController extends Controller
         }
 
         $mean = $sum / $nbArticles;
-        $delta = 1.00 - $mean;
+        $delta = $balanceMarket - $mean;
         $correction = round($delta, 4);
 
         foreach ($allArticles as $article) {
