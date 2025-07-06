@@ -22,7 +22,7 @@ class TransactionController extends Controller
         $mappedItems = [];
         foreach ($items as [$articleId, $quantity]) {
             $categoryId = $this->getCategoryFromArticle($articleId);
-            if ($categoryId == 11) {    // Si c'est une bière pression, on remplace par le prix du marché
+            if ($categoryId == 11 || $categoryId == 10) {    // Si c'est une bière pression ou bouteille, on remplace par le prix du marché
                 $firstTransaction = Http::withHeaders([  // Première transaction de l'article (qui aura été mis à 0e) pour les stats
                     'accept-language' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
                 ])->post('https://api.nemopay.net/services/POSS3/transaction?system_id='.$systemId.'&app_key='.$appKey.'&sessionid='.$sessionId, [
@@ -66,10 +66,10 @@ class TransactionController extends Controller
     {
         return MarketPrices::where('article_id', $articleId)
             ->first()
-            ->price ?? 1.0;
+            ->price ?? 1.80;
     }
 
-    private function mapPriceToBeerArticle($price)
+    private function mapPriceToBeerArticle($price)  // Calcule l'id de la bière sachant que 60 centimes c'est l'id 23658 et qu'on augmente l'id de 1 par centime
     {
         $rounded = number_format($price, 2, '.', '');
         $basePrice = 0.60;
@@ -89,7 +89,7 @@ class TransactionController extends Controller
     {
         $maxPrice = 2.4;
         $minPrice = 0.6;
-        $priceStep = 0.07;
+        $priceStep = 0.07;      // Plus ou moins de fluctuation sur le prix du marché
         $balanceMarket = 1.80;   // Le marché se balance autour de cette valeur
 
         $article = Articles::where('article_id', $articleId)->first();
@@ -164,6 +164,7 @@ class TransactionController extends Controller
         foreach ($articles as $article) {
             $articleModel = Articles::where('article_id', $article->article_id)->first();
             $article->article_name = $articleModel ? $articleModel->article_name : null;
+            $article->category_id = $articleModel ? $articleModel->category_id : null;
         }
 
         $response = [
