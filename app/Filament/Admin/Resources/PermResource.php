@@ -7,7 +7,6 @@ use App\Filament\Admin\Resources\PermResource\RelationManagers;
 use App\Mail\MailPerm;
 use App\Models\Perm;
 use App\Models\Semestre;
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -275,6 +274,7 @@ class PermResource extends Resource
                         'xl' => 6,
                         '2xl' => 6,
                     ]),
+                Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
             ])
             ->columns(6); // Définit le nombre de colonnes global pour le formulaire
     }
@@ -337,8 +337,7 @@ class PermResource extends Resource
                 ]
             )
             ->checkIfRecordIsSelectableUsing(
-                fn (Model $record): bool => !$record->mailed
-            )
+                fn (Model $record): bool => !$record->mailed     )
             ->emptyStateHeading('Aucune permanence');
     }
 
@@ -409,6 +408,16 @@ class PermResource extends Resource
 
     public static function sendMail($record)
     {
+        // Vérification : la perm a-t-elle au moins un créneau ?
+        if ($record->creneaux()->count() === 0) {
+            \Filament\Notifications\Notification::make()
+                ->title('Erreur : La perm n\'est pas dans le planning')
+                ->body('Impossible d\'envoyer le mail car aucun créneau n\'est attribué à cette perm.')
+                ->danger()
+                ->send();
+            return;
+        }
+
         DB::beginTransaction();
 
         try {
@@ -425,20 +434,33 @@ class PermResource extends Resource
                 $email->cc($mailAsso);
             }
 
-            $nombreCreneaux = $record->nombre_creaneaux;
+            /*$nombreCreneaux = $record->nombre_creaneaux;
             if ($nombreCreneaux > 1) {
                 $email->send(new MailPerm($record));
             } else {
                 $email->send(new MailPerm($record));
-            }
+            }*/
+
+            //Test
+            $nombreCreneaux = $record->creneaux()->count();
+            $email->send(new MailPerm($record));
 
             $record->mailed = 1;
             $record->save();
 
             DB::commit();
+
+            \Filament\Notifications\Notification::make()
+                ->title('Mail envoyé avec succès')
+                ->success()
+                ->send();
         } catch (Exception $e) {
             DB::rollBack();
+            \Filament\Notifications\Notification::make()
+                ->title('Erreur lors de l\'envoi du mail')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
         }
     }
 }
-

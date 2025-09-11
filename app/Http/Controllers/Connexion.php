@@ -54,24 +54,32 @@ class Connexion extends Controller
 
                 $userData = $provider->getResourceOwner($accessToken);
                 // Make a request to the authentication server to get user associations
-                $response = Http::withToken($accessToken)->get('https://auth.assos.utc.fr/api/user/associations/current');
+                //$response = Http::withToken($accessToken)->get('https://auth.assos.utc.fr/api/user/associations/current');
+                $tokenString = $accessToken->getToken();
+                $response = Http::withToken($tokenString)->get('https://auth.assos.utc.fr/api/user/associations/current');
+
+
 
                 if ($response->failed()) {
-                    return response()->json(['message' => 'Error while getting user infos','JWT_ERROR' => true], 401);
+                    //return response()->json(['message' => 'Error while getting user infos','JWT_ERROR' => true], 401);
                 }
 
+                //$userAssos = is_array($response->json()) ? $response->json() : [];
                 $userAssos = $response->json();
+
 
                 $adminStatus = MemberRole::None;
                 // Check if the user is a member or administrator of the picasso
-                foreach ($userAssos as $asso) {
-                    if ($asso['login'] == 'picasso') {
-                        $adminStatus = MemberRole::Member;
-                        $acceptedRoles = ['developer', 'resp informatique', 'president', 'treasury', 'vice-treasury', 'secretaire general', 'vice-president'];
-                        if (in_array($asso['user_role']['type'], $acceptedRoles)) {
+                if(is_array($userAssos) && count($userAssos) > 0){
+                    foreach ($userAssos as $asso) {
+                        /*if ($asso['login'] == 'picasso') {
                             $adminStatus = MemberRole::Administrator;
+                            break;
+                        }*/
+                        if (($asso['login'] ?? null) === 'picasso') {
+                            $adminStatus = MemberRole::Administrator;
+                            break;
                         }
-                        break;
                     }
                 }
 
@@ -80,14 +88,31 @@ class Connexion extends Controller
                 $user->uuid = $userData->toArray()["uuid"];
                 $user->email = $userData->toArray()["email"];
                 $user->role = $adminStatus;
-                if(User::where('uuid', $user->uuid)->count() > 0){
+
+
+
+                /*if(User::where('uuid', $user->uuid)->count() > 0){
                     $user->update();
                 }
                 else{
                     if ($adminStatus != MemberRole::None) {
                         $user->save();
                     }
+                }*/
+
+                $existingUser = User::where('uuid', $user->uuid)->first();
+                if ($existingUser) {
+                    $existingUser->update([
+                        'email' => $userData->toArray()["email"],
+                        'role'  => $adminStatus,
+                    ]);
+                    $user = $existingUser; // on réutilise cet utilisateur dans la session
+                } else {
+                    if ($adminStatus != MemberRole::None) {
+                        $user->save();
+                    }
                 }
+
                 session(['user' => $user]);
 
                 // Create a cookie with the access token and set its expiration time to 1440 minutes (24 hours)
