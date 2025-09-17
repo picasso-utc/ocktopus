@@ -33,6 +33,9 @@
     <li><strong>L’heure c’est l’heure :</strong> La vente d’alcool est autorisée de 18h30 à 21h30. À 21h56, on lance la Traviata et l’allumage des lumières, puis on évacue la salle et la terrasse. À 23h, tout doit être nettoyé et tout le monde dehors. Pendant l'évacuation du pic : gardez votre calme et n'oubliez pas le gilet jaune qui vous sera remis par l'astreintrice. Les abords du Pic doivent être dégagés très rapidement (sur le trottoir tout le long et sur le parvis de BF) pour éviter le bruit et ainsi les plaintes des voisins.</li>
 
     <li><strong>Lâchez-vous sur la déco et les animations ! :</strong> Vous avez un budget de 20€ pour dynamiser notre cher foyer. Que vous soyez une asso ou juste un groupe de potes, éclatez-vous, faites-nous rêver, et n’oubliez pas de mettre la facture à l’ordre de PVDC PICASSO.</li>
+
+    <li><strong>Vous pouvez demander à avoir un DJ Set ! :</strong> Il vous suffit de contacter FSC et de leur demander si ils/elles seraient disponibles le soir de votre perm. 🎧</li>
+
     <li><strong>Concours de qualité :</strong> À la fin du semestre, les assos les plus créatives et engagées seront récompensées lors du repas des permanenciers (RDP). Des prix seront remis, alors faites chauffer la déco, les animations et le menu ! 🔥🏆</li>
 </ol>
     <h3>En plus, voici quelques conseils pratiques :</h3>
