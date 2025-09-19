@@ -34,7 +34,7 @@
 
     <li><strong>Lâchez-vous sur la déco et les animations ! :</strong> Vous avez un budget de 20€ pour dynamiser notre cher foyer. Que vous soyez une asso ou juste un groupe de potes, éclatez-vous, faites-nous rêver, et n’oubliez pas de mettre la facture à l’ordre de PVDC PICASSO.</li>
 
-    <li><strong>Vous pouvez demander à avoir un DJ Set ! :</strong> Il vous suffit de contacter FSC et de leur demander si ils/elles seraient disponibles le soir de votre perm. 🎧</li>
+    <li><strong>Vous pouvez demander à avoir un DJ Set ! :</strong> Il vous suffit de contacter FSC et de leur demander si ils/elles seraient disponibles le soir de votre perm et si vous souhaitez un style de musique particulier. 🎧</li>
 
     <li><strong>Concours de qualité :</strong> À la fin du semestre, les assos les plus créatives et engagées seront récompensées lors du repas des permanenciers (RDP). Des prix seront remis, alors faites chauffer la déco, les animations et le menu ! 🔥🏆</li>
 </ol>
