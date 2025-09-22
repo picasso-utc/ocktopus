@@ -1,0 +1,39 @@
+name: Build ocktopus
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Prepare deploy folder
+        run: |
+          mkdir deploy
+          rsync -av --progress ./ ./deploy \
+            --exclude='.env' \
+            --exclude='storage' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='vendor/bin' \
+            --exclude='deploy' \
+            --exclude='.git'
+
+          cd deploy
+          tar -czf ../deploy.tar.gz .
+
+      - name: Upload artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          name: laravel-deploy-package
+          path: deploy.tar.gz
