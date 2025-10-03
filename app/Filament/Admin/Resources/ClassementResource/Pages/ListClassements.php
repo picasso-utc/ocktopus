@@ -60,11 +60,12 @@ class ListClassements extends ListRecords
                                             WHEN "Autre" THEN 1
                                             WHEN "Soir 1" THEN 2.5
                                             WHEN "Soir 2" THEN 2
+                                            WHEN "LESSIVE" THEN 1
                                             ELSE 0
                                         END)
                                 FROM astreintes
                                 INNER JOIN creneau ON astreintes.creneau_id = creneau.id
-                                WHERE astreintes.user_id = users.id 
+                                WHERE astreintes.user_id = users.id
                                 AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
                             ->orderBy('points', 'desc');
                     }
@@ -82,7 +83,7 @@ class ListClassements extends ListRecords
                                           END)
                                 FROM astreintes
                                 INNER JOIN creneau ON astreintes.creneau_id = creneau.id
-                                WHERE astreintes.user_id = users.id 
+                                WHERE astreintes.user_id = users.id
                                 AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
                             ->orderBy('points', 'desc');
                     }
@@ -98,7 +99,7 @@ class ListClassements extends ListRecords
                                           END)
                                 FROM astreintes
                                 INNER JOIN creneau ON astreintes.creneau_id = creneau.id
-                                WHERE astreintes.user_id = users.id 
+                                WHERE astreintes.user_id = users.id
                                 AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
                             ->orderBy('points', 'desc');
                     }
@@ -114,7 +115,22 @@ class ListClassements extends ListRecords
                                           END)
                                 FROM astreintes
                                 INNER JOIN creneau ON astreintes.creneau_id = creneau.id
-                                WHERE astreintes.user_id = users.id 
+                                WHERE astreintes.user_id = users.id
+                                AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
+                            ->orderBy('points', 'desc');
+                    }
+                ),
+            'high_scores_lessive' => Tab::make('Lessive')
+                ->modifyQueryUsing(
+                    function (Builder $query) use ($startSemester, $endSemester) {
+                        return $query->selectRaw('users.*,
+                                COALESCE((SELECT SUM(CASE astreintes.astreinte_type
+                                            WHEN "LESSIVE" THEN 1
+                                            ELSE 0
+                                          END)
+                                FROM astreintes
+                                INNER JOIN creneau ON astreintes.creneau_id = creneau.id
+                                WHERE astreintes.user_id = users.id
                                 AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
                             ->orderBy('points', 'desc');
                     }

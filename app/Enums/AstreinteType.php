@@ -13,6 +13,7 @@ class AstreinteType
     const S3 = 'S3';
     const S4 = 'S4';
     const A = 'A';
+    const LESSIVE = 'Lessive';
 
     public static function choices()
     {
@@ -26,6 +27,7 @@ class AstreinteType
             self::S3 => 'Soir 3',
             self::S4 => 'Soir 4',
             self::A => 'Divers',
+            self::LESSIVE => 'LESSIVE',
         ];
     }
 }

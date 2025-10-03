@@ -74,10 +74,10 @@ class NoteAstreinteOverview extends BaseWidget
         }
         return [
             Stat::make('Astreintes', Astreinte::query()
-                ->where('user_id', $userId) 
+                ->where('user_id', $userId)
                 ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
                 ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
-                ->count()) 
+                ->count())
                 ->description('Votre nombre d\'astreintes'),
             Stat::make('Astreintes matin', $sumMatin1Matin2)
                 ->description('Votre nombre d\'astreintes du matin'),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\AstreinteType;
 use App\Filament\Admin\Resources\AstreinteShotgunResource\Pages;
 use App\Filament\Admin\Resources\AstreinteShotgunResource\RelationManagers;
 use App\Models\Astreinte;
@@ -85,23 +86,24 @@ class AstreinteShotgunResource extends Resource
                             'M' => 'Matin',
                             'D' => 'Déjeuner',
                             'S' => 'Soir',
+                            'L' => 'Lessive',
                         }),
                     Tables\Columns\TextColumn::make('perm.nom')
                         ->label('Perm associée')
                         ->badge(),
                     Tables\Columns\TextColumn::make('creneau')
                         ->formatStateUsing(function ($state, Creneau $creneau) {
-                            
+
                             $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
                                 // Jointure interne avec la table users
-                                ->join('users', 'astreintes.user_id', '=', 'users.id') 
-                                // Trier pour obtenir un affichage chronologique cohérent  
+                                ->join('users', 'astreintes.user_id', '=', 'users.id')
+                                // Trier pour obtenir un affichage chronologique cohérent
                                 ->orderBy('astreinte_type')
-                                ->select('users.email') 
-                                ->distinct() 
+                                ->select('users.email', 'astreintes.astreinte_type') // ajout du second arg pour etre compatible avec MySQL 8+
+                                ->distinct()
                                 ->get()
                                 ->map(function ($user) {
-                                    return mailToName($user->email); 
+                                    return mailToName($user->email);
                                 });
 
                             return "Astreinteurs : " . $membresDuCreneau->implode(', ');
@@ -146,6 +148,14 @@ class AstreinteShotgunResource extends Resource
                     ->color(fn($record) => self::determineColor2($record, $userId))
                     ->action(fn($record) => self::handleshotgun2($record, $userId)),
                 //->disabled(true), -> à creuser pour etre encore mieux
+                Tables\Actions\Action::make('lessive')
+                    ->label('Lessive')
+                    ->button()
+                    ->visible(fn($record) =>
+                            Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
+                        )
+                    ->color(fn($record) => self::determineColorLessive($record, $userId))
+                    ->action(fn($record) => self::handleLessive($record, $userId)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -389,4 +399,49 @@ class AstreinteShotgunResource extends Resource
             'index' => Pages\ListAstreinteShotguns::route('/'),
         ];
     }
+
+    // Gestion des lessives
+    private static function handleLessive($record, $userId)
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $existing = Astreinte::where('astreinte_type', AstreinteType::LESSIVE)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->first();
+
+        // Si c'est la bonne personne => désinscription
+        if ($existing && $existing->user_id == $userId) {
+            $existing->delete();
+            return;
+        }
+
+        // Si c'est quelqu'un d'autre => impossible
+        if ($existing) {
+            Notification::make()
+                ->title('Le créneau Lessive est déjà pris cette semaine')
+                ->color('danger')
+                ->send();
+            return;
+        }
+
+        // Sinon => inscription
+        Astreinte::create([
+            'user_id' => $userId,
+            'creneau_id' => $record->id,
+            'astreinte_type' => AstreinteType::LESSIVE,
+        ]);
+    }
+
+
+    private static function determineColorLessive($record, $userId)
+    {
+        $existing = Astreinte::where('astreinte_type', AstreinteType::LESSIVE)
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->first();
+
+        if ($existing && $existing->user_id == $userId) return 'success';
+        if ($existing) return 'danger';
+    }
+
 }
