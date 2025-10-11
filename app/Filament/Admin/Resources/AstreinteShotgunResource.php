@@ -407,7 +407,9 @@ class AstreinteShotgunResource extends Resource
         $endOfWeek = Carbon::now()->endOfWeek();
 
         $existing = Astreinte::where('astreinte_type', AstreinteType::LESSIVE)
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->whereHas('creneau', function ($q) use ($record) {
+                $q->whereDate('date', $record->date);
+            })
             ->first();
 
         // Si c'est la bonne personne => désinscription
@@ -437,7 +439,9 @@ class AstreinteShotgunResource extends Resource
     private static function determineColorLessive($record, $userId)
     {
         $existing = Astreinte::where('astreinte_type', AstreinteType::LESSIVE)
-            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->whereHas('creneau', function ($q) use ($record) {
+                $q->whereDate('date', $record->date);
+            })
             ->first();
 
         if ($existing && $existing->user_id == $userId) return 'success';
