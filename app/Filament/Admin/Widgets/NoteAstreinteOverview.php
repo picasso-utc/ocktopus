@@ -45,8 +45,10 @@ class NoteAstreinteOverview extends BaseWidget
             ->pluck('count', 'astreinte_type');
 
         // Nombre moyen d'astreintes par utilisateur
+        // Nombre total d'astreintes (hors LESSIVE)
         $totalAstreintes = Astreinte::query()
             ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->where('astreinte_type', '!=', 'LESSIVE')
             ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
             ->count();
         $totalUsers = User::query()->where("role", "!=", "none")->count();
@@ -62,7 +64,13 @@ class NoteAstreinteOverview extends BaseWidget
 
         $totalPointsUtilisateur = User::find($userId)->nombre_points;
 
-        $nombreAstreintesNotees = Astreinte::whereNotNull('note_orga')->count();
+        // Nombre d'astreintes notées (hors LESSIVE)
+        $nombreAstreintesNotees = Astreinte::query()
+            ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->where('astreinte_type', '!=', 'LESSIVE')
+            ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
+            ->whereNotNull('note_orga')
+            ->count();
         $pourcentageAstreintesNotees = $totalAstreintes > 0
             ? ($nombreAstreintesNotees / $totalAstreintes) * 100
             : 0;

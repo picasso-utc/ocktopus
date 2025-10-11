@@ -46,6 +46,7 @@ class ListAstreintes extends ListRecords
             'persoNonNoté' => Tab::make('En attente de notation')
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
+                    ->where('astreinte_type', '!=', 'LESSIVE') // exclut les LESSIVE
                     ->whereNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
@@ -58,6 +59,7 @@ class ListAstreintes extends ListRecords
             'perso' => Tab::make('Vos notes')
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
+                    ->where('astreinte_type', '!=', 'LESSIVE') // exclut les LESSIVE
                     ->whereNotNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
