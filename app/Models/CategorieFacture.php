@@ -22,6 +22,11 @@ class CategorieFacture extends Model
         return $this->nom;
     }
 
+    public function recettes()
+    {
+        return $this->hasMany(Recettes::class, 'categorie_id');
+    }
+
     public function children()
     {
         return $this->hasMany(CategorieFacture::class, 'id_parent');

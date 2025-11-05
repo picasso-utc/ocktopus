@@ -17,10 +17,10 @@ return new class extends Migration
             $table->date('date_facturation')->default(now());
             $table->char('nom',255);
             $table->char('prenom',255);
-            $table->char('numero_voie',255);
-            $table->char('rue',255);
-            $table->char('code_postal',5);
-            $table->char('ville',255);
+            $table->char('numero_voie',255)->nullable();
+            $table->char('rue',255)->nullable();
+            $table->char('code_postal',5)->nullable();
+            $table->char('ville',255)->nullable();
             $table->char('email',255);
             $table->float('total')->default(0);
             $table->timestamps();

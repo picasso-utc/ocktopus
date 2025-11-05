@@ -6,7 +6,7 @@ use App\Filament\Treso\Resources\FactureRecueResource\Pages;
 use App\Models\CategorieFacture;
 use App\Models\FactureRecue;
 use App\Models\Semestre;
-use App\Models\User;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -43,11 +43,6 @@ class FactureRecueResource extends Resource
     public static function form(Form $form): Form
     {
         $semestreActif = Semestre::where('activated', true)->first();
-
-        $user = session('user');
-        $userUuid = $user->uuid;
-        $userId =User::where('uuid', $userUuid)->pluck('id')->first();
-
         return $form
             ->schema(
                 [
@@ -63,17 +58,35 @@ class FactureRecueResource extends Resource
                     ->label('Prix Total TTC (€)')
                     ->required()
                     ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $totalCategoriesPrix = array_sum(array_column($get('categoriePrix') ?? [], 'prix'));
+                            if (abs($value - $totalCategoriesPrix) > 0.01) {
+                                $fail('Le prix total doit correspondre à la somme des montants des catégories.');
+                            }
+                        };
+                    }),
+                
                 TextInput::make('tva')
-                    ->label('TVA (€)')
+                    ->label('Total TVA (€)')
                     ->required()
                     ->numeric()
-                    ->suffixIcon('heroicon-o-currency-euro'),
+                    ->suffixIcon('heroicon-o-currency-euro')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $totalCategoriesTVA = array_sum(array_column($get('categoriePrix') ?? [], 'tva'));
+                            if (abs($value - $totalCategoriesTVA) > 0.01) {
+                                $fail('Le total de la TVA doit correspondre à la somme des TVA des catégories.');
+                            }
+                        };
+                    }),                
                 TextInput::make('moyen_paiement')
                     //->label
                     ->required()
                     ->maxLength(255),
                 DatePicker::make('date')
+                    ->label('Date Facturation')
                     ->required()
                     ->timezone('Europe/Paris'),
                 DatePicker::make('date_paiement')
@@ -122,12 +135,17 @@ class FactureRecueResource extends Resource
                             ->searchable()
                             ->required()
                             ->distinct()
-                            ->columnSpan(3),
+                            ->columnSpan(2),
                         TextInput::make('prix')
                             ->label('Montant de la catégorie')
                             ->numeric()
                             ->suffixIcon('heroicon-o-currency-euro')
-                            ->columnSpan(3),
+                            ->columnSpan(2),
+                        TextInput::make('tva')
+                            ->label('TVA')
+                            ->numeric()
+                            ->suffixIcon('heroicon-o-currency-euro')
+                            ->columnSpan(2),
                         ]
                     )
                     ->defaultItems(1)
@@ -141,7 +159,6 @@ class FactureRecueResource extends Resource
                         ->default($semestreActif->id)
                         ->required()
                         ->columnSpan(6),
-                    Hidden::make('author_id')->default($userId),
                     Hidden::make('facture_number')->default(""),
                 ]
             )
@@ -161,6 +178,7 @@ class FactureRecueResource extends Resource
                 TextColumn::make('destinataire')
                      ->searchable(),
                 TextColumn::make('date')
+                    ->label('Date Facturation')
                     ->date('M d, Y')
                     ->searchable(),
                 TextColumn::make('date_paiement')
@@ -200,20 +218,7 @@ class FactureRecueResource extends Resource
                     ->label('Personne à rembourser')
                     ->searchable()
                     ->default('--'),
-                TextColumn::make('author_id')
-                    ->label('Auteur.ice')
-                    ->formatStateUsing(
-                        function ($state) {
-                            $user = User::find($state);
-                            if ($user && $user->email) {
-                                list($name, ) = explode('@', $user->email);
-                                list($firstName, $lastName) = array_pad(explode('.', $name), 2, null);
-                                return ucfirst($firstName) . ' ' . ucfirst($lastName);
-                            }
-                            return '';
-                        }
-                    )
-                    ->searchable(),
+
                 TextColumn::make('categoriePrix')
                     ->label('Catégorie(s)')
                     ->formatStateUsing(

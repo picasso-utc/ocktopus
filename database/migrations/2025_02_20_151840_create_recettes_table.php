@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('montant_categorie', function (Blueprint $table) {
+        Schema::create('recettes', function (Blueprint $table) {
             $table->id();
-            $table->float('prix')->default(0);
+            $table->foreignId('categorie_id')->constrained('categorie_factures');
+            $table->date('date_debut');
+            $table->date('date_fin');
+            $table->float('valeur')->default(0);
             $table->float('tva')->default(0);
-            $table->foreignId('categorie_id')->constrained('categorie_factures')->onDelete('cascade');
-            $table->foreignId('facture_id')->constrained('facture_recues')->onDelete('cascade');
+            $table->text('remarque')->nullable();
+            $table->foreignId('semestre_id')->constrained();
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('montant_categorie');
+        Schema::dropIfExists('recettes');
     }
 };
