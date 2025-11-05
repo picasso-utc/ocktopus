@@ -100,28 +100,35 @@ class CreneauResource extends Resource
                 '6' => '!border-s-2 !border-green-600 !dark:border-green-300',
                 default => '!border-s-2 !border-orange-600 dark:border-orange-300',
             })
+            ->query(function () {
+                return Creneau::query()
+                    ->selectRaw('date, MAX(perm_id) as perm_id, MAX(id) as id')
+                    ->groupBy('date');
+            }) 
             ->groups([
-                Group::make('date')->date()
-                    ->collapsible()
-                    ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)
-                        ->locale('fr')
-                        ->translatedFormat('l')),
-
-                Group::make('creneau')
-            ])
-            ->defaultGroup('date')
+                Group::make('date')
+                    ->label('Semaine du semestre')
+                    ->getTitleFromRecordUsing(function (Creneau $record) {
+                        $debutSemestre = Semestre::where('activated', true)->value('startOfSemestre');
+                        $dateCreneau = Carbon::parse($record->date);
+                        $startSemestre = Carbon::parse($debutSemestre);
+                        $semaineDuSemestre = $startSemestre->diffInWeeks($dateCreneau) + 1;
+            
+                        return "Semaine $semaineDuSemestre";
+                    })
+            ])                   
+            ->defaultSort('date')          
             ->columns([
                 Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('creneau')
-                        ->label('dd')
-                        ->state(fn ($record) => match ($record->creneau) {
-                            'M' => 'Matin',
-                            'D' => 'Déjeuner',
-                            'S' => 'Soir',
-                        }),
+                    Tables\Columns\TextColumn::make('date')
+                        ->label('Date')
+                        ->getStateUsing(fn (Creneau $record) => ucfirst(Carbon::parse($record->date)->locale('fr')->translatedFormat('l j F Y')))
+                        ->extraAttributes(['class' => 'mb-2'])
+                        ->icon('heroicon-o-calendar'),
                     Tables\Columns\TextColumn::make('perm.nom')
-                        ->label('Perm associée')
-                        ->badge(),
+                        ->label('Perm')
+                        ->formatStateUsing(fn ($state) => "<span style='font-size: 2em;'>{$state}</span>")
+                        ->html(),                    
                     Tables\Columns\SelectColumn::make('perm_id')
                         ->label('Associer une perm')
                         ->options(function () {
@@ -133,31 +140,20 @@ class CreneauResource extends Resource
                             return $filteredPerms->pluck('nom', 'id')->toArray();
                         })
                         ->placeholder("Choisir une perm")
-                        //(function ($record) {
-//                            $associatedPerm = $record->perm;
-//                            return $associatedPerm ? $associatedPerm->nom : 'Choisir une perm';
-//                        })
                         ->hidden(function (Creneau $creneau){
                             return $creneau->perm_id;
-                        }),
-                    Tables\Columns\TextColumn::make('creneau')
-                        ->formatStateUsing(function ($state, Creneau $creneau) {
-                            $membresDuCreneau = Astreinte::where('creneau_id', $creneau->id)
-                                ->pluck('user_id')
-                                ->unique()
-                                ->toArray();
-
-                            $nomsMembres = User::whereIn('id', $membresDuCreneau)->pluck('email')
-                                ->map(function ($email) {
-                                    return mailToName($email);
-                                });
-
-                            // Join les emails avec une virgule pour les afficher tous
-                            return "Astreinteurs : " . $nomsMembres->implode(', ');
-                        }),
+                        })
+                        ->afterStateUpdated(fn ($state, $record) => Creneau::where('date', $record->date)->update(['perm_id' => $state, 'confirmed' => true]))                  
                 ])
             ])
             ->filters([
+                Filter::make('A venir')
+                    ->label('A venir')
+                    ->toggle()
+                    ->default()
+                    ->query(function (Builder $query) {
+                        $query->where('date', '>=', Carbon::yesterday());
+                    }),
                 Tables\Filters\SelectFilter::make('perm_id')
                     ->options(Perm::pluck('nom', 'id'))
                     ->label('Par perm')
@@ -168,20 +164,13 @@ class CreneauResource extends Resource
                         $query->where('perm_id', null);
                     }),
             ])
-
             ->actions([
                 Tables\Actions\Action::make('dissociate')
                     ->label('Supprimer perm')
                     ->color("danger")
                     ->button()
                     ->visible(fn($record) => $record->perm_id !== null)
-                    ->action(fn($record) => self::dissociatePerm($record)),
-                Tables\Actions\Action::make('confirm')
-                    ->label('Confirmer perm')
-                    ->color("success")
-                    ->button()
-                    ->visible(fn($record) => $record->perm_id !== null && $record->confirmed==false)
-                    ->action(fn($record) => self::confirmPerm($record)),
+                    ->action(fn ($record) => Creneau::where('date', $record->date)->update(['perm_id' => null, 'confirmed' => false])) ,                             
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -209,7 +198,6 @@ class CreneauResource extends Resource
         ];
     }
 
-
     /**
      * Get the pages associated with the resource.
      *
@@ -223,35 +211,4 @@ class CreneauResource extends Resource
             'edit' => Pages\EditCreneau::route('/{record}/edit'),
         ];
     }
-
-
-    /*****************
-     * auxiliaries Functions
-     ****************/
-
-    /**
-     * Dissociate the associated permission from a specific slot.
-     *
-     * @param mixed $record
-     * @return void
-     */
-    public static function dissociatePerm($record)
-    {
-        // Dissocier la perm associée du créneau spécifique
-        Creneau::where('id', '=', $record->id)->update(['perm_id' => null, 'confirmed' => false]);
-    }
-
-    /**
-     * Confirm
-     *
-     * @param mixed $record
-     * @return void
-     */
-    public static function confirmPerm($record)
-    {
-        // Dissocier la perm associée du créneau spécifique
-        Creneau::where('id', '=', $record->id)->update(['confirmed' => true]);
-    }
-
 }
-
