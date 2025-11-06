@@ -4,12 +4,15 @@ namespace App\Filament\Admin\Resources\GoodiesResource\Pages;
 
 use App\Filament\Admin\Resources\GoodiesResource;
 use App\Models\Goodies;
+use App\Models\User;
 use App\Services\PayUtcClient;
 use DateTime;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class ManageGoodies extends ManageRecords
 {
@@ -53,37 +56,49 @@ class ManageGoodies extends ManageRecords
         }
 
         $accumulatedData = array_merge($accumulatedData, $jsonData);
-        $length = count($accumulatedData);
+
+        $wallets=array_map(fn($item)=>$item['rows'][0]['payments'][0]['wallet_id'], $accumulatedData);
+        $uniqueWallets=array_unique($wallets);
+        $uniqueWallets=array_values($uniqueWallets);
+        $length = count($uniqueWallets);
+
+        $membresPic = User::where('role','!=','none')->pluck('email', 'email')->toArray();
 
         $winners = [];
+        $winnersName = [];
         while (count($winners) < 20) {
             $randomIndex = rand(0, $length - 1);
-            $walletId = $accumulatedData[$randomIndex]['rows'][0]['payments'][0]['wallet_id'];
+            $walletId = $uniqueWallets[$randomIndex];
             if (!in_array($walletId, $winners)) {
                 $winners[] = $walletId;
             }
-        }
 
-        $user = Http::withHeaders(
-            [
-            'X-Return-Structure' => 'array',
-            'Content-Type' => 'application/json',
-            'X-API-KEY' => config('app.proxy_key')
-            ]
-        )->post(
-            config('app.proxy_url'),
-            [
-                'wallets' => $winners,
+            $user = Http::withHeaders(
+                [
+                    'X-Return-Structure' => 'array',
+                    'Content-Type' => 'application/json',
+                    'X-API-KEY' => config('app.proxy_key')
                 ]
-        );
+            )->post(
+                config('app.proxy_url'),
+                ['wallets' => [$walletId]]
+            );
 
-        $winnersName = [];
-        for ($i = 0; $i < 20; $i++) {
-            $winnersName[] = $user->json()[$i]['firstname'] . ' ' . $user->json()[$i]['lastname'];
+            $userData = $user->json();
+            Log::info($userData);
+            $winnerMail = $userData[0]['email'];
+
+            if (!in_array($winnerMail, $membresPic)) {
+                $winnersName[] = $userData[0]['firstname'] . ' ' . $userData[0]['lastname'];
+            }
+
+            unset($uniqueWallets[$randomIndex]);
         }
 
         // clear the database
         Goodies::all()->each->delete();
+
+        Log::info('Gagnant.e.s du '.Carbon::now().' : '.json_encode($winnersName));
 
         // add the winners in the database
         for ($i = 0; $i < 20; $i++) {
