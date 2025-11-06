@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class BlocagesResource extends Resource
 {
@@ -37,6 +38,11 @@ class BlocagesResource extends Resource
                     ->placeholder('Date du blocage')
                     ->default(now())
                     ->required(),
+                Forms\Components\DatePicker::make('fin')
+                    ->label('Fin du blocage')
+                    ->placeholder('Fin du blocage')
+                    ->default(Carbon::now()->addDays(7))
+                    ->required(),
             ]);
     }
 
@@ -55,9 +61,14 @@ class BlocagesResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->label('Date')
                     ->formatStateUsing(function ($record) {
-                        return $record->date->format('d/m/Y');
+                        return $record->date->translatedFormat('d F Y');
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('fin')
+                    ->label('Fin du blocage')
+                    ->formatStateUsing(function ($record) {
+                        return $record->fin->translatedFormat('d F Y');
+                    }),
             ])
             ->filters([
                 //

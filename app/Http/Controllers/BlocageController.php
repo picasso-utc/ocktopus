@@ -8,16 +8,18 @@ use Illuminate\Http\Request;
 
 class BlocageController extends Controller
 {
-    public function getBlocages(Request $request): mixed{
+    public function getBlocages(Request $request): mixed
+    {
+        Blocages::where('fin', '<', now())->delete();
+
         $gingerClient = new GingerClient;
-        $blocages = Blocages::all()->pluck('cas')->map(function($blockedUser)use($gingerClient){
+        $blocages = Blocages::all()->pluck('cas')->map(function ($blockedUser) use ($gingerClient) {
             try {
                 return $gingerClient->getUserInfo($blockedUser)['data']['badge_uid'];
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 return null;
             }
-        })->filter(fn($blockedUser)=>$blockedUser!=null);
+        })->filter(fn($blockedUser) => $blockedUser != null);
         return $blocages;
-        
     }
 }
