@@ -3,6 +3,7 @@
 use App\Http\Controllers\BachController;
 use App\Http\Controllers\ExonerationController;
 use App\Http\Controllers\TodayConsumptionController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,10 +30,14 @@ Route::post('/bach/login/cas',[BachController::class, 'loginCas']);
 Route::post('/bach/login/badge',[BachController::class, 'loginBadge']);
 
 // Récupération des ventes journalières d'un ou plusieurs produits
-Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
+//Route::get('/get-sales/{productNames}', [TodayConsumptionController::class, 'getSales']);
+Route::get('/get-sales/{productName}', [TodayConsumptionController::class, 'getTodayConsumption']);
+
 
 // Récupération des id d'utilisateurs bloqués
 Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlocages']);
 
 // Exoneration d'un achat
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
+
+Route::post('/transaction', [TransactionController::class, 'handle']);
