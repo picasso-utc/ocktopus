@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Configuration du middleware 
+// Configuration du middleware
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -41,3 +41,13 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
 
 Route::post('/transaction', [TransactionController::class, 'handle']);
+
+
+// Gestion de l'authentification CAS pour l'application mobile
+use App\Http\Controllers\AuthController;
+
+Route::prefix('mobile')->group(function () {
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
+    Route::get('/auth/me', [AuthController::class, 'getUserData']);
+});
+

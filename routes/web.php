@@ -62,3 +62,43 @@ Route::get('/download/{filename}', function ($filename) {
 })->name('download');
 
 Route::get('/bourse',[\App\Http\Controllers\TransactionController::class,'getPrices']);
+
+// Gestion de l'authentification CAS pour l'application mobile
+use App\Http\Controllers\AuthController;
+
+Route::prefix('mobile')->group(function () {
+    Route::get('/auth/login', [AuthController::class, 'login'])->name('mobile.auth.login');
+    Route::get('/auth/callback', [AuthController::class, 'callback'])->name('mobile.auth.callback');
+
+    Route::get('/api-connected', function (\Illuminate\Http\Request $request) {
+        return response()->json([
+            'access_token' => $request->query('access_token'),
+            'refresh_token' => $request->query('refresh_token'),
+        ]);
+    })->name('mobile.api-connected');
+
+    Route::get('/api-not-connected', function (\Illuminate\Http\Request $request) {
+        return response()->json([
+            'error' => true,
+            'message' => $request->query('message'),
+        ], 401);
+    })->name('mobile.api-not-connected');
+});
+
+
+// Pages "retour app" (au minimum pour éviter 404)
+// TODO : A changer plus tard (seulement pour test en local)
+Route::get('/api-connected', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'access_token' => $request->query('access_token'),
+        'refresh_token' => $request->query('refresh_token'),
+    ]);
+})->name('api-connected');
+
+Route::get('/api-not-connected', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'error' => true,
+        'message' => $request->query('message'),
+    ], 401);
+})->name('api-not-connected');
+

@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use UnexpectedValueException;
+use Illuminate\Support\Facades\Auth as LaravelAuth;
+
 
 class Auth
 {
@@ -26,18 +28,92 @@ class Auth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Retrieve the JWT token from the cookie
+        // Ne jamais appliquer l’auth backoffice aux routes mobile
+        if ($request->is('mobile/*') || $request->is('api/mobile/*')) {
+            return $next($request);
+        }
+        // ===== Bypass JWT en environnement local / testing =====
+        /*
+        if (app()->environment(['local', 'testing'])) {
+            // Force connexion sur Dina (id = 63)
+            $user = \App\Models\User::find(63);
+
+            if ($user === null) {
+                // Récupérer un utilisateur de test existant
+                $user = User::first();
+
+                if ($user) {
+                    // Connecte l'utilisateur dans l'auth guard
+                    LaravelAuth::loginUsingId($user->id);
+                    session(['user' => $user]);
+                } else {
+                    // Si aucun user en base, créer un utilisateur factice minimal
+                    $user = new User();
+                    $user->id = 0;
+                    $user->uuid = 'local-fake-uuid';
+                    $user->name = 'Local Dev User';
+                }
+            }
+
+            auth()->setUser($user);
+
+            // Continue avec la requête
+            $panel = Filament::getCurrentPanel();
+
+            abort_if(
+                $user instanceof FilamentUser ?
+                    (! $user->canAccessPanel($panel)) :
+                    false, // bypass en dev
+                403,
+            );
+
+            return $next($request);
+        }
+        */
+        if (app()->environment(['local', 'testing'])) {
+            // Force connexion sur Dina (id = 63)
+            $user = \App\Models\User::find(63);
+
+            if ($user === null) {
+                // Crée un utilisateur factice avec UUID de l'id choisi
+                $user = new User();
+                $user->id = 63;
+                $user->uuid = '984e2a30-1fbc-11ec-bc5d-b32b8e873763';
+                $user->name = 'Local Dev User';
+                $user->email = 'dina.mouayed@etu.utc.fr';
+            }
+
+            // Auth Laravel
+            LaravelAuth::loginUsingId($user->id);
+            session(['user' => $user]);
+
+            auth()->setUser($user);
+
+            $panel = Filament::getCurrentPanel();
+            abort_if(
+                $user instanceof FilamentUser ?
+                    (! $user->canAccessPanel($panel)) :
+                    false,
+                403,
+            );
+
+            return $next($request);
+        }
+
+
+        // ===== Environnement prod / autres =====
+        // Récupérer le token depuis le cookie
         $token = $request->cookie(config('app.token_name'));
-        // If the token is null, redirect to authentication route with the current route stored in a cookie
+
         if ($token == null) {
             $cookie_route = cookie('route', $request->route()->getName(), 10);
             return redirect()->route('auth_route')->withCookie($cookie_route);
         }
 
         try {
-            // Decode the JWT token using the public key
+            // Lire le contenu brut de la clé publique (string PEM)
             $public_key_path = storage_path('app/keys/public.key');
-            $public_key = openssl_get_publickey('file://' . $public_key_path);
+            $public_key = file_get_contents($public_key_path);
             $decoded_uuid = JWT::decode($token, new Key($public_key, 'RS256'))->sub;
 
             if ($decoded_uuid == null) {
@@ -48,6 +124,7 @@ class Auth
             if ($user == null || $user->uuid != $decoded_uuid) {
                 return redirect()->route('auth_route')->withCookie(cookie('route', $request->route()->getName(), 10));
             }
+
             // Set the user as the authenticated user
             auth()->setUser($user);
         } catch (ExpiredException) {
