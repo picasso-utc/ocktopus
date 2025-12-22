@@ -13,6 +13,7 @@ use League\OAuth2\Client\Provider\GenericProvider;
 use LogicException;
 use UnexpectedValueException;
 
+// Auth controller pour l'application mobile
 class AuthController extends Controller
 {
     public GenericProvider $provider;
@@ -171,16 +172,12 @@ class AuthController extends Controller
 
             $target = $request->session()->pull('post_auth_target', 'mobile');
 
-            // deep link vers l’app
+            // retour WebView RN : URL que l'app intercepte
             if ($target === 'mobile') {
-                $scheme = config('services.mobile.deeplink_scheme', 'picmobile');
-
-                $deepLink = $scheme.'://auth/callback?'.http_build_query([
+                return redirect()->to('/mobile/api-connected?'.http_build_query([
                     'access_token'  => $accessToken,
                     'refresh_token' => $refreshToken,
-                ]);
-
-                return redirect()->away($deepLink);
+                ]));
             }
 
             // fallback web (si besoin)

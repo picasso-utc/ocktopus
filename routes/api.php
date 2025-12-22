@@ -41,3 +41,17 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
 
 Route::post('/transaction', [TransactionController::class, 'handle']);
+
+// Application mobile
+use App\Http\Controllers\AuthController;
+
+Route::prefix('mobile')->group(function () {
+
+    // L'app React Native appelle GET /auth/me  =>  /api/mobile/auth/me
+    Route::get('/auth/me', [AuthController::class, 'getUserData'])
+        ->middleware('jwt');
+
+    // L'app React Native refresh => POST /auth/refresh  =>  /api/mobile/auth/refresh
+    Route::post('/auth/refresh', [AuthController::class, 'refresh'])
+        ->middleware('jwt');
+});

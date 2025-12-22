@@ -26,3 +26,14 @@ Route::prefix('mobile/auth')->name('mobile.auth.')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 });
+
+// pages de fin de flow pour RN WebView
+Route::prefix('mobile')->name('mobile.')->group(function () {
+    Route::get('/api-connected', function () {
+        return response('OK');
+    })->name('api-connected');
+
+    Route::get('/api-not-connected', function () {
+        return response('NOT OK');
+    })->name('api-not-connected');
+});
