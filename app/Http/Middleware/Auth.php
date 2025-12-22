@@ -26,6 +26,14 @@ class Auth
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // bypass auth backoffice pour l'app mobile
+        if (
+            $request->is('mobile/*') ||
+            $request->is('api/mobile/*')
+        ) {
+            return $next($request);
+        }
+
         // Retrieve the JWT token from the cookie
         $token = $request->cookie(config('app.token_name'));
         // If the token is null, redirect to authentication route with the current route stored in a cookie
