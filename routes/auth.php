@@ -20,7 +20,7 @@ Route::prefix('mobile/auth')->name('mobile.auth.')->group(function () {
     Route::get('/callback', [AuthController::class, 'callback'])
         ->name('callback');
 
-    Route::post('/refresh', [AuthController::class, 'refresh'])
+    Route::match(['GET', 'POST'], '/refresh', [AuthController::class, 'refresh'])
         ->name('refresh');
 
     Route::get('/logout', [AuthController::class, 'logout'])

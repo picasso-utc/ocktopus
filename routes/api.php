@@ -41,14 +41,3 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
 
 Route::post('/transaction', [TransactionController::class, 'handle']);
-
-
-/*
-// Gestion de l'authentification CAS pour l'application mobile
-use App\Http\Controllers\AuthController;
-
-Route::prefix('mobile')->group(function () {
-    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
-    Route::get('/auth/me', [AuthController::class, 'getUserData']);
-});
-*/

@@ -63,36 +63,3 @@ Route::get('/download/{filename}', function ($filename) {
 
 Route::get('/bourse',[\App\Http\Controllers\TransactionController::class,'getPrices']);
 
-
-/*
-// Gestion de l'authentification CAS pour l'application mobile
-use App\Http\Controllers\AuthController;
-// Authentification CAS — APPLICATION MOBILE UNIQUEMENT
-Route::prefix('mobile')->group(function () {
-
-    // Lance le flow CAS (appelé par l’app RN)
-    Route::get('/auth/login', [AuthController::class, 'login'])
-        ->name('mobile.auth.login');
-
-    // Callback CAS (appelé par le provider OAuth/CAS)
-    Route::get('/auth/callback', [AuthController::class, 'callback'])
-        ->name('mobile.auth.callback');
-
-    // Retour SUCCÈS vers l’app
-    Route::get('/api-connected', function (\Illuminate\Http\Request $request) {
-        return response()->json([
-            'access_token'  => $request->query('access_token'),
-            'refresh_token' => $request->query('refresh_token'),
-        ]);
-    })->name('mobile.api-connected');
-
-    // Retour ERREUR vers l’app
-    Route::get('/api-not-connected', function (\Illuminate\Http\Request $request) {
-        return response()->json([
-            'error'   => true,
-            'message' => $request->query('message'),
-        ], 401);
-    })->name('mobile.api-not-connected');
-
-});
-*/
