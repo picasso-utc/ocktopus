@@ -69,10 +69,6 @@ class AuthController extends Controller
         $state = bin2hex(random_bytes(16));
         $request->session()->put('oauth2state', $state);
 
-        $authorizationUrl = $this->provider->getAuthorizationUrl([
-            'state' => $state,
-        ]);
-
         // construit l’URL authorize
         $authorizationUrl = $this->provider->getAuthorizationUrl([
             'state' => $state,
@@ -96,9 +92,10 @@ class AuthController extends Controller
         }
 
         if (!$request->has('code')) {
-            return redirect()->route('mobile.api-not-connected', [
+            return response()->json([
+                'success' => false,
                 'message' => 'No authorization code',
-            ]);
+            ], 400);
         }
 
         try {
@@ -110,23 +107,26 @@ class AuthController extends Controller
             $userDetails = $resourceOwner->toArray();
 
             if (($userDetails['deleted_at'] ?? null) !== null || ($userDetails['active'] ?? 0) != 1) {
-                return redirect()->route('mobile.api-not-connected', [
-                    'message' => 'Compte supprimé ou désactivé',
-                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No authorization code',
+                ], 400);
             }
 
             $email = $userDetails['email'] ?? null;
             if (!$email) {
-                return redirect()->route('mobile.api-not-connected', [
-                    'message' => 'Email manquant dans les infos OAuth',
-                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No authorization code',
+                ], 400);
             }
 
             $user = User::where('email', $email)->first();
             if (!$user) {
-                return redirect()->route('mobile.api-not-connected', [
-                    'message' => 'Utilisateur introuvable',
-                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No authorization code',
+                ], 400);
             }
 
             // alumni/exte (si provider != cas)
@@ -147,16 +147,29 @@ class AuthController extends Controller
                 'exp' => now()->addDays(30)->timestamp,
             ], $privateKey, 'RS256');
 
-            return redirect()->route('mobile.api-connected', [
-                'access_token'  => $jwtAccess,
-                'refresh_token' => $jwtRefresh,
-            ]);
+            $target = $request->session()->pull('post_auth_target', 'mobile');
+
+            // deep link vers l’app
+            if ($target === 'mobile') {
+                $scheme = config('services.mobile.deeplink_scheme', 'picmobile');
+
+                $deepLink = $scheme.'://auth/callback?'.http_build_query([
+                    'access_token'  => $jwtAccess,
+                    'refresh_token' => $jwtRefresh,
+                ]);
+
+                return redirect()->away($deepLink);
+            }
+
+            // fallback web si un jour tu veux --> TODO : a retirer (voir si ça cree un bug ou pas)
+            return redirect()->to('https://pic.assos.utc.fr');
 
         } catch (\Exception $e) {
             Log::error('Erreur callback OAuth mobile: '.$e->getMessage());
-            return redirect()->route('mobile.api-not-connected', [
-                'message' => 'Callback error : '.$e->getMessage(),
-            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'No authorization code',
+            ], 400);
         }
     }
 
