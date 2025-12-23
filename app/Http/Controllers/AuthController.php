@@ -88,13 +88,16 @@ class AuthController extends Controller
         $state = bin2hex(random_bytes(16));
         $request->session()->put('oauth2state', $state);
 
-        // Choisir la bonne redirectUri (mobile vs web) sans casser le backoffice
+        // Marquer que c'est un flow mobile pour que Connexion::auth() puisse router correctement
         $target = $request->get('target', 'mobile'); // /mobile/auth/login => mobile par défaut
-        $redirectUri = ($target === 'mobile')
-            ? config('services.oauth.redirect_uri_mobile')
-            : config('services.oauth.redirect_uri');
+        if ($target === 'mobile') {
+            $request->session()->put('mobile_auth_flow', true);
+        }
 
-        // recrée le provider avec la bonne redirectUri
+        // Utiliser la même redirectUri que le backoffice (celle enregistrée dans le client OAuth)
+        $redirectUri = config('services.oauth.redirect_uri');
+
+        // recrée le provider avec la redirectUri du backoffice
         $this->provider = new GenericProvider([
             'clientId' => config('services.oauth.client_id'),
             'clientSecret' => config('services.oauth.client_secret'),

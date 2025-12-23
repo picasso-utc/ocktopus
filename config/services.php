@@ -44,8 +44,9 @@ return [
             'logout_url' => env('OAUTH_LOGOUT_URL', 'https://auth.assos.utc.fr/logout'),
     ],
 
-    'mobile' => [
-        'deeplink_scheme' => env('MOBILE_DEEPLINK_SCHEME', 'picmobile'),
+    'crypt' => [
+        'private' => file_get_contents(storage_path('app/keys/mobile-private.key')),
+        'public' => file_get_contents(storage_path('app/keys/mobile-public.key')),
     ],
 
 

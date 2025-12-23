@@ -43,6 +43,13 @@ class Connexion extends Controller
 
             return redirect($authUrl);
         } else {
+            // Si c'est un flow mobile, déléguer à AuthController
+            if ($request->session()->has('mobile_auth_flow')) {
+                $request->session()->forget('mobile_auth_flow');
+                $authController = new AuthController();
+                return $authController->callback($request);
+            }
+
             try {
                 // Exchange the authorization code for an access token
                 $accessToken = $provider->getAccessToken(
