@@ -35,7 +35,8 @@ return [
     'oauth' => [
             'client_id' => env('OAUTH_CLIENT_ID'),
             'client_secret' => env('OAUTH_CLIENT_SECRET'),
-            'redirect_uri' => env('OAUTH_REDIRECT_URI', rtrim(env('APP_URL'), '/').'/mobile/auth/callback'),
+            'redirect_uri' => env('OAUTH_REDIRECT_URI'),
+            'redirect_uri_mobile' => env('OAUTH_REDIRECT_URI_MOBILE'),
             'scopes' => explode(' ', env('OAUTH_SCOPES', 'users-infos read-assos read-memberships')),
             'authorize_url' => env('OAUTH_AUTHORIZE_URL', 'https://auth.assos.utc.fr/oauth/authorize'),
             'access_token_url' => env('OAUTH_ACCESS_TOKEN_URL', 'https://auth.assos.utc.fr/oauth/token'),
