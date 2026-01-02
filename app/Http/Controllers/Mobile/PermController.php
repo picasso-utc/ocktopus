@@ -85,11 +85,65 @@ class PermController extends Controller
                 'message' => 'Demande de permanence enregistrée avec succès.',
                 'data' => $perm
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de l\'enregistrement de la permanence : ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get the permanences for the current week.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function currentWeek()
+    {
+        $start = \Carbon\Carbon::now()->previous(\Carbon\Carbon::SATURDAY)->toDateString();
+        $end = \Carbon\Carbon::now()->next(\Carbon\Carbon::SATURDAY)->toDateString();
+
+        try {
+            $creneaux = \App\Models\Creneau::with('perm')
+                ->whereBetween('date', [$start, $end])
+                ->whereNotNull('perm_id')
+                ->orderBy('date')
+                ->orderByRaw("FIELD(creneau, 'M', 'D', 'S', 'L')")
+                ->get();
+
+            $formatted = $creneaux->map(function ($creneau) {
+                return [
+                    'id' => $creneau->id,
+                    'date' => $creneau->date,
+                    'creneau_type' => $creneau->creneau, // M, D, S, L
+                    'perm_id' => $creneau->perm_id,
+                    'perm_nom' => $creneau->perm->nom,
+                    'theme' => $creneau->perm->theme,
+                    'description' => $creneau->perm->description,
+                    'ambiance' => $creneau->perm->ambiance,
+                    'nom_resp' => $creneau->perm->nom_resp,
+                    'mail_resp' => $creneau->perm->mail_resp,
+                    'nom_resp_2' => $creneau->perm->nom_resp_2,
+                    'mail_resp_2' => $creneau->perm->mail_resp_2,
+                    'asso' => $creneau->perm->asso,
+                    'mail_asso' => $creneau->perm->mail_asso,
+                    'membres' => $creneau->perm->membres,
+                    'teddy' => $creneau->perm->teddy,
+                    'repas' => $creneau->perm->repas,
+                    'idea_repas' => $creneau->perm->idea_repas,
+                    'remarques' => $creneau->perm->remarques,
+                    'artiste' => $creneau->perm->artiste,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $formatted
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des permanences : ' . $e->getMessage()
             ], 500);
         }
     }
