@@ -44,6 +44,7 @@ Route::post('/transaction', [TransactionController::class, 'handle']);
 
 // Application mobile
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Mobile\PermController;
 
 Route::prefix('mobile')->group(function () {
 
@@ -53,5 +54,9 @@ Route::prefix('mobile')->group(function () {
 
     // L'app React Native refresh => POST /auth/refresh  =>  /api/mobile/auth/refresh
     Route::post('/auth/refresh', [AuthController::class, 'refresh'])
+        ->middleware('jwt');
+
+    // Demande de permanence
+    Route::post('/perms', [PermController::class, 'store'])
         ->middleware('jwt');
 });
