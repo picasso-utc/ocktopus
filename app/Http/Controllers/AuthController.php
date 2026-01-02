@@ -282,15 +282,16 @@ class AuthController extends Controller
             }
 
             return response()->json([
-                'success' => true,
-                'data' => [
-                    'id' => $user->id,
-                    'name' => $user->firstName,
-                    'lastName' => $user->lastName,
-                    'admin' => $user->admin,
-                    'member' => $user->member
-                ]
-            ]);
+            'success' => true,
+            'data' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => mailToName($user->email),
+                'role' => $user->role,
+                'admin' => $user->role->isAdministrator(),
+                'member' => $user->role->isMember()
+            ]
+        ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la récupération des users infos: ' . $e->getMessage());
             return response()->json(['success' => 'false', 'message' => 'Erreur lors de la récupération des users infos : '.$e], 401);
