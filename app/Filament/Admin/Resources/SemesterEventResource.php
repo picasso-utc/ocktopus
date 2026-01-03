@@ -57,7 +57,7 @@ class SemesterEventResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('titre')->sortable()->searchable(),
-                TextColumn::make('date')->dateTime(),
+                TextColumn::make('date')->date(),
                 TextColumn::make('lieu'),
                 TextColumn::make('description'),
             ])
