@@ -62,9 +62,9 @@ class AnnoncesResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('titre')->sortable()->searchable(),
-                TextColumn::make('type')->dateTime(),
-                TextColumn::make('courte_desc')->dateTime(),
-                TextColumn::make('longue_desc')->dateTime(),
+                TextColumn::make('type'),
+                TextColumn::make('courte_desc'),
+                TextColumn::make('longue_desc'),
             ])
             ->actions([
                 EditAction::make(),
