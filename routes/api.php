@@ -45,6 +45,9 @@ Route::post('/transaction', [TransactionController::class, 'handle']);
 // Application mobile
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Mobile\PermController;
+use App\Http\Controllers\Mobile\AnnoncesController;
+use App\Http\Controllers\Mobile\JeuxTemporaireController;
+use App\Http\Controllers\Mobile\SemesterEventController;
 
 Route::prefix('mobile')->group(function () {
 
@@ -62,5 +65,17 @@ Route::prefix('mobile')->group(function () {
 
     // Permanences de la semaine en cours
     Route::get('/perms/current-week', [PermController::class, 'currentWeek'])
+        ->middleware('jwt');
+
+    // Annonces
+    Route::get('/annonces', [AnnoncesController::class, 'index'])
+        ->middleware('jwt');
+
+    // Jeux Temporaires
+    Route::get('/jeux-temporaires', [JeuxTemporaireController::class, 'index'])
+        ->middleware('jwt');
+
+    // Évènements du semestre
+    Route::get('/semester-events', [SemesterEventController::class, 'index'])
         ->middleware('jwt');
 });
