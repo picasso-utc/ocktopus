@@ -20,9 +20,24 @@ class AnnoncesController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+            $formatted = $annonces->map(function ($annonce) {
+                return [
+                    'id' => $annonce->id,
+                    'titre' => $annonce->titre,
+                    'type' => $annonce->type,
+                    'courte_desc' => $annonce->courte_desc,
+                    'longue_desc' => $annonce->longue_desc,
+                    'mis_en_avant' => $annonce->mis_en_avant,
+                    'media_path' => $annonce->media_path,
+                    'media_url' => $annonce->media_path ? url('/image') . '?url=' . $annonce->media_path : null,
+                    'created_at' => $annonce->created_at,
+                    'updated_at' => $annonce->updated_at,
+                ];
+            });
+
             return response()->json([
                 'success' => true,
-                'data' => $annonces
+                'data' => $formatted
             ]);
         } catch (\Exception $e) {
             return response()->json([
