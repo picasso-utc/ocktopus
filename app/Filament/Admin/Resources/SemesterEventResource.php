@@ -42,8 +42,9 @@ class SemesterEventResource extends Resource
                 DatePicker::make('date')
                     ->required()
                     ->label('Date de l\'évènement'),
-                TextInput::make('Lieu')
+                TextInput::make('lieu')
                     ->required()
+                    ->label('Lieu')
                     ->placeholder('Picasso, JMDE, Parking...'),
                 TextInput::make('description')
                     ->required()

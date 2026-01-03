@@ -41,8 +41,9 @@ class JeuxTemporaireResource extends Resource
                     ->required()
                     ->label('Durée du jeux')
                     ->placeholder('(ex: Du 28 au 31 Octobre - Ticket d\'or à gagner !)'),
-                TextInput::make('Lieu')
+                TextInput::make('lieu')
                     ->required()
+                    ->label('Lieu')
                     ->placeholder('Picasso, JMDE, Parking...'),
                 TextInput::make('description')
                     ->required()
