@@ -50,6 +50,7 @@ use App\Http\Controllers\Mobile\JeuxTemporaireController;
 use App\Http\Controllers\Mobile\SemesterEventController;
 use App\Http\Controllers\Mobile\BoiteIdeesController;
 use App\Http\Controllers\Mobile\FaqController;
+use App\Http\Controllers\Mobile\ShotgunController;
 
 Route::prefix('mobile')->group(function () {
 
@@ -75,6 +76,12 @@ Route::prefix('mobile')->group(function () {
 
     // FAQs
     Route::get('/faqs', [FaqController::class, 'index'])
+        ->middleware('jwt');
+
+    // Shotgun Events
+    Route::get('/shotgun-events', [ShotgunController::class, 'index'])
+        ->middleware('jwt');
+    Route::post('/shotgun-events/toggle', [ShotgunController::class, 'toggle'])
         ->middleware('jwt');
 
     // Jeux Temporaires
