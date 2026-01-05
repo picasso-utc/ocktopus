@@ -45,6 +45,7 @@ class AnnoncesResource extends Resource
                     ->required()
                     ->label('Type de l\'annonce')
                     ->placeholder('Type de l\'annonce (Évènement, Nouveauté, Annonce...)')
+                    ->maxLength(50)
                     ->columnSpan(5),
                 TextInput::make('courte_desc')
                     ->required()
