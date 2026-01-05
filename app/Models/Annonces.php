@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Annonces extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'annonces';
 
     protected $fillable = [
@@ -17,6 +17,7 @@ class Annonces extends Model
         'courte_desc',
         'longue_desc',
         'mis_en_avant',
-        'media_path'
+        'media_path',
+        'is_active'
     ];
 }

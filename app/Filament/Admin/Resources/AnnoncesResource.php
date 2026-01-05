@@ -7,6 +7,7 @@ use App\Enums\MediaType;
 use App\Models\Annonces;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -16,6 +17,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 
@@ -36,24 +38,43 @@ class AnnoncesResource extends Resource
                 TextInput::make('titre')
                     ->required()
                     ->label('Titre de l\'annonce')
-                    ->placeholder('Court mais catchy (50 caractères max)'),
+                    ->placeholder('Court mais catchy')
+                    ->maxLength(50)
+                    ->columnSpan(1),
                 TextInput::make('type')
                     ->required()
                     ->label('Type de l\'annonce')
-                    ->placeholder('Type de l\'annonce (Évènement, Nouveauté, Annonce...)'),
+                    ->placeholder('Type de l\'annonce (Évènement, Nouveauté, Annonce...)')
+                    ->columnSpan(5),
                 TextInput::make('courte_desc')
                     ->required()
                     ->label('Description courte')
-                    ->placeholder('Un description courte (250 caractères max)'),
+                    ->placeholder('Un description courte')
+                    ->maxLength(250)
+                    ->columnSpan(5),
+                Toggle::make('mis_en_avant')
+                    ->required()
+                    ->columnSpan(1),
                 TextInput::make('longue_desc')
                     ->required()
                     ->label('Description longue')
-                    ->placeholder('Un description longue pour expliquer l\'annonce'),
-                Toggle::make('mis_en_avant')->required(),
+                    ->placeholder('Un description longue pour expliquer l\'annonce')
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
                 FileUpload::make('media_path')
                     ->label('Média (10Mo max)')
                     ->required()
-                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']),
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                    ->columnSpan(4),
+                Toggle::make('is_active')
+                    ->default(true)
+                    ->label("Rendre l'annonce active ?")
+                    ->columnSpan(2),
             ]);
     }
 
@@ -61,6 +82,8 @@ class AnnoncesResource extends Resource
     {
         return $table
             ->columns([
+                ToggleColumn::make('is_active')
+                    ->label('Annonce active ?'),
                 TextColumn::make('titre')->sortable()->searchable(),
                 TextColumn::make('type'),
                 TextColumn::make('courte_desc'),
