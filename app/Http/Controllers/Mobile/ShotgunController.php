@@ -41,6 +41,7 @@ class ShotgunController extends Controller
                     'debut_event' => $event->debut_event,
                     'fin_event' => $event->fin_event,
                     'nombre_places' => $event->nombre_places,
+                    'categorie' => $event->categorie,
                     'shotguns_count' => $event->shotguns_count,
                     'has_shotgunned' => $hasShotgunned,
                     'is_open' => $isOpen,

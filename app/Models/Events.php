@@ -10,7 +10,7 @@ class Events extends Model
     use HasFactory;
 
     protected $table = 'events';
-    protected $fillable = ['titre','ouverture','debut_event','fin_event','nombre_places'];
+    protected $fillable = ['titre','ouverture','debut_event','fin_event','nombre_places', 'categorie'];
 
     public function shotguns()
     {

@@ -34,6 +34,7 @@ class EventResource extends Resource
                 DateTimePicker::make('debut_event')->nullable(),
                 DateTimePicker::make('fin_event')->nullable(),
                 TextInput::make('nombre_places')->numeric()->required(),
+                TextInput::make('categorie')->placeholder('Repas, Soirée, Sortie...'),
             ]);
     }
     
@@ -46,6 +47,7 @@ class EventResource extends Resource
                 TextColumn::make('debut_event')->dateTime(),
                 TextColumn::make('fin_event')->dateTime(),
                 TextColumn::make('nombre_places'),
+                TextColumn::make('categorie')->sortable()->searchable(),
                 TextColumn::make('shotguns_count')
                     ->label('Places restantes')
                     ->getStateUsing(fn ($record) => $record->nombre_places - $record->shotguns()->count()),
