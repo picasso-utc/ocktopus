@@ -49,6 +49,7 @@ use App\Http\Controllers\Mobile\AnnoncesController;
 use App\Http\Controllers\Mobile\JeuxTemporaireController;
 use App\Http\Controllers\Mobile\SemesterEventController;
 use App\Http\Controllers\Mobile\BoiteIdeesController;
+use App\Http\Controllers\Mobile\FaqController;
 
 Route::prefix('mobile')->group(function () {
 
@@ -70,6 +71,10 @@ Route::prefix('mobile')->group(function () {
 
     // Annonces
     Route::get('/annonces', [AnnoncesController::class, 'index'])
+        ->middleware('jwt');
+
+    // FAQs
+    Route::get('/faqs', [FaqController::class, 'index'])
         ->middleware('jwt');
 
     // Jeux Temporaires
