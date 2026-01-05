@@ -65,6 +65,8 @@ Route::prefix('mobile')->group(function () {
     // Demande de permanence
     Route::post('/perms', [PermController::class, 'store'])
         ->middleware('jwt');
+    Route::get('/perms', [PermController::class, 'index'])
+        ->middleware('jwt');
 
     // Permanences de la semaine en cours
     Route::get('/perms/current-week', [PermController::class, 'currentWeek'])

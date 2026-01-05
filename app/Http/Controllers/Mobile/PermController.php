@@ -147,4 +147,26 @@ class PermController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all permanence requests.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        try {
+            $perms = Perm::orderBy('created_at', 'desc')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $perms
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des demandes de permanence : ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
