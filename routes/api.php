@@ -48,6 +48,7 @@ use App\Http\Controllers\Mobile\PermController;
 use App\Http\Controllers\Mobile\AnnoncesController;
 use App\Http\Controllers\Mobile\JeuxTemporaireController;
 use App\Http\Controllers\Mobile\SemesterEventController;
+use App\Http\Controllers\Mobile\BoiteIdeesController;
 
 Route::prefix('mobile')->group(function () {
 
@@ -77,5 +78,11 @@ Route::prefix('mobile')->group(function () {
 
     // Évènements du semestre
     Route::get('/semester-events', [SemesterEventController::class, 'index'])
+        ->middleware('jwt');
+
+    // Boite à Idées
+    Route::get('/boite-idees', [BoiteIdeesController::class, 'index'])
+        ->middleware('jwt');
+    Route::post('/boite-idees', [BoiteIdeesController::class, 'store'])
         ->middleware('jwt');
 });
