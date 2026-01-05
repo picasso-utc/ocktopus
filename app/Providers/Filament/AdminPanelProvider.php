@@ -36,6 +36,14 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Yellow,
                 ]
             )
+            ->navigationGroups([
+                'Admin',
+                'Général',
+                'Astreintes',
+                'Gestion des perms',
+                'Gestion des télés',
+                'Gestion de l\'application mobile',
+            ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages(
