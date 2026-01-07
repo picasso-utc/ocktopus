@@ -99,4 +99,15 @@ Route::prefix('mobile')->group(function () {
         ->middleware('jwt');
     Route::post('/boite-idees', [BoiteIdeesController::class, 'store'])
         ->middleware('jwt');
+
+    // Elo
+    Route::prefix('elo')->middleware('jwt')->group(function () {
+        Route::get('/get-rankings', [\App\Http\Controllers\Mobile\Elo::class, 'getRankings']);
+        Route::get('/search-user', [\App\Http\Controllers\Mobile\Elo::class, 'searchUser']);
+        Route::get('/get-user-elo', [\App\Http\Controllers\Mobile\Elo::class, 'getUserElo']);
+        Route::get('/get-match-history', [\App\Http\Controllers\Mobile\Elo::class, 'getMarchHistory']);
+        Route::get('/get-match-requests', [\App\Http\Controllers\Mobile\Elo::class, 'getMatchRequests']);
+        Route::post('/create-match-record', [\App\Http\Controllers\Mobile\Elo::class, 'createMatchRecord']);
+        Route::post('/respond-match-request', [\App\Http\Controllers\Mobile\Elo::class, 'respondMatch']);
+    });
 });
