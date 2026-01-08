@@ -7,6 +7,16 @@ use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Application mobile
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Mobile\PermController;
+use App\Http\Controllers\Mobile\AnnoncesController;
+use App\Http\Controllers\Mobile\JeuxTemporaireController;
+use App\Http\Controllers\Mobile\SemesterEventController;
+use App\Http\Controllers\Mobile\BoiteIdeesController;
+use App\Http\Controllers\Mobile\FaqController;
+use App\Http\Controllers\Mobile\ShotgunController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,16 +51,6 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
 
 Route::post('/transaction', [TransactionController::class, 'handle']);
-
-// Application mobile
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Mobile\PermController;
-use App\Http\Controllers\Mobile\AnnoncesController;
-use App\Http\Controllers\Mobile\JeuxTemporaireController;
-use App\Http\Controllers\Mobile\SemesterEventController;
-use App\Http\Controllers\Mobile\BoiteIdeesController;
-use App\Http\Controllers\Mobile\FaqController;
-use App\Http\Controllers\Mobile\ShotgunController;
 
 Route::prefix('mobile')->group(function () {
 
