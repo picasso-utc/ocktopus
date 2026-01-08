@@ -27,7 +27,7 @@ class Elo extends Controller
         $input = $request->input('input');
         $type = $request->input('type');
 
-        $userMails = ClassementElo::where('mail_user','LIKE','%'.$term.'%')->orWhere('nom_user','LIKE','%'.$term.'%')
+        $userMails = ClassementElo::where('mail_user','LIKE','%'.$input.'%')->orWhere('nom_user','LIKE','%'.$input.'%')
             ->where('type', $type)
             ->take(10)
             ->get();
@@ -136,7 +136,7 @@ class Elo extends Controller
         $matchId = $request->input('match_id');
         $accepter = $request->input('accepter');
         $match = HistoriqueMatch::find($matchId);
-        if (!$match || $match->mail_receveur !== $user['email'] || $match->type !== $type) {
+        if (!$match || $match->mail_receveur !== $user['email']) {
             return response()->json([
                 'success' => false,
                 'message' => 'Match non trouvé ou accès refusé'
@@ -153,7 +153,7 @@ class Elo extends Controller
                 'success' => false,
                 'message' => 'Vous devez d\'abord répondre aux anciens matchs en attente'
             ], 409);
-        } 
+        }
 
 
         $match->valider = $accepter;
