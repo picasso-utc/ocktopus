@@ -54,14 +54,28 @@ class BoiteIdeesController extends Controller
     }
 
     /**
-     * Get all ideas.
+     * Get ideas of the authenticated user only.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->get('user');
+
+        if (!isset($user['email'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non authentifié'
+            ], 401);
+        }
+
         try {
-            $ideas = BoiteIdees::orderBy('created_at', 'desc')->get();
+            $authorName = mailToName($user['email']);
+
+            $ideas = BoiteIdees::where('author', $authorName)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
