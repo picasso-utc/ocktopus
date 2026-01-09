@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BachController;
 use App\Http\Controllers\ExonerationController;
+use App\Http\Controllers\Mobile\SignatureCharteController;
 use App\Http\Controllers\TodayConsumptionController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
@@ -99,6 +100,11 @@ Route::prefix('mobile')->group(function () {
         ->middleware('jwt');
     Route::post('/boite-idees', [BoiteIdeesController::class, 'store'])
         ->middleware('jwt');
+
+    Route::prefix('charte')->middleware('jwt')->group(function () {
+        Route::get('/signed', [SignatureCharteController::class, 'hasSigned']);
+        Route::post('/sign', [SignatureCharteController::class, 'sign']);
+    });
 
     // Elo
     Route::prefix('elo')->middleware('jwt')->group(function () {
