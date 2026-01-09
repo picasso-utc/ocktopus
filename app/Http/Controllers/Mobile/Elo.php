@@ -40,7 +40,7 @@ class Elo extends Controller
         $type = $request->input('type');
         $elo = ClassementElo::firstOrCreate(
             ['mail_user' => $user['email'], 'type' => $type],
-            ['elo_score' => 1000]
+            ['elo_score' => 1000, 'nom_user' => mailToName($user['email'])]
         );
         return response()->json($elo);
     }
@@ -100,7 +100,7 @@ class Elo extends Controller
 
         $match = HistoriqueMatch::create([
             'mail_envoyeur' => $user['email'],
-            'nom_envoyeur' => mailToName($user['name']),
+            'nom_envoyeur' => mailToName($user['email']),
             'mail_receveur' => $request->input('mail_receveur'),
             'nom_receveur' => mailToName($request->input('mail_receveur')),
             'type' => $request->input('type'),
@@ -114,6 +114,39 @@ class Elo extends Controller
             'message' => 'Match enregistré avec succès',
             'data' => $match
         ], 201);
+    }
+
+    public function cancelMatchRecord(Request $request){
+        $user = $request->input('user');
+        $matchId = $request->input('match_id');
+
+        $match = HistoriqueMatch::find($matchId);
+        if (!$match) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Match non trouvé'
+            ], 404);
+        }
+        if ($match->mail_envoyeur !== $user['email']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès refusé pour ce match'
+            ], 403);
+        }
+        if ($match->valider === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce match à déjà été accepté, il ne peut plus être annulé'
+            ], 418); //418 = I'm a teapot (ça fait 5 ans je veux utilisé ce code erreur laissez le moi svp)
+        }
+
+        $match->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Match annulé avec succès',
+            'data' => $match
+        ], 200);
     }
 
     public function getMatchRequests(Request $request){
@@ -155,11 +188,10 @@ class Elo extends Controller
             ], 409);
         }
 
-
-        $match->valider = $accepter;
-        $match->save();
-
         if($accepter){
+            $match->valider = $accepter;
+            $match->save();
+
             $eloReceveur = ClassementElo::firstOrCreate(
                 ['mail_user' => $match->mail_receveur, 'type' => $match->type],
                 ['elo_score' => 1000]
@@ -185,6 +217,8 @@ class Elo extends Controller
             $eloReceveur->elo_score = round($newEloReceveur);
             $eloEnvoyeur->save();
             $eloReceveur->save();
+        } else {
+            $match->delete();
         }
 
         return response()->json([
