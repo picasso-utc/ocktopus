@@ -109,5 +109,6 @@ Route::prefix('mobile')->group(function () {
         Route::get('/get-match-requests', [\App\Http\Controllers\Mobile\Elo::class, 'getMatchRequests']);
         Route::post('/create-match-record', [\App\Http\Controllers\Mobile\Elo::class, 'createMatchRecord']);
         Route::post('/respond-match-request', [\App\Http\Controllers\Mobile\Elo::class, 'respondMatch']);
+        Route::delete('/cancel-match-record', [\App\Http\Controllers\Mobile\Elo::class, 'cancelMatchRecord']);
     });
 });
