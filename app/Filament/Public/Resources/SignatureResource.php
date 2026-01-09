@@ -3,38 +3,35 @@
 namespace App\Filament\Public\Resources;
 
 use App\Filament\Public\Resources\SignatureResource\Pages;
-use App\Filament\Public\Resources\SignatureResource\RelationManagers;
-use App\Models\Creneau;
-use App\Models\Signature;
-use App\Models\User;
+use App\Models\Semestre;
+use App\Models\SignatureCharte;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class SignatureResource extends Resource
 {
-    protected static ?string $model = Signature::class;
+    protected static ?string $model = SignatureCharte::class;
+
     protected static ?string $navigationGroup = 'Permanences';
-    protected static ?string $label = 'Signatures';
+    protected static ?string $label = 'Charte Permanencier';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Form $form): Form
     {
         $user = session('user');
-        $userMail = $user->email;
+        $userMail = $user?->email;
 
-        $creneauToday = Creneau::where('date', now()->format('Y-m-d'))->first();
-        $perm_id = $creneauToday->perm_id;
-        return $form
-        ->schema([
+        // Semestre actif (A25, P26, etc.)
+        $semestreActif = Semestre::where('activated', true)->first();
+        $semestreId = $semestreActif?->id;
+
+        return $form->schema([
             Placeholder::make('charte')
                 ->label('')
                 ->content(new HtmlString('
@@ -55,47 +52,44 @@ class SignatureResource extends Resource
                 '))
                 ->columnSpan('full'),
 
+            Checkbox::make('agree')
+                ->label("Je certifie être en accord avec la charte du permanencier")
+                ->required()
+                ->rule('accepted'),
 
-                Checkbox::make('agree')
-                    ->label("Je certifie être en accord avec la charte du permanencier")
-                    ->required()
-                    ->rule('accepted'), // Validation pour s'assurer que la case est cochée
-                Forms\Components\Hidden::make('adresse_mail')->default($userMail),
-                Forms\Components\Hidden::make('perm_id')->default($perm_id)
+            Forms\Components\Hidden::make('adresse_mail')
+                ->default($userMail)
+                ->required(),
 
-            ]);
+            Forms\Components\Hidden::make('semestre_id')
+                ->default($semestreId)
+                ->required(),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label("Date de signature"),
-                Tables\Columns\TextColumn::make('adresse_mail')
-                    ->label("Adresse mail du signataire"),
-                Tables\Columns\TextColumn::make('perm.nom')
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-            ])
-            ->bulkActions([
-            ]);
-    }
+        return $table->columns([
+            Tables\Columns\TextColumn::make('created_at')
+                ->label("Date de signature")
+                ->dateTime('d/m/Y H:i'),
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            Tables\Columns\TextColumn::make('adresse_mail')
+                ->label("Adresse mail du signataire")
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('semestre.state')
+                ->label("Semestre")
+                ->sortable(),
+        ])
+            ->actions([])
+            ->bulkActions([]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSignatures::route('/'),
+            'index'  => Pages\ListSignatures::route('/'),
             'create' => Pages\CreateSignature::route('/create'),
         ];
     }
