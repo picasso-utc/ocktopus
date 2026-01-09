@@ -27,8 +27,12 @@ class Elo extends Controller
         $input = $request->input('input');
         $type = $request->input('type');
 
-        $userMails = ClassementElo::where('mail_user','LIKE','%'.$input.'%')->orWhere('nom_user','LIKE','%'.$input.'%')
+        $userMails = ClassementElo::query()
             ->where('type', $type)
+            ->where(function ($q) use ($input) {
+                $q->where('mail_user', 'LIKE', '%' . $input . '%')
+                    ->orWhere('nom_user', 'LIKE', '%' . $input . '%');
+            })
             ->take(10)
             ->get();
 
