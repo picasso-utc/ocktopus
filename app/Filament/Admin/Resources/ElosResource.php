@@ -40,19 +40,17 @@ class ElosResource extends Resource
                 Tables\Columns\TextColumn::make('nom_user')
                     ->label('Personne')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('points')
-                    ->label('Points')
+                Tables\Columns\TextColumn::make('elo_score')
+                    ->label('Elo')
                     ->sortable()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
