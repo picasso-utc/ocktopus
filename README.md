@@ -241,6 +241,7 @@ php artisan serve
 
 Puis ouvre : `http://127.0.0.1:8000`
 
+---
 
 ### Le mot de la fin
 
