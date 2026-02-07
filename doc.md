@@ -16,11 +16,11 @@ Pour comprendre Laravel, imagine un **tuyau** :
 
 ```mermaid
 graph TD
-    A[Mapsur (URL)] --> B[Route]
-    B --> C[Controller]
-    C --> D[Model/DB]
-    D --> E[View (HTML)]
-    E --> F[Utilisateur]
+    A["Navigateur (Tape une URL)"] --> B["Route (Le panneau de direction)"]
+    B --> C["Controller (Le chef d'orchestre)"]
+    C --> D["Model (La liaison avec la base)"]
+    D --> E["View (Le design HTML/Blade)"]
+    E --> F["Utilisateur (La page s'affiche)"]
 ```
 
 **En langage simple :**  
