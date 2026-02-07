@@ -1,16 +1,34 @@
-# Documentation complète (ultra-pédagogique) — Projet Laravel Ocktopus
+# Documentation complète
 
-Bienvenue ! Ce document s’adresse à des débutants complets. Ici, on explique **lentement**, **simplement**, et avec **beaucoup d’exemples**.
-
----
-
-## 1) La philosophie du projet (en une phrase simple)
-
-**Ce site sert à gérer les contenus et services du Pic’Asso (télés, perms, trésorerie, etc.), et à les afficher proprement aux utilisateurs.**
+Documentation du super site du Pic. Ce site sert à gérer les contenus et services du Pic’Asso (télés, perms, trésorerie, etc.), et à les afficher proprement aux utilisateurs.
 
 ---
 
-## 2) Le schéma de fonctionnement (Mermaid)
+## 1. Architecture : Le Pattern MVC dans Laravel
+
+Le site est en Laravel. C'est un framework **MVC (Modèle-Vue-Contrôleur)** strict dans lequel on va coder majoritairement en php. L'objectif est la **séparation des préoccupations** (*Separation of Concerns*).  
+Pour celles et ceux qui n'ont pas suivi SR03 ou SR10 ou d'autres UVs du type voici un petit récap de ce qu'est le modèle MVC et commment il s'applique à se projet.
+
+### Le concept appliqué au repo :
+
+* **M - Model (`app/Models`)**
+    * **Rôle :** Abstraction de la base de données (ORM Eloquent) et logique métier.
+    * **Responsabilité :** Chaque classe (ex: `Tv`) correspond à une table SQL (`tvs`). C'est ici que sont définies les relations (`hasMany`, `belongsTo`) et les scopes.
+    * *Règle :* Pas de requêtes SQL brutes dans les contrôleurs, on utilise les méthodes du Modèle.
+
+* **V - View (`resources/views`)**
+    * **Rôle :** Présentation et interface utilisateur.
+    * **Tech :** Moteur de template **Blade** (`.blade.php`).
+    * **Responsabilité :** Afficher les données injectées par le contrôleur. Blade compile en PHP pur et permet d'utiliser des structures de contrôle (`@foreach`, `@if`) directement dans le HTML.
+
+* **C - Controller (`app/Http/Controllers`)**
+    * **Rôle :** Orchestrateur.
+    * **Responsabilité :** Il intercepte la requête HTTP, valide les entrées, appelle les Modèles pour la data, et retourne une Réponse (Vue ou JSON).
+    * *Règle :* Un contrôleur doit rester "léger". Il ne contient pas de logique métier complexe (qui devrait être dans un Service ou un Modèle).
+
+---
+
+## 2) Le schéma de fonctionnement
 
 Pour comprendre Laravel, imagine un **tuyau** :
 
@@ -28,9 +46,9 @@ Quand quelqu’un tape une URL, Laravel suit une route → appelle un contrôleu
 
 ---
 
-## 3) La Structure pour les Nuls (Détaillée)
+## 3) Détail des éléments principaux de la structure
 
-### ✅ `routes/web.php` — La carte des URLs
+###  `routes/web.php` — La carte des URLs
 C’est **le plan des routes**.  
 Chaque ligne dit : “Si l’URL est X, alors fais ça”.
 
@@ -42,10 +60,9 @@ Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show']);
 **Traduction :**  
 Quand quelqu’un va sur `/TV/quelquechose`, Laravel appelle la méthode `show` du contrôleur `TvController`.
 
----
 
-### ✅ `app/Http/Controllers` — Le “chef cuisinier”
-Ici on écrit la **recette** de chaque page.
+###  `app/Http/Controllers`
+Ici on écrit le fonctionnement de chaque page.
 
 **Le contrôleur :**
 - récupère des données (depuis les modèles)
@@ -61,12 +78,7 @@ public function show(Tv $tv)
 }
 ````
 
-**Image mentale :**  
-Tu donnes la recette à la cuisine, la cuisine prépare les ingrédients, puis envoie le plat à la table.
-
----
-
-### ✅ `app/Models` — Les objets “base de données”
+### `app/Models` — Les objets “base de données”
 Un **Model** représente une table en base de données.
 
 Exemple :
@@ -88,15 +100,18 @@ class Tv extends Model
 }
 ````
 
----
 
-### ✅ `resources/views` — Les pages HTML (avec Blade)
+### `resources/views` — Les pages HTML (avec Blade)
 Ici on écrit ce que l’utilisateur voit.
 
 Laravel utilise **Blade**, un mini-langage dans le HTML.
 
-#### ✨ Blade pour les nuls :
+#### Explication rapide de Blade :
 
+Blade mélange du HTML + des petits scripts faciles à lire.
+
+
+Quelques sintaxes :  
 - `{{ $variable }}` : affiche une variable
 - `@if` : condition
 - `@foreach` : boucle
@@ -115,36 +130,12 @@ Exemple Blade :
 @endforeach
 </ul>
 ````
-
-**Traduction :**  
-Blade mélange du HTML + des petits scripts faciles à lire.
-
 ---
 
-## 4) Exemple concret (Trajet d’une page)
 
-**Route choisie :** `/TV/{tv}`
+## 4) Debug & Logs
 
-**Trajet exact du code :**
-1. **routes/web.php**  
-   → `Route::get('/TV/{tv}', [\App\Http\Controllers\TvController::class, 'show'])`
-
-2. **app/Http/Controllers/TvController.php**  
-   → méthode `show(Tv $tv)`
-
-3. **app/Models/Tv.php**  
-   → relation vers `Link`
-
-4. **app/Models/Link.php**
-
-5. **resources/views/TV/display.blade.php**  
-   → affiche un `<iframe>` avec l’URL
-
----
-
-## 5) Au secours, ça ne marche pas ! (Debug & Logs)
-
-### ✅ Où voir les erreurs ?
+### Où voir les erreurs ?
 Toutes les erreurs Laravel sont enregistrées ici :
 
 ```
@@ -153,11 +144,7 @@ storage/logs/laravel.log
 
 **Si ça bug, c’est ici qu’il faut regarder en premier.**
 
----
-
-### ✅ Comment lire le fichier ?
-
-Tu peux l’ouvrir avec VS Code ou taper en terminal :
+Je vous conseille de vous connecter directement en ssh sur le serveur pour ouvrir ce fichier avec tail et de suivre l'évolution des messages d'erreur en live :
 
 ````bash
 tail -f storage/logs/laravel.log
@@ -165,11 +152,19 @@ tail -f storage/logs/laravel.log
 
 **`tail -f`** = affiche les nouvelles lignes en temps réel.
 
+Ou bien : 
+
+````bash
+tail -n 100 storage/logs/laravel.log
+````
+
+Pour afficher les 100 dernières lignes d'erreurs (les erreurs font généralement autour de 60-80 lignes)
+
 ---
 
-## 6) Commandes de Survie (Détaillées)
+## 5) Quelques commandes 
 
-### ✅ `php artisan serve`
+###  `php artisan serve`
 Lance le serveur local.  
 Utile pour tester en local.
 
@@ -179,9 +174,8 @@ php artisan serve
 
 Puis ouvre : `http://127.0.0.1:8000`
 
----
 
-### ✅ `php artisan route:list`
+###  `php artisan route:list`
 Affiche toutes les routes disponibles.  
 **Très utile pour retrouver quelle URL correspond à quoi.**
 
@@ -194,9 +188,8 @@ Tu verras :
 - l’URL
 - le contrôleur
 
----
 
-### ✅ `php artisan migrate`
+###  `php artisan migrate`
 Applique les migrations de base de données.
 
 ````bash
@@ -206,68 +199,14 @@ php artisan migrate
 **Traduction :**  
 Laravel crée ou modifie les tables selon les fichiers dans `database/migrations`.
 
----
 
-## 7) Tableau “Je veux faire quoi ?”
+### 🏁 Le mot de la fin
 
-| Mon objectif | Où aller dans le code |
-|---|---|
-| Modifier un texte sur une page | resources/views/** (ex: resources/views/TV/display.blade.php) |
-| Changer une URL publique | routes/web.php |
-| Ajouter un champ en base de données | database/migrations/** + app/Models/** (ex: migration de la table concernée + modèle associé) |
-
----
-
-## 8) Schéma simple de la base de données (Mermaid)
-
-Ce schéma est **simplifié** pour débutants.
-
-```mermaid
-erDiagram
-    LINK ||--o{ TV : "contient"
-    USERS ||--o{ ASTREINTES : "effectue"
-
-    LINK {
-        bigint id
-        string name
-        string url
-    }
-
-    TV {
-        bigint id
-        string name
-        bigint link_id
-    }
-
-    USERS {
-        bigint id
-        string email
-        string role
-    }
-
-    ASTREINTES {
-        bigint id
-        bigint user_id
-        bigint creneau_id
-        string astreinte_type
-    }
-```
-
-**Lecture simple :**
-- Une TV appartient à un Link
-- Un User peut faire plusieurs Astreintes
-
----
-
-## 9) Mini résumé (si tu es perdu)
-
-✅ **Routes** = plan des URLs  
-✅ **Controllers** = recette (récupérer / filtrer / envoyer)  
-✅ **Models** = tables SQL en code  
-✅ **Views** = HTML avec Blade
-
----
-
-Si tu veux une version dédiée à un module précis (perms, trésorerie, TV…), dis-le et je l’ajoute.
+> Rédigé en **A25** par votre super Resp Info, **Clément Chazelas**.
+>
+> J'encourage mes successeurs à étoffer cette rapide documentation, pour ceux qui viendront après.
+> Ne laissont pas ce super projet subir le cycle de renouvellement qu'on voit bien trop souvent dans le paysage associatif de notre belle école.
+> 
+> **Bon code !** 🚀 
 
 
