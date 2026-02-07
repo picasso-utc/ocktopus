@@ -28,7 +28,7 @@ Pour celles et ceux qui n'ont pas suivi SR03 ou SR10 ou d'autres UVs du type voi
 
 ---
 
-## 2) Le schéma de fonctionnement
+## 2. Le schéma de fonctionnement
 
 Pour comprendre Laravel, imagine un **tuyau** :
 
@@ -46,7 +46,7 @@ Quand quelqu’un tape une URL, Laravel suit une route → appelle un contrôleu
 
 ---
 
-## 3) Détail des éléments principaux de la structure
+## 3. Détail des éléments principaux de la structure
 
 ###  `routes/web.php` — La carte des URLs
 C’est **le plan des routes**.  
@@ -133,7 +133,7 @@ Exemple Blade :
 ---
 
 
-## 4) Debug & Logs
+## 4. Debug & Logs
 
 ### Où voir les erreurs ?
 Toutes les erreurs Laravel sont enregistrées ici :
@@ -162,7 +162,7 @@ Pour afficher les 100 dernières lignes d'erreurs (les erreurs font généraleme
 
 ---
 
-## 5) Quelques commandes 
+## 5. Quelques commandes 
 
 ###  `php artisan serve`
 Lance le serveur local.  
@@ -198,6 +198,48 @@ php artisan migrate
 
 **Traduction :**  
 Laravel crée ou modifie les tables selon les fichiers dans `database/migrations`.
+
+---
+
+## 6. Installation du projet
+
+### Prérequis
+- **PHP** (version compatible Laravel)
+- **Composer** (gestionnaire de dépendances PHP)
+- **Node.js + npm** (pour les assets front si besoin)
+
+### Étapes d’installation
+
+1/ **Cloner le projet**
+````bash
+git clone <url-du-repo>
+cd ocktopus
+````
+
+2/ **Installer les dépendances PHP**
+````bash
+composer install
+````
+
+3/ **Configurer l’environnement**
+Demande le fichier `.env` au responsable, puis mets-le à la racine du projet.
+
+Pour une base locale simple :
+````env
+DB_CONNECTION=sqlite
+````
+
+4/ **Créer la base de données**
+````bash
+php artisan migrate
+````
+
+5/ **Lancer le serveur**
+````bash
+php artisan serve
+````
+
+Puis ouvre : `http://127.0.0.1:8000`
 
 
 ### Le mot de la fin
