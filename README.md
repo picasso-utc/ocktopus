@@ -200,13 +200,13 @@ php artisan migrate
 Laravel crée ou modifie les tables selon les fichiers dans `database/migrations`.
 
 
-### 🏁 Le mot de la fin
+### Le mot de la fin
 
 > Rédigé en **A25** par votre super Resp Info, **Clément Chazelas**.
 >
 > J'encourage mes successeurs à étoffer cette rapide documentation, pour ceux qui viendront après.
 > Ne laissont pas ce super projet subir le cycle de renouvellement qu'on voit bien trop souvent dans le paysage associatif de notre belle école.
 > 
-> **Bon code !** 🚀 
+> **Have fun !** 
 
 
