@@ -180,11 +180,13 @@ class FactureRecueResource extends Resource
                 TextColumn::make('date')
                     ->label('Date Facturation')
                     ->date('M d, Y')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('date_paiement')
                     ->date('M d, Y')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
                 TextColumn::make('date_remboursement')
                     ->date('M d, Y')
                     ->searchable()
