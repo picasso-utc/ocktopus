@@ -43,10 +43,10 @@ return [
             'owner_details_url' => env('OAUTH_RESOURCE_OWNER_DETAILS', 'https://auth.assos.utc.fr/api/user'),
             'logout_url' => env('OAUTH_LOGOUT_URL', 'https://auth.assos.utc.fr/logout'),
     ],
-
+    
     'crypt' => [
-        'private' => file_get_contents(storage_path('app/keys/mobile-private.key')),
-        'public' => file_get_contents(storage_path('app/keys/mobile-public.key')),
+        'private' => file_exists(storage_path('app/keys/mobile-private.key')) ? file_get_contents(storage_path('app/keys/mobile-private.key')) : null,
+        'public' => file_exists(storage_path('app/keys/mobile-public.key')) ? file_get_contents(storage_path('app/keys/mobile-public.key')) : null,
     ],
 
 

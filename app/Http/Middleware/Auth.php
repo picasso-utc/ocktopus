@@ -43,9 +43,20 @@ class Auth
         }
 
         try {
+            // Bypass JWT verification in local environment if session user exists (Avoid using keys in local)
+            if (config('app.env') === 'local' && session()->has('user')) {
+                auth()->setUser(session('user'));
+                return $next($request);
+            }
+
             // Decode the JWT token using the public key
             $public_key_path = storage_path('app/keys/public.key');
-            $public_key = openssl_get_publickey('file://' . $public_key_path);
+            $public_key = @openssl_get_publickey('file://' . $public_key_path);
+            
+            if (!$public_key) {
+                throw new LogicException('Missing or invalid public key');
+            }
+
             $decoded_uuid = JWT::decode($token, new Key($public_key, 'RS256'))->sub;
 
             if ($decoded_uuid == null) {

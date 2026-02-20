@@ -8,6 +8,7 @@
 .env
 .env.backup
 .env.production
+.env.dev
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -22,3 +23,4 @@ env.ocktopus
 *.sql
 *.sqlite
 *.key
+*:Zone.Identifier

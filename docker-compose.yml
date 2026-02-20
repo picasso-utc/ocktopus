@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocktopus_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    environment:
+      COMPOSER_PROCESS_TIMEOUT: 2000
+    # Insalle les dépendances composer seulement si il n'y a pas de vendor
+    command: sh -c "if [ ! -f vendor/autoload.php ]; then composer install; fi && php artisan serve --host=0.0.0.0 --port=8000"
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+    networks:
+      - ocktopus-network
+
+  db:
+    image: mysql:8.0
+    container_name: ocktopus_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: picasso
+      MYSQL_USER: picasso
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+      # Montage de l'export SQL qui sera executé automatiquement lors de l'initialisation du conteneur (premier lancement)
+      - ./database/export/picasso.sql:/docker-entrypoint-initdb.d/picasso.sql
+    networks:
+      - ocktopus-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: ocktopus_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - ocktopus-network
+
+networks:
+  ocktopus-network:
+    driver: bridge
+
+volumes:
+  db_data:
