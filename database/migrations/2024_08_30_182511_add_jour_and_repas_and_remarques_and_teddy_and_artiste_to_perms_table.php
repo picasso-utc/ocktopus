@@ -16,6 +16,10 @@ return new class extends Migration
             $table->json('jour')->nullable();
             $table->string('repas')->nullable();
             $table->string('idea_repas')->nullable();
+            $table->boolean('gouter')->default(false);
+            $table->string('idea_gouter', 255)->nullable();
+            $table->boolean('repas_soir')->default(false);
+            $table->string('idea_repas_soir', 255)->nullable();
             $table->string('remarques')->nullable();
             $table->boolean('teddy')->default(false);
             $table->boolean('artiste')->default(false);

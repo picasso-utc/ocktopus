@@ -127,6 +127,54 @@ class PermResource extends Resource
                         'xl' => 4,
                         '2xl' => 4,
                     ]),
+                Forms\Components\Toggle::make('gouter')
+                    ->required()
+                    ->label('Un petit goûter prévu ?')
+                    ->inline(false)
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ]),
+                Forms\Components\TextInput::make('idea_gouter')
+                    ->label('Idée du goûter')
+                    ->placeholder('Des idées du goûter ?')
+                    ->disabled(fn(callable $get) => !$get('gouter'))
+                    ->required(fn(callable $get) => $get('gouter'))
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 4,
+                        'xl' => 4,
+                        '2xl' => 4,
+                    ]),
+                Forms\Components\Toggle::make('repas_soir')
+                    ->required()
+                    ->label('Repas prévu ?')
+                    ->inline(false)
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ]),
+                Forms\Components\TextInput::make('idea_repas_soir')
+                    ->label('Idée du repas')
+                    ->placeholder('Des idées du repas ?')
+                    ->disabled(fn(callable $get) => !$get('repas_soir'))
+                    ->required(fn(callable $get) => $get('repas_soir'))
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 4,
+                        'xl' => 4,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\TextInput::make('nom_resp')
                     ->required()
                     ->placeholder('Nom du responsable de la permanence')
@@ -385,6 +433,24 @@ class PermResource extends Resource
                     IconEntry::make('artiste')
                         ->label("Accueil d'artistes")
                         ->boolean(),
+                    IconEntry::make('repas')
+                        ->label("Repas prévu")
+                        ->boolean(),
+                    TextEntry::make('idea_repas')
+                        ->label('Idée du repas')
+                        ->visible(fn($record) => $record->repas == true),
+                    IconEntry::make('gouter')
+                        ->label("Goûter prévu")
+                        ->boolean(),
+                    TextEntry::make('idea_gouter')
+                        ->label('Idée du goûter')
+                        ->visible(fn($record) => $record->gouter == true),
+                    IconEntry::make('repas_soir')
+                        ->label("Repas prévu")
+                        ->boolean(),
+                    TextEntry::make('idea_repas_soir')
+                        ->label('Idée du repas')
+                        ->visible(fn($record) => $record->repas_soir == true),
                 ]
 
             );
