@@ -60,14 +60,21 @@ class ExteResource extends Resource
                     ->disabledDates($disabledDates)
                     ->reactive()
                     ->beforeOrEqual(fn ($get) => Carbon::parse($get('exte_date_debut'))->addWeek()->toDateString()),          
-                Forms\Components\Checkbox::make('responsabilite')
-                    ->label('En cochant la case ci-dessous, tu prends l\'entière responsabilité des actes de ton exté, et tu certifies ton exté ramènera un document d\'identité physique ainsi qu\'un mail de confirmation venant du Pic\'Asso')
+                    Forms\Components\Checkbox::make('responsabilite')
+                    ->label('En cochant la case ci-dessous, tu prends l\'entière responsabilité des actes de ton exté, et tu certifies avoir lu et accepté la charte des extés télchargeable ci-dessous')
                     ->required(),
-                Forms\Components\TextInput::make('commentaire')
+                    Forms\Components\TextInput::make('commentaire')
                     ->label('Commentaire')
                     ->placeholder('Tu peux nous laisser un très bref commentaire :)')
-                    ->maxLength(80)
-            ])  ;
+                    ->maxLength(80),
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make('download_charte')
+                            ->label('Télécharger la charte des extés')
+                            ->icon('heroicon-o-document-arrow-down')
+                            ->color('primary')
+                            ->url(fn () => asset('storage/charte_exte.pdf'), shouldOpenInNewTab: true)
+                    ])->columnSpanFull()
+            ]);
     }
 
     public static function table(Table $table): Table

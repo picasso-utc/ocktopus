@@ -17,6 +17,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installation des extensions PHP requises par Laravel et SQLite/MySQL
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
+RUN php artisan storage:link
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
