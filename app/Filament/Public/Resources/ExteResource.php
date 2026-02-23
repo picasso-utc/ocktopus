@@ -47,7 +47,7 @@ class ExteResource extends Resource
                     ->required(),
                 Forms\Components\DatePicker::make('exte_date_debut')
                     ->label('Date début')
-                    ->helperText("A partir de quelle date viendrait-il ? (au moins une semaine à l'avance)")
+                    ->helperText("A partir de quelle date viendrait-il ? (à faire avant la perm)")
                     ->required()
                     ->disabledDates($disabledDates)
                     ->reactive()
