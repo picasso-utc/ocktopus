@@ -27,7 +27,7 @@ class ListExtes extends ListRecords
                 ->modifyQueryUsing(
                     function (Builder $query) use ($startOfWeek) {
                         return $query->where('mailed', 0)
-                        ->where('exte_date_fin', '>=', $startOfWeek);
+                            ->where('exte_date_fin', '>=', $startOfWeek);
                     }
                 ),
             // Élément pour les éléments validés
@@ -43,9 +43,33 @@ class ListExtes extends ListRecords
 
 
 
-protected function getHeaderActions(): array
+    protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('copier_extes_du_jour')
+                ->label('Copier extés du jour')
+                ->color('info')
+                ->icon('heroicon-o-clipboard-document')
+                ->action(function () {
+                    $today = Carbon::today();
+
+                    $extes = Exte::where('exte_date_debut', '<=', $today)
+                        ->where('exte_date_fin', '>=', $today)
+                        ->get();
+
+                    $dateLabel = $today->translatedFormat('l d F Y');
+
+                    $lines = ["------ {$dateLabel} ------"];
+                    foreach ($extes as $exte) {
+                        $lines[] = "{$exte->exte_nom_prenom} - exté de {$exte->etu_nom_prenom}";
+                    }
+
+                    $text = implode("\n", $lines);
+
+                    $this->js("navigator.clipboard.writeText(" . json_encode($text) . ")");
+                })
+                ->successNotificationTitle('Extés du jour copiées dans le presse-papier !'),
+
             Actions\Action::make('pdf_validés')
                 ->form([
                     DatePicker::make('date_debut')
@@ -73,7 +97,7 @@ protected function getHeaderActions(): array
                         echo Pdf::loadHtml(
                             Blade::render('pdf/exteTab', ['demandes' => $requests])
                         )
-                            ->setPaper('a4','landscape')
+                            ->setPaper('a4', 'landscape')
                             ->stream();
                     }, 'Demandes-' . now()->format('Y-m-d') . '.pdf');
                 }),
@@ -104,7 +128,7 @@ protected function getHeaderActions(): array
                         echo Pdf::loadHtml(
                             Blade::render('pdf/exteTab', ['demandes' => $requests])
                         )
-                            ->setPaper('a4','landscape')
+                            ->setPaper('a4', 'landscape')
                             ->stream();
                     }, 'Demandes-' . now()->format('Y-m-d') . '.pdf');
                 })
