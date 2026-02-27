@@ -87,6 +87,7 @@ class AstreinteShotgunResource extends Resource
                             'D' => 'Déjeuner',
                             'S' => 'Soir',
                             'L' => 'Lessive',
+                            'DR' => 'Drive',
                         }),
                     Tables\Columns\TextColumn::make('perm.nom')
                         ->label('Perm associée')
@@ -156,6 +157,14 @@ class AstreinteShotgunResource extends Resource
                         )
                     ->color(fn($record) => self::determineColorLessive($record, $userId))
                     ->action(fn($record) => self::handleLessive($record, $userId)),
+                Tables\Actions\Action::make('drive')
+                    ->label('Drive')
+                    ->button()
+                    ->visible(fn($record) =>
+                            Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
+                        )
+                    ->color(fn($record) => self::determineColorDrive($record, $userId))
+                    ->action(fn($record) => self::handleDrive($record, $userId)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -200,7 +209,11 @@ class AstreinteShotgunResource extends Resource
                 ->first();
             $existingAstreinte = Astreinte::where('creneau_id', $record->id)
                     ->where('astreinte_type', $astreinteType)->first() != null;
-            if (!$existingAstreinte) {
+            $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
+                    ->where('user_id', $userId)
+                    ->where('astreinte_type', 'Soir 2')
+                    ->first();
+            if (!$existingAstreinte && !$astreinteUserOther) {
                 $astreinte = new Astreinte([
                     'user_id' =>$userId,
                     'creneau_id' => $record->id,
@@ -210,15 +223,23 @@ class AstreinteShotgunResource extends Resource
                 // Enregistre l'instance dans la base de données
                 $astreinte->save();
             } else {
-                if ($astreinteUser) Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id', $userId) //A changer
-                    ->where('astreinte_type', $astreinteType)
-                    ->first()
-                    ->delete();
-                else Notification::make()
-                    ->title('Il n\'y a plus de places pour cette astreinte')
-                    ->color('danger')
-                    ->send();
+                if ($astreinteUser){
+                    Astreinte::where('creneau_id', $record->id)
+                        ->where('user_id', $userId) //A changer
+                        ->where('astreinte_type', $astreinteType)
+                        ->first()
+                        ->delete();
+                } elseif ($astreinteUserOther) {
+                    Notification::make()
+                        ->title('Vous avez déjà une perm du soir')
+                        ->color('danger')
+                        ->send();
+                } else {
+                    Notification::make()
+                        ->title('Il n\'y a plus de places pour cette astreinte')
+                        ->color('danger')
+                        ->send();
+                }
             }
         }
     }
@@ -252,6 +273,7 @@ class AstreinteShotgunResource extends Resource
                     ->first();
                 $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
                     ->where('user_id',$userId) //A changer Filament::auth()->id()
+                    ->where('astreinte_type', 'Soir 1')
                     ->first();
             } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
@@ -439,6 +461,52 @@ class AstreinteShotgunResource extends Resource
     private static function determineColorLessive($record, $userId)
     {
         $existing = Astreinte::where('astreinte_type', AstreinteType::LESSIVE)
+            ->whereHas('creneau', function ($q) use ($record) {
+                $q->whereDate('date', $record->date);
+            })
+            ->first();
+
+        if ($existing && $existing->user_id == $userId) return 'success';
+        if ($existing) return 'danger';
+    }
+
+    private static function handleDrive($record, $userId)
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $existing = Astreinte::where('astreinte_type', AstreinteType::DRIVE)
+            ->whereHas('creneau', function ($q) use ($record) {
+                $q->whereDate('date', $record->date);
+            })
+            ->first();
+
+        // Si c'est la bonne personne => désinscription
+        if ($existing && $existing->user_id == $userId) {
+            $existing->delete();
+            return;
+        }
+
+        // Si c'est quelqu'un d'autre => impossible
+        if ($existing) {
+            Notification::make()
+                ->title('Le créneau Drive est déjà pris cette semaine')
+                ->color('danger')
+                ->send();
+            return;
+        }
+
+        // Sinon => inscription
+        Astreinte::create([
+            'user_id' => $userId,
+            'creneau_id' => $record->id,
+            'astreinte_type' => AstreinteType::DRIVE,
+        ]);
+    }
+
+    private static function determineColorDrive($record, $userId)
+    {
+        $existing = Astreinte::where('astreinte_type', AstreinteType::DRIVE)
             ->whereHas('creneau', function ($q) use ($record) {
                 $q->whereDate('date', $record->date);
             })

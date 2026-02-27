@@ -47,6 +47,7 @@ class ListAstreintes extends ListRecords
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
                     ->where('astreinte_type', '!=', 'LESSIVE') // exclut les LESSIVE
+                    ->where('astreinte_type', '!=', 'DRIVE') // exclut les DRIVE
                     ->whereNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')
@@ -60,6 +61,7 @@ class ListAstreintes extends ListRecords
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->where('user_id',User::where('uuid', session('user')->uuid)->pluck('id')->first())
                     ->where('astreinte_type', '!=', 'LESSIVE') // exclut les LESSIVE
+                    ->where('astreinte_type', '!=', 'DRIVE') // exclut les DRIVE
                     ->whereNotNull('note_orga')
                         ->whereHas('creneau', function ($query) {
                             $query->whereNotNull('perm_id')

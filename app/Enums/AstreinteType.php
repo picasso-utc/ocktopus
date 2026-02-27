@@ -14,6 +14,7 @@ class AstreinteType
     const S4 = 'S4';
     const A = 'A';
     const LESSIVE = 'Lessive';
+    const DRIVE = 'Drive';
 
     public static function choices()
     {
@@ -28,6 +29,7 @@ class AstreinteType
             self::S4 => 'Soir 4',
             self::A => 'Divers',
             self::LESSIVE => 'LESSIVE',
+            self::DRIVE => 'DRIVE',
         ];
     }
 }
