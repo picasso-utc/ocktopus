@@ -21,6 +21,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
@@ -165,6 +168,86 @@ class CreneauResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('info_perm')
+                    ->label('Infos')
+                    ->icon('heroicon-o-information-circle')
+                    ->color('info')
+                    ->button()
+                    ->modalHeading(fn($record) => 'Détails de la permanence (' . ($record->perm->nom ?? '') . ')')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Fermer')
+                    ->visible(fn($record) => $record->perm_id !== null)
+                    ->infolist([
+                        Grid::make(2)
+                            ->schema([
+                                TextEntry::make('perm.nom')
+                                    ->label('Nom')
+                                    ->visible(fn($record) => !empty($record->perm?->nom)),
+                                TextEntry::make('perm.theme')
+                                    ->label('Thème')
+                                    ->visible(fn($record) => !empty($record->perm?->theme)),
+                                TextEntry::make('perm.periode')
+                                    ->label('Infos sur la période')
+                                    ->visible(fn($record) => !empty($record->perm?->periode)),
+                                TextEntry::make('perm.jour')
+                                    ->label('Jours souhaités')
+                                    ->visible(fn($record) => !empty($record->perm?->jour)),
+                                TextEntry::make('perm.ambiance')
+                                    ->label('Ambiance')
+                                    ->visible(fn($record) => !empty($record->perm?->ambiance)),
+                                TextEntry::make('perm.nom_resp')
+                                    ->label('Responsable n°1')
+                                    ->visible(fn($record) => !empty($record->perm?->nom_resp)),
+                                TextEntry::make('perm.nom_resp_2')
+                                    ->label('Responsable n°2')
+                                    ->visible(fn($record) => !empty($record->perm?->nom_resp_2)),
+                                TextEntry::make('perm.mail_resp')
+                                    ->label('Mail resp n°1')
+                                    ->visible(fn($record) => !empty($record->perm?->mail_resp)),
+                                TextEntry::make('perm.mail_resp_2')
+                                    ->label('Mail resp n°2')
+                                    ->visible(fn($record) => !empty($record->perm?->mail_resp_2)),
+                                TextEntry::make('perm.mail_asso')
+                                    ->label("Mail de l'asso")
+                                    ->visible(fn($record) => !empty($record->perm?->mail_asso)),
+                                IconEntry::make('perm.teddy')
+                                    ->label("Teddy habillé")->boolean()
+                                    ->visible(fn($record) => $record->perm?->teddy !== null),
+                                IconEntry::make('perm.artiste')
+                                    ->label("Accueil d'artistes")->boolean()
+                                    ->visible(fn($record) => $record->perm?->artiste !== null),
+                                IconEntry::make('perm.repas')
+                                    ->label("Repas prévu")->boolean()
+                                    ->visible(fn($record) => $record->perm?->repas !== null),
+                                TextEntry::make('perm.idea_repas')
+                                    ->label('Idée du repas')
+                                    ->visible(fn($record) => !empty($record->perm?->idea_repas)),
+                                IconEntry::make('perm.gouter')
+                                    ->label("Goûter prévu")->boolean()
+                                    ->visible(fn($record) => $record->perm?->gouter !== null),
+                                TextEntry::make('perm.idea_gouter')
+                                    ->label('Idée du goûter')
+                                    ->visible(fn($record) => !empty($record->perm?->idea_gouter)),
+                                IconEntry::make('perm.repas_soir')
+                                    ->label("Repas prévu (soir)")->boolean()
+                                    ->visible(fn($record) => $record->perm?->repas_soir !== null),
+                                TextEntry::make('perm.idea_repas_soir')
+                                    ->label('Idée du repas (soir)')
+                                    ->visible(fn($record) => !empty($record->perm?->idea_repas_soir)),
+                                TextEntry::make('perm.description')
+                                    ->label('Description')->html()
+                                    ->visible(fn($record) => !empty($record->perm?->description))
+                                    ->columnSpanFull(),
+                                TextEntry::make('perm.membres')
+                                    ->label('Membres')
+                                    ->visible(fn($record) => !empty($record->perm?->membres))
+                                    ->columnSpanFull(),
+                                TextEntry::make('perm.remarques')
+                                    ->label('Remarques')
+                                    ->visible(fn($record) => !empty($record->perm?->remarques))
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
                 Tables\Actions\Action::make('dissociate')
                     ->label('Supprimer perm')
                     ->color("danger")
