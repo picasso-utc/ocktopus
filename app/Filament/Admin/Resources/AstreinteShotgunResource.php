@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Auth;
 class AstreinteShotgunResource extends Resource
 {
 
-     /* @var string|null
+    /* @var string|null
      */
     protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
 
@@ -65,18 +65,18 @@ class AstreinteShotgunResource extends Resource
     {
         $user = session('user');
         $userUuid = $user->uuid;
-        $userId =User::where('uuid', $userUuid)->pluck('id')->first();
+        $userId = User::where('uuid', $userUuid)->pluck('id')->first();
         return $table
             ->paginated([15]) // 15 éléments par page (3 créneaux x 5 jours)
-                ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]))
+            ->query(CreneauResource::getEloquentQuery()->whereBetween('date', [self::getStartSemester(), self::getEndSemester()]))
             ->groups([
                 Group::make('date')
                     ->date()
                     ->collapsible()
-                    ->getDescriptionFromRecordUsing(fn (Creneau $record): string => Carbon::parse($record->date)
+                    ->getDescriptionFromRecordUsing(fn(Creneau $record): string => Carbon::parse($record->date)
                         ->locale('fr')
                         ->translatedFormat('l')),
-                ])
+            ])
             ->defaultGroup('date')
             ->columns([
                 Tables\Columns\Layout\Stack::make([
@@ -133,7 +133,7 @@ class AstreinteShotgunResource extends Resource
                 Tables\Actions\Action::make('shotgun1')
                     ->label(fn($record) => match ($record->creneau) {
                         'M' => '9h30-10h15',
-                        'D' => '11h45-13h',
+                        'D' => '11h45-12h45',
                         'S' => '17h30-23h',
                     })
                     ->button()
@@ -141,8 +141,8 @@ class AstreinteShotgunResource extends Resource
                     ->action(fn($record) => self::handleshotgun1($record, $userId)),
                 Tables\Actions\Action::make('shotgun2')
                     ->label(fn($record) => match ($record->creneau) {
-                        'M' => '10h-12h',
-                        'D' => '12h45h-14h15',
+                        'M' => '10h-11h',
+                        'D' => '12h15-13h30',
                         'S' => '18h30-23h',
                     })
                     ->button()
@@ -152,17 +152,19 @@ class AstreinteShotgunResource extends Resource
                 Tables\Actions\Action::make('lessive')
                     ->label('Lessive')
                     ->button()
-                    ->visible(fn($record) =>
-                            Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
-                        )
+                    ->visible(
+                        fn($record) =>
+                        Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
+                    )
                     ->color(fn($record) => self::determineColorLessive($record, $userId))
                     ->action(fn($record) => self::handleLessive($record, $userId)),
                 Tables\Actions\Action::make('drive')
                     ->label('Drive')
                     ->button()
-                    ->visible(fn($record) =>
-                            Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
-                        )
+                    ->visible(
+                        fn($record) =>
+                        Carbon::parse($record->date)->isFriday() && $record->creneau === 'S'
+                    )
                     ->color(fn($record) => self::determineColorDrive($record, $userId))
                     ->action(fn($record) => self::handleDrive($record, $userId)),
             ])
@@ -208,14 +210,14 @@ class AstreinteShotgunResource extends Resource
                 ->where('astreinte_type', $astreinteType)
                 ->first();
             $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                    ->where('astreinte_type', $astreinteType)->first() != null;
+                ->where('astreinte_type', $astreinteType)->first() != null;
             $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id', $userId)
-                    ->where('astreinte_type', 'Soir 2')
-                    ->first();
+                ->where('user_id', $userId)
+                ->where('astreinte_type', 'Soir 2')
+                ->first();
             if (!$existingAstreinte && !$astreinteUserOther) {
                 $astreinte = new Astreinte([
-                    'user_id' =>$userId,
+                    'user_id' => $userId,
                     'creneau_id' => $record->id,
                     'astreinte_type' => $astreinteType,
                 ]);
@@ -223,7 +225,7 @@ class AstreinteShotgunResource extends Resource
                 // Enregistre l'instance dans la base de données
                 $astreinte->save();
             } else {
-                if ($astreinteUser){
+                if ($astreinteUser) {
                     Astreinte::where('creneau_id', $record->id)
                         ->where('user_id', $userId) //A changer
                         ->where('astreinte_type', $astreinteType)
@@ -251,7 +253,7 @@ class AstreinteShotgunResource extends Resource
      * @return void
      */
 
-    private static function handleshotgun2($record , $userId)
+    private static function handleshotgun2($record, $userId)
     {
         $astreinteType = null;
         $astreinteUserOther = null;
@@ -265,19 +267,19 @@ class AstreinteShotgunResource extends Resource
         if ($astreinteType) {
             if ($astreinteType == "Soir 2") {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->where('astreinte_type', $astreinteType)
-                        ->count() >= 3;
+                    ->where('astreinte_type', $astreinteType)
+                    ->count() >= 3;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id',$userId) //A changer Filament::auth()->id()
+                    ->where('user_id', $userId) //A changer Filament::auth()->id()
                     ->where('astreinte_type', $astreinteType)
                     ->first();
                 $astreinteUserOther = Astreinte::where('creneau_id', $record->id)
-                    ->where('user_id',$userId) //A changer Filament::auth()->id()
+                    ->where('user_id', $userId) //A changer Filament::auth()->id()
                     ->where('astreinte_type', 'Soir 1')
                     ->first();
             } else {
                 $existingAstreinte = Astreinte::where('creneau_id', $record->id)
-                        ->where('astreinte_type', $astreinteType)->first() != null;
+                    ->where('astreinte_type', $astreinteType)->first() != null;
                 $astreinteUser = Astreinte::where('creneau_id', $record->id)
                     ->where('user_id', $userId)
                     ->where('astreinte_type', $astreinteType)//A changer Filament::auth()->id()
@@ -329,13 +331,17 @@ class AstreinteShotgunResource extends Resource
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 1";
         }
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('user_id', $userId)
-            ->where('astreinte_type', $astreinteType)
-            ->first())
+        if (
+            Astreinte::where('creneau_id', $record->id)
+                ->where('user_id', $userId)
+                ->where('astreinte_type', $astreinteType)
+                ->first()
+        )
             return 'success';
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('astreinte_type', $astreinteType)->first()) {
+        if (
+            Astreinte::where('creneau_id', $record->id)
+                ->where('astreinte_type', $astreinteType)->first()
+        ) {
             return 'danger';
         }
 
@@ -356,12 +362,17 @@ class AstreinteShotgunResource extends Resource
         } elseif ($record->creneau == "S") {
             $astreinteType = "Soir 2";
         }
-        if (Astreinte::where('creneau_id', $record->id)
-            ->where('user_id', $userId)
-            ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
-            ->first()) return 'success';
-        if (($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->where('astreinte_type', $astreinteType)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)
-                    ->where('astreinte_type', $astreinteType)->first())) {
+        if (
+            Astreinte::where('creneau_id', $record->id)
+                ->where('user_id', $userId)
+                ->where('astreinte_type', $astreinteType) //A changer Filament::auth()->id()
+                ->first()
+        )
+            return 'success';
+        if (
+            ($astreinteType == "Soir 2" && Astreinte::where('creneau_id', $record->id)->where('astreinte_type', $astreinteType)->count() >= 3) || ($astreinteType != "Soir 2" && Astreinte::where('creneau_id', $record->id)
+                ->where('astreinte_type', $astreinteType)->first())
+        ) {
             return 'danger';
         }
     }
@@ -466,8 +477,10 @@ class AstreinteShotgunResource extends Resource
             })
             ->first();
 
-        if ($existing && $existing->user_id == $userId) return 'success';
-        if ($existing) return 'danger';
+        if ($existing && $existing->user_id == $userId)
+            return 'success';
+        if ($existing)
+            return 'danger';
     }
 
     private static function handleDrive($record, $userId)
@@ -512,8 +525,10 @@ class AstreinteShotgunResource extends Resource
             })
             ->first();
 
-        if ($existing && $existing->user_id == $userId) return 'success';
-        if ($existing) return 'danger';
+        if ($existing && $existing->user_id == $userId)
+            return 'success';
+        if ($existing)
+            return 'danger';
     }
 
 }

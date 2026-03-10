@@ -32,8 +32,8 @@ class ManageGoodies extends ManageRecords
             'GET',
             'transactions',
             [
-            'created__gt' => $dateStart,
-            'created__lt' => $dateEnd,
+                'created__gt' => $dateStart,
+                'created__lt' => $dateEnd,
             ]
         );
         $jsonData = json_decode($response->getContent(), true);
@@ -46,8 +46,8 @@ class ManageGoodies extends ManageRecords
                 'GET',
                 'transactions',
                 [
-                'created__gt' => $dateStart,
-                'created__lt' => $dateEnd,
+                    'created__gt' => $dateStart,
+                    'created__lt' => $dateEnd,
                 ]
             );
             $jsonData = json_decode($response->getContent(), true);
@@ -57,12 +57,12 @@ class ManageGoodies extends ManageRecords
 
         $accumulatedData = array_merge($accumulatedData, $jsonData);
 
-        $wallets=array_map(fn($item)=>$item['rows'][0]['payments'][0]['wallet_id'], $accumulatedData);
-        $uniqueWallets=array_unique($wallets);
-        $uniqueWallets=array_values($uniqueWallets);
+        $wallets = array_map(fn($item) => $item['rows'][0]['payments'][0]['wallet_id'], $accumulatedData);
+        $uniqueWallets = array_unique($wallets);
+        $uniqueWallets = array_values($uniqueWallets);
         $length = count($uniqueWallets);
 
-        $membresPic = User::where('role','!=','none')->pluck('email', 'email')->toArray();
+        $membresPic = User::where('role', '!=', 'none')->pluck('email', 'email')->toArray();
 
         $winners = [];
         $winnersName = [];
@@ -80,9 +80,9 @@ class ManageGoodies extends ManageRecords
                     'X-API-KEY' => config('app.proxy_key')
                 ]
             )->post(
-                config('app.proxy_url'),
-                ['wallets' => [$walletId]]
-            );
+                    config('app.proxy_url'),
+                    ['wallets' => [$walletId]]
+                );
 
             $userData = $user->json();
             Log::info($userData);
@@ -98,7 +98,7 @@ class ManageGoodies extends ManageRecords
         // clear the database
         Goodies::all()->each->delete();
 
-        Log::info('Gagnant.e.s du '.Carbon::now().' : '.json_encode($winnersName));
+        Log::info('Gagnant.e.s du ' . Carbon::now() . ' : ' . json_encode($winnersName));
 
         // add the winners in the database
         for ($i = 0; $i < 20; $i++) {
