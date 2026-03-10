@@ -43,7 +43,7 @@ class ExteResource extends Resource
                     ->label('Quel est ton CAS  ?')
                     ->required(),
                 Forms\Components\TextInput::make('exte_nom_prenom')
-                    ->label('Quel est le nom et prénom de ton exté ? (1 EXTE MAX)')
+                    ->label("Quel est le nom et prénom de ton exté ? (Prévoir de ramener un document d'identité le jour de la venue de ton exté)")
                     ->required(),
                 Forms\Components\DatePicker::make('exte_date_debut')
                     ->label('Date début')
