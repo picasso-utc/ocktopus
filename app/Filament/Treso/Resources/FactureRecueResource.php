@@ -49,10 +49,14 @@ class FactureRecueResource extends Resource
                 TextInput::make('destinataire')
                     ->required()
                     ->maxLength(255)
+                    ->datalist(fn () => FactureRecue::whereNotNull('destinataire')->distinct()->pluck('destinataire')->toArray())
+                    ->autocomplete(true)
                     ->columnSpan(2),
                 TextInput::make('personne_a_rembourser')
                     ->label('Personne à rembourser')
                     ->maxLength(255)
+                    ->datalist(fn () => FactureRecue::whereNotNull('personne_a_rembourser')->distinct()->pluck('personne_a_rembourser')->toArray())
+                    ->autocomplete(true)
                     ->columnSpan(2),
                 TextInput::make('prix')
                     ->label('Prix Total TTC (€)')
@@ -84,7 +88,9 @@ class FactureRecueResource extends Resource
                 TextInput::make('moyen_paiement')
                     //->label
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->datalist(fn () => FactureRecue::whereNotNull('moyen_paiement')->distinct()->pluck('moyen_paiement')->toArray())
+                    ->autocomplete(true),
                 DatePicker::make('date')
                     ->label('Date Facturation')
                     ->required()

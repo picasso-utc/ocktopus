@@ -188,6 +188,7 @@ class FactureEmiseResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $semestreActif = Semestre::where('activated', true)->first();
         return $table
             ->columns([
                 TextColumn::make('destinataire'),
@@ -199,10 +200,13 @@ class FactureEmiseResource extends Resource
                     ->label('TVA')
                     ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €"))
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('date_due'),
+                TextColumn::make('date_due')
+                    ->label('Date dûe')
+                    ->sortable(),
                 TextColumn::make('state')
                     ->label('État')
                     ->badge()
+                    ->sortable()
                     ->formatStateUsing(fn (string $state): string => match ($state){
                         'D' => 'Dûe',
                         'T' => 'Partiellement payée',
@@ -222,6 +226,7 @@ class FactureEmiseResource extends Resource
                 Tables\Filters\SelectFilter::make('semestre_id')
                         ->options(Semestre::all()->pluck('state', 'id'))
                         ->label('Semestre')
+                        ->default($semestreActif->id)
                         ->placeholder('Tous les semestre')
                 ]
             )

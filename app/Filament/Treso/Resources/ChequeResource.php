@@ -16,6 +16,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -94,11 +95,13 @@ class ChequeResource extends Resource
                 TextColumn::make('valeur')
                     ->label('Valeur')
                     ->searchable()
-                    ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €")),
+                    ->formatStateUsing(fn (string $state): string => __(number_format($state, 2) . " €"))
+                    ->sortable(),
                 TextColumn::make('state')
                     ->label('État')
                     ->badge()
                     ->searchable()
+                    ->sortable()
                     ->formatStateUsing(
                         fn (string $state): string => match ($state) {
                             'E' => 'Encaissé',
@@ -121,17 +124,22 @@ class ChequeResource extends Resource
                 TextColumn::make('date_encaissement')
                     ->date('M d, Y')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
                 TextColumn::make('date_emission')
                     ->date('M d, Y')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
                 TextColumn::make('facture.facture_number')
                     ->label('Facture Associée')
                     ->searchable(),
             ])
             ->filters([
-                //
+                Filter::make('derniers_8_mois')
+                    ->label('Émis dans les 8 derniers mois')
+                    ->query(fn (Builder $query): Builder => $query->where('date_emission', '>=', now()->subMonths(8)))
+                    ->toggle(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
