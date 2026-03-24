@@ -153,7 +153,7 @@ class PermResource extends Resource
                     ]),
                 Forms\Components\Toggle::make('repas_soir')
                     ->required()
-                    ->label('Repas prévu ?')
+                    ->label('Repas prévu le soir ?')
                     ->inline(false)
                     ->reactive()
                     ->columnSpan([
@@ -164,8 +164,8 @@ class PermResource extends Resource
                         '2xl' => 2,
                     ]),
                 Forms\Components\TextInput::make('idea_repas_soir')
-                    ->label('Idée du repas')
-                    ->placeholder('Des idées du repas ?')
+                    ->label('Idée du repas du soir')
+                    ->placeholder('Des idées pour le repas du soir ?')
                     ->disabled(fn(callable $get) => !$get('repas_soir'))
                     ->required(fn(callable $get) => $get('repas_soir'))
                     ->columnSpan([
@@ -446,10 +446,10 @@ class PermResource extends Resource
                         ->label('Idée du goûter')
                         ->visible(fn($record) => $record->gouter == true),
                     IconEntry::make('repas_soir')
-                        ->label("Repas prévu")
+                        ->label("Repas prévu le soir")
                         ->boolean(),
                     TextEntry::make('idea_repas_soir')
-                        ->label('Idée du repas')
+                        ->label('Idée du repas du soir')
                         ->visible(fn($record) => $record->repas_soir == true),
                 ]
 
