@@ -32,13 +32,13 @@
 
     <li><strong>L’heure c’est l’heure :</strong> La vente d’alcool est autorisée de 18h30 à 21h30. À 21h56, on lance la Traviata et l’allumage des lumières, puis on évacue la salle et la terrasse. À 23h, tout doit être nettoyé et tout le monde dehors. Pendant l'évacuation du pic : gardez votre calme et n'oubliez pas le gilet jaune qui vous sera remis par l'astreinteur.ice. Les abords du Pic doivent être dégagés très rapidement (sur le trottoir tout le long et sur le parvis de BF) pour éviter le bruit et ainsi les plaintes des voisins.</li>
 
-    <li><strong>Lâchez-vous sur la déco et les animations ! :</strong> Uniquement pour les groupes de potes, vous avez un budget de 20€ pour dynamiser notre cher foyer. N'oubliez pas de mettre la facture à l'ordre de PIC'ASSO. Que vous soyez une asso ou juste un groupe de potes, éclatez-vous, faites-nous rêver !</li>
+    <li><strong>Lâchez-vous sur la déco et les animations ! :</strong> Uniquement pour les groupes de potes, vous avez un budget de 20€ pour dynamiser notre cher foyer. N'oubliez pas de mettre la facture à l'ordre de BDE - Pic'Asso. Que vous soyez une asso ou juste un groupe de potes, éclatez-vous, faites-nous rêver !</li>
 
-    <li><strong>Concours de qualité :</strong> À la fin du semestre, les assos les plus créatives et engagées seront récompensées lors du repas des permanenciers (RDP). Des prix seront remis, alors faites chauffer la déco, les animations et le menu ! 🔥🏆</li>
+    <li><strong>Concours de qualité :</strong> À la fin du semestre, les permanences les plus créatives et engagées seront récompensées lors du repas des permanenciers (RDP). Des prix seront remis, alors faites chauffer la déco, les animations et le menu ! 🔥🏆</li>
 
     <li><strong>La collaboration avant tout !</strong>Beaucoup d’asso peuvent se rendre disponibles pour vous aider à proposer des bangers pendant vos perms (Décibels, Picsart, FSC, Larsen, Cinemut, les assos de danse, etc…) n’hésitez pas à les contacter si vous le souhaitez (au moins 2 semaines avant pour des questions logistiques). Et si vous ne savez pas comment faire, ou ce qui est possible ou non au Pic, n’hésitez pas à nous le dire dès la création du groupe messenger, on est là pour vous aider!</li>
 
-    <li><strong>Jeudi soir uniquement :</strong>La safe zone stop VSS est mise en place tous les jeudi soirs à partir de 20h, ce qui signifie que les permancier.esformé.es devront assurer des perm Safe Zone dans la soirée.</li>
+    <li><strong>Jeudi soir uniquement :</strong>La safe zone stop VSS est mise en place tous les jeudi soirs à partir de 20h, ce qui signifie que les permancier.es formé.es devront assurer des perm Safe Zone dans la soirée.</li>
 </ol>
     <h3>En plus, voici quelques conseils pratiques :</h3>
 
@@ -48,6 +48,7 @@
         <li><strong>Perm caisse :</strong> Gardez toujours un permanencier à la caisse pour ramasser les écocups et bouteilles.</li>
         <li><strong>Imprimez et partagez :</strong> Un planning vous a été mis en pièce jointe, celui-ci doit être rempli en tenant compte des remarques ci-dessus. Le planning doit être imprimé en 4 exemplaires (possible avec notre super imprimante !), allez vers nous pour l’imprimante et n'oubliez pas de le prendre en photo pour bien vous repérer. Partagez-le aussi dans votre groupe !</li>
         <li><strong>Nouveau :</strong>Un générateur de planning est désormais disponible sur le site (<a href="https://pic.assos.utc.fr/planning-generator">https://pic.assos.utc.fr/planning-generator</a>) pour faciliter la création de plannings (vérifiez quand même que le planning est good au cas où). Une fois le planning créé, vous pouvez le télécharger en Excel pour le modifier.</li>
+        <li><strong>Pour les permanences du matin et du midi :</strong> il faut au moins 4 ou 5 permanenciers présents pour distribuer les viennoiseries et les sandwichs.</li>
     </ul>
 
     <p>N’oubliez pas qu’en cas de doute, vous pouvez demander de l’aide à l’astreinteur ou à l’astreintrice, on est là pour ça :)</p>
