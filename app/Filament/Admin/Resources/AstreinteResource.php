@@ -45,7 +45,7 @@ class AstreinteResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
                             'Matin 1' => 'Matin 9h30-10h15',
-                            'Matin 2' => 'Matin 10h-11h',
+                            'Matin 2' => 'Matin 10h-12h',
                             'Déjeuner 1' => 'Midi 11h45-12h45',
                             'Déjeuner 2' => 'Midi 12h15-13h30',
                             'Soir 1' => 'Soir 17h30-23h',

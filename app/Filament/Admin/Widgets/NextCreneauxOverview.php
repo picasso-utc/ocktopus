@@ -43,7 +43,7 @@ class NextCreneauxOverview extends BaseWidget
     {
         $mapping = [
             'Matin 1' => '9h30-10h15',
-            'Matin 2' => '10h-11h',
+            'Matin 2' => '10h-12h',
             'Déjeuner 1' => '11h45-12h45',
             'Déjeuner 2' => '12h15-13h30',
             'Soir 1' => '17h30-23h',
