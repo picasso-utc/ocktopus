@@ -192,6 +192,7 @@ class PermResource extends Resource
                     ->placeholder('Adresse mail du responsable de la permanence')
                     ->label('Adresse mail du responsable')
                     ->default(auth()->user()?->email)
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 4,
@@ -214,6 +215,7 @@ class PermResource extends Resource
                     ->required()
                     ->placeholder('Adresse mail du sous-responsable')
                     ->label('Adresse mail du sous-responsable')
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 4,
@@ -237,6 +239,7 @@ class PermResource extends Resource
                     ->required(fn(Forms\Get $get) => $get('asso'))
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 6,
@@ -484,12 +487,33 @@ class PermResource extends Resource
             return;
         }
 
+        // Vérification : l'email du responsable est-il valide?
+        if (!filter_var($record->mail_resp, FILTER_VALIDATE_EMAIL)) {
+            \Filament\Notifications\Notification::make()
+                ->title('Erreur : Email invalide')
+                ->body('Impossible d\'envoyer le mail car l\'email du responsable est invalide.')
+                ->danger()
+                ->send();
+            return;
+        }
+
         DB::beginTransaction();
 
         try {
             $mailResp1 = $record->mail_resp;
             $mailResp2 = $record->mail_resp_2;
             $mailAsso = $record->mail_asso;
+            $incorrectEmails = [];
+
+            // Vérification : les emails sont-ils valides ?
+            if($mailResp2 && !filter_var($mailResp2, FILTER_VALIDATE_EMAIL)) {
+                $incorrectEmails[] = $mailResp2;
+                $mailResp2 = null;
+            }
+            if($mailAsso && !filter_var($mailAsso, FILTER_VALIDATE_EMAIL)) {
+                $incorrectEmails[] = $mailAsso;
+                $mailAsso = null;
+            }
 
             $email = Mail::to($mailResp1);
             if ($mailResp2 && $mailAsso) {
@@ -516,10 +540,19 @@ class PermResource extends Resource
 
             DB::commit();
 
-            \Filament\Notifications\Notification::make()
+            if(!empty($incorrectEmails)) {
+                \Filament\Notifications\Notification::make()
+                    ->title('Mail envoyé avec succès')
+                    ->body('Sauf pour les adresses suivantes : ' . implode(', ', $incorrectEmails))
+                    ->success()
+                    ->send();
+            } else {
+                \Filament\Notifications\Notification::make()
                 ->title('Mail envoyé avec succès')
                 ->success()
                 ->send();
+            }
+
         } catch (Exception $e) {
             DB::rollBack();
             \Filament\Notifications\Notification::make()

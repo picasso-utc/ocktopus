@@ -187,6 +187,7 @@ class RequestedPermsResource extends Resource
                     ->placeholder('Adresse mail du responsable de la permanence')
                     ->label('Adresse mail du responsable')
                     ->default(auth()->user()?->email)
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 4,
@@ -209,6 +210,7 @@ class RequestedPermsResource extends Resource
                     ->required()
                     ->placeholder('Adresse mail du sous-responsable')
                     ->label('Adresse mail du sous-responsable')
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 4,
@@ -232,6 +234,7 @@ class RequestedPermsResource extends Resource
                     ->required(fn (Forms\Get $get) => $get('asso'))
                     ->placeholder('Adresse mail de l\'association')
                     ->label('Adresse mail de l\'association')
+                    ->email()
                     ->columnSpan([
                         'sm' => 6,
                         'md' => 6,
