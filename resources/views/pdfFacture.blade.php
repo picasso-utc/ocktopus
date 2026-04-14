@@ -85,7 +85,7 @@
 <div>
     <p>
         Adresse émettrice :<br>
-        <b>PVDC PIC’ASSO</b> <br>
+        <b>BDE PIC’ASSO</b> <br>
         Maison des étudiants<br>
         Rue Roger Couttolenc 60200 Compiègne<br>
         <a href="mailto:team.treso.picasso@assos.utc.fr">team.treso.picasso@assos.utc.fr</a><br>

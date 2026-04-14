@@ -77,7 +77,7 @@
 <div class="right">
     <p>
         Adresse de Facturation :<br>
-        PVDC PIC’ASSO Maison des étudiants<br>
+        BDE PIC’ASSO Maison des étudiants<br>
         Rue Roger Couttolenc 60200 Compiègne<br>
         <a href="mailto:team.treso.picasso@assos.utc.fr">team.treso.picasso@assos.utc.fr</a><br>
     </p>
