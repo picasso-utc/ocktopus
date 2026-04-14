@@ -180,7 +180,7 @@ class FactureEmiseResource extends Resource
         $selectedProducts = collect($get('elementFacture'))->filter(fn($item) => !empty($item['prix_unitaire_ttc']) && !empty($item['quantite']) && !empty($item['tva']));
 
         $total = $selectedProducts->reduce(function ($total, $product) {
-            return $total + ($product['prix_unitaire_ttc'] * $product['quantite'] * $product['tva']/100);
+            return $total + $product['prix_unitaire_ttc'] * $product['quantite'] * ($product['tva'] / (100 + $product['tva']));
         }, 0);
 
         $set('tva', number_format($total, 2, '.', ''));
