@@ -61,6 +61,7 @@ class ListClassements extends ListRecords
                                             WHEN "Soir 1" THEN 2.5
                                             WHEN "Soir 2" THEN 2
                                             WHEN "LESSIVE" THEN 1
+                                            WHEN "DRIVE" THEN 1
                                             ELSE 0
                                         END)
                                 FROM astreintes
@@ -126,6 +127,21 @@ class ListClassements extends ListRecords
                         return $query->selectRaw('users.*,
                                 COALESCE((SELECT SUM(CASE astreintes.astreinte_type
                                             WHEN "LESSIVE" THEN 1
+                                            ELSE 0
+                                          END)
+                                FROM astreintes
+                                INNER JOIN creneau ON astreintes.creneau_id = creneau.id
+                                WHERE astreintes.user_id = users.id
+                                AND creneau.date BETWEEN ? AND ?), 0) as points', [$startSemester, $endSemester])
+                            ->orderBy('points', 'desc');
+                    }
+                ),
+            'high_scores_drive' => Tab::make('Drive')
+                ->modifyQueryUsing(
+                    function (Builder $query) use ($startSemester, $endSemester) {
+                        return $query->selectRaw('users.*,
+                                COALESCE((SELECT SUM(CASE astreintes.astreinte_type
+                                            WHEN "DRIVE" THEN 1
                                             ELSE 0
                                           END)
                                 FROM astreintes

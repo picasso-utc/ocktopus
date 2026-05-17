@@ -43,6 +43,10 @@ class Astreinte extends Model
                 return 2.5; // 2.5 points pour le soir_1
             case 'Soir 2':
                 return 2; // 2 points pour les autres soirs
+            case 'LESSIVE':
+                return 1; // 1 point pour Lessive
+            case 'DRIVE':
+                return 1; // 1 point pour Drive
             default:
                 return 0; // ou une valeur par défaut
         }
