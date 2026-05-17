@@ -44,15 +44,14 @@ class NoteAstreinteOverview extends BaseWidget
             ->get()
             ->pluck('count', 'astreinte_type');
 
-        // Nombre moyen d'astreintes par utilisateur
-        // Nombre total d'astreintes (hors LESSIVE)
-        $totalAstreintes = Astreinte::query()
+         // Nombre moyen d'astreintes par utilisateur
+        // Nombre total d'astreintes (avec LESSIVE et DRIVE)
+        $totalAstreintesAll = Astreinte::query()
             ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
-            ->where('astreinte_type', '!=', 'LESSIVE')
             ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
             ->count();
         $totalUsers = User::query()->where("role", "!=", "none")->count();
-        $averageAstreintesPerUser = $totalUsers > 0 ? $totalAstreintes / $totalUsers : 0;
+        $averageAstreintesPerUser = $totalUsers > 0 ? $totalAstreintesAll / $totalUsers : 0;
 
         // Somme des astreintes pour les types "Matin 1" et "Matin 2"
         $sumMatin1Matin2 = $astreintesByType->get('Matin 1', 0) + $astreintesByType->get('Matin 2', 0);
@@ -64,10 +63,18 @@ class NoteAstreinteOverview extends BaseWidget
 
         $totalPointsUtilisateur = User::find($userId)->nombre_points;
 
-        // Nombre d'astreintes notées (hors LESSIVE)
+        // Nombre total d'astreintes (hors LESSIVE et DRIVE)
+        $totalAstreintes = Astreinte::query()
+            ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
+            ->where('astreinte_type', '!=', 'LESSIVE')
+            ->where('astreinte_type', '!=', 'DRIVE')
+            ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
+            ->count();
+        // Nombre d'astreintes notées (hors LESSIVE et DRIVE)
         $nombreAstreintesNotees = Astreinte::query()
             ->join('creneau', 'astreintes.creneau_id', '=', 'creneau.id')
             ->where('astreinte_type', '!=', 'LESSIVE')
+            ->where('astreinte_type', '!=', 'DRIVE')
             ->whereBetween('date', [self::getStartSemester(), self::getEndSemester()])
             ->whereNotNull('note_orga')
             ->count();
@@ -93,12 +100,16 @@ class NoteAstreinteOverview extends BaseWidget
                 ->description('Votre nombre d\'astreintes du midi'),
             Stat::make('Astreintes soir', $sumSoir1Soir2)
                 ->description('Votre nombre d\'astreintes du soir'),
-            Stat::make('Astreintes moyenne', round($averageAstreintesPerUser, 2))
-                ->description('Nombre moyen d\'astreintes par utilisateur'),
+            Stat::make('Astreintes Lessive', $astreintesByType->get('LESSIVE', 0))
+                ->description('Votre nombre d\'astreintes Lessive'),
+            Stat::make('Astreintes Drive', $astreintesByType->get('DRIVE', 0))
+                ->description('Votre nombre d\'astreintes Drive'),
             Stat::make('Nombre total de points', $totalPointsUtilisateur)
                 ->description('Total des points basé sur les astreintes'),
+            Stat::make('Astreintes moyenne', round($averageAstreintesPerUser, 2))
+                ->description('Nombre moyen d\'astreintes par utilisateur'),
             Stat::make('Astreintes notées', round($pourcentageAstreintesNotees, 2) . '%')
-                ->description('Pourcentage d\'astreintes notée')
+                ->description('Pourcentage d\'astreintes notées')
                 ->color($couleurPourcentage),
 
         ];
