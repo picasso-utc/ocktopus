@@ -59,6 +59,10 @@ class CreateShotgun extends CreateRecord
         $currentYear = Carbon::parse($event->debut_event)->year;
 
         $countSameWeek = $shotguns->filter(function($shotgun) use ($currentWeek, $currentYear) {
+            if (empty($shotgun->event) || empty($shotgun->event->debut_event)) {
+                return false;
+            }
+
             $eventStart = Carbon::parse($shotgun->event->debut_event);
             return $eventStart->weekOfYear === $currentWeek && $eventStart->year === $currentYear;
         })->count();
