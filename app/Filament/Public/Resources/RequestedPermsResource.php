@@ -296,30 +296,24 @@ class RequestedPermsResource extends Resource
                         'xl' => 3,
                         '2xl' => 3,
                     ]),
-                Forms\Components\Toggle::make('artiste')
-                    ->required()
-                    ->label('Souhaitez-vous accueillir des artistes ?')
-                    ->inline(false)
-                    ->columnSpan([
-                        'sm' => 6,
-                        'md' => 6,
-                        'lg' => 6,
-                        'xl' => 6,
-                        '2xl' => 6,
-                    ]),
-                Forms\Components\TextInput::make('remarques')
-                    ->placeholder('Donnez nous les informations qui vous semblent importantes')
-                    ->label('Remarque supplémentaires')
-                    ->maxLength(255)
-                    ->columnSpan([
-                        'sm' => 6,
-                        'md' => 6,
-                        'lg' => 6,
-                        'xl' => 6,
-                        '2xl' => 6,
-                    ]),
+                Forms\Components\Group::make([
+                    Forms\Components\Toggle::make('artiste')
+                        ->required()
+                        ->label('Souhaitez-vous accueillir des artistes ?')
+                        ->inline(false),
+                    Forms\Components\TextInput::make('remarques')
+                        ->placeholder('Donnez nous les informations qui vous semblent importantes')
+                        ->label('Remarque supplémentaires')
+                        ->maxLength(255),
+                ])->columnSpan([
+                    'sm' => 6,
+                    'md' => 3,
+                    'lg' => 3,
+                    'xl' => 3,
+                    '2xl' => 3,
+                ]),
                 Forms\Components\FileUpload::make('image_path')
-                    ->label("Une icône pour l'appli ? (ex. le logo de votre asso")
+                    ->label("Une icône pour l'appli ? (ex. le logo de votre asso)")
                     ->image()
                     ->imageResizeMode('cover')
                     ->imageCropAspectRatio('1:1')
@@ -330,10 +324,10 @@ class RequestedPermsResource extends Resource
                     ->nullable()
                     ->columnSpan([
                         'sm' => 6,
-                        'md' => 6,
-                        'lg' => 6,
-                        'xl' => 6,
-                        '2xl' => 6,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => 3,
                     ]),
                 Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
             ])
