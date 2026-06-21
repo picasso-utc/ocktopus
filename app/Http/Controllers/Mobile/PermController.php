@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mobile;
 use App\Http\Controllers\Controller;
 use App\Models\Perm;
 use App\Models\Semestre;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,9 +13,6 @@ class PermController extends Controller
 {
     /**
      * Store a new permanence request from a mobile user.
-     *
-     * @param  Request $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -37,6 +35,7 @@ class PermController extends Controller
             'membres' => 'required|array',
             'artiste' => 'required|boolean',
             'remarques' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -73,12 +72,17 @@ class PermController extends Controller
                 'ambiance' => $request->ambiance,
                 'periode' => $request->periode,
                 'jour' => $request->jour,
-                'membres' => implode(' - ', $request->membres), // Match Filament TagsInput behavior
+                'membres' => implode(' - ', $request->membres),
                 'artiste' => $request->artiste,
                 'remarques' => $request->remarques,
                 'semestre_id' => $semestreActif->id,
                 'validated' => false,
             ]);
+
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('perms', 'public');
+                $perm->update(['image_path' => $path]);
+            }
 
             return response()->json([
                 'success' => true,
@@ -94,14 +98,24 @@ class PermController extends Controller
     }
 
     /**
-     * Get the permanences for the current week.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Get the permanences for the current or next week.
+     * Shows next week's perms once Saturday arrives.
      */
     public function currentWeek()
     {
-        $start = \Carbon\Carbon::now()->previous(\Carbon\Carbon::SATURDAY)->toDateString();
-        $end = \Carbon\Carbon::now()->next(\Carbon\Carbon::SATURDAY)->toDateString();
+        $now = Carbon::now();
+        $isSaturdayOrAfter = $now->dayOfWeek === Carbon::SATURDAY
+            || $now->dayOfWeek === Carbon::SUNDAY;
+
+        if ($isSaturdayOrAfter) {
+            $start = $now->copy()->next(Carbon::MONDAY)->toDateString();
+            $end = $now->copy()->next(Carbon::SATURDAY)->toDateString();
+            $weekLabel = 'next_week';
+        } else {
+            $start = $now->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+            $end = $now->copy()->endOfWeek(Carbon::FRIDAY)->toDateString();
+            $weekLabel = 'current_week';
+        }
 
         try {
             $creneaux = \App\Models\Creneau::with('perm')
@@ -115,7 +129,7 @@ class PermController extends Controller
                 return [
                     'id' => $creneau->id,
                     'date' => $creneau->date,
-                    'creneau_type' => $creneau->creneau, // M, D, S, L
+                    'creneau_type' => $creneau->creneau,
                     'perm_id' => $creneau->perm_id,
                     'perm_nom' => $creneau->perm->nom,
                     'theme' => $creneau->perm->theme,
@@ -133,11 +147,15 @@ class PermController extends Controller
                     'idea_repas' => $creneau->perm->idea_repas,
                     'remarques' => $creneau->perm->remarques,
                     'artiste' => $creneau->perm->artiste,
+                    'image_url' => $creneau->perm->image_path
+                        ? url('storage/' . $creneau->perm->image_path)
+                        : null,
                 ];
             });
 
             return response()->json([
                 'success' => true,
+                'week_label' => $weekLabel,
                 'data' => $formatted
             ]);
         } catch (\Exception $e) {
@@ -150,9 +168,6 @@ class PermController extends Controller
 
     /**
      * Get permanence requests for the authenticated user.
-     *
-     * @param  Request $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
