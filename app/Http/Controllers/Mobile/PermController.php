@@ -149,14 +149,18 @@ class PermController extends Controller
     }
 
     /**
-     * Get all permanence requests.
+     * Get permanence requests for the authenticated user.
      *
+     * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $perms = Perm::orderBy('created_at', 'desc')->get();
+            $user = $request->get('user');
+            $perms = Perm::where('mail_resp', $user['email'])
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
