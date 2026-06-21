@@ -318,6 +318,23 @@ class RequestedPermsResource extends Resource
                         'xl' => 6,
                         '2xl' => 6,
                     ]),
+                Forms\Components\FileUpload::make('image_path')
+                    ->label("Une icône pour l'appli ? (ex. le logo de votre asso")
+                    ->image()
+                    ->imageResizeMode('cover')
+                    ->imageCropAspectRatio('1:1')
+                    ->imageResizeTargetWidth('800')
+                    ->imageResizeTargetHeight('800')
+                    ->directory('perms')
+                    ->disk('public')
+                    ->nullable()
+                    ->columnSpan([
+                        'sm' => 6,
+                        'md' => 6,
+                        'lg' => 6,
+                        'xl' => 6,
+                        '2xl' => 6,
+                    ]),
                 Forms\Components\Hidden::make('semestre_id')->default($semestreActif->id),
             ])
             ->columns(6); // Définit le nombre de colonnes global pour le formulaire
