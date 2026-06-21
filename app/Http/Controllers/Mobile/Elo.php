@@ -16,7 +16,7 @@ class Elo extends Controller
 
         $rankings = ClassementElo::where('type', $type)
             ->orderBy('elo_score', 'desc')
-            ->take(25)
+            ->take(10)
             ->get();
 
         return response()->json($rankings);
