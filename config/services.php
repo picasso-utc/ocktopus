@@ -49,5 +49,8 @@ return [
         'public' => file_exists(storage_path('app/keys/mobile-public.key')) ? file_get_contents(storage_path('app/keys/mobile-public.key')) : null,
     ],
 
+    'bach' => [
+        'api_key' => env('BACH_API_KEY'),
+    ],
 
 ];

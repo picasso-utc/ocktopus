@@ -17,6 +17,7 @@ use App\Http\Controllers\Mobile\SemesterEventController;
 use App\Http\Controllers\Mobile\BoiteIdeesController;
 use App\Http\Controllers\Mobile\FaqController;
 use App\Http\Controllers\Mobile\ShotgunController;
+use App\Http\Controllers\Mobile\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,9 @@ Route::get('/blocages', [\App\Http\Controllers\BlocageController::class, 'getBlo
 Route::post('/exoneration', [ExonerationController::class, 'storeExonerations']);
 
 Route::post('/transaction', [TransactionController::class, 'handle']);
+
+// Bach sends products
+Route::post('/bach/send-products', [ProductController::class, 'receiveFromBach']);
 
 Route::prefix('mobile')->group(function () {
 
@@ -105,6 +109,10 @@ Route::prefix('mobile')->group(function () {
         Route::get('/signed', [SignatureCharteController::class, 'hasSigned']);
         Route::post('/sign', [SignatureCharteController::class, 'sign']);
     });
+
+    // Products
+    Route::get('/get-products', [ProductController::class, 'index'])
+        ->middleware('jwt');
 
     // Elo
     Route::prefix('elo')->middleware('jwt')->group(function () {
