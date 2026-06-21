@@ -26,9 +26,7 @@ class ProductController extends Controller
             return response()->json(['success' => false, 'message' => 'No products provided'], 400);
         }
 
-        // Clear existing products and insert new ones
-        Product::truncate();
-
+        Product::truncate(); // On vide toute la DB et on remet que les produits encore là
         foreach ($products as $product) {
             Product::create([
                 'name' => $product['name'],
@@ -44,8 +42,22 @@ class ProductController extends Controller
         ]);
     }
 
+    private const CATEGORY_MAP = [
+        'Bières bouteilles' => 'bottle',
+        'Bières Pression' => 'draft',
+        'Café & Thé' => 'bulk',
+        'Chips' => 'chips',
+        'Jus de fruits' => 'juice',
+        'Repas' => 'meal',
+        'Softs Alternatifs' => 'soft',
+        'Softs Classiques' => 'soft',
+        'Viennoiserie' => 'viennoiserie',
+        'Vrac' => 'bulk',
+        'Saucisson et fromages' => 'bulk',
+    ];
+
     /**
-     * Get all products for the mobile app.
+     * Get all products for the mobile app, with categories mapped to app format.
      */
     public function index()
     {
@@ -57,8 +69,8 @@ class ProductController extends Controller
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->price / 100, // Convert cents to euros
-                    'category' => $product->category,
+                    'price' => $product->price / 100,
+                    'category' => self::CATEGORY_MAP[$product->category] ?? $product->category,
                 ];
             });
 
