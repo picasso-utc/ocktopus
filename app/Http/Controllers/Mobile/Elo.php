@@ -46,7 +46,15 @@ class Elo extends Controller
             ['mail_user' => $user['email'], 'type' => $type],
             ['elo_score' => 1000, 'nom_user' => mailToName($user['email'])]
         );
-        return response()->json($elo);
+
+        $rank = ClassementElo::where('type', $type)
+            ->where('elo_score', '>', $elo->elo_score)
+            ->count() + 1;
+
+        $result = $elo->toArray();
+        $result['rank'] = $rank;
+
+        return response()->json($result);
     }
 
     public function getMarchHistory(Request $request){
