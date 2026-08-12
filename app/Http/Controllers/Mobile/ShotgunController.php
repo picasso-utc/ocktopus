@@ -23,6 +23,7 @@ class ShotgunController extends Controller
 
         try {
             $events = Events::withCount('shotguns')
+                ->where('debut_event', '>=', Carbon::now())
                 ->orderBy('ouverture', 'desc')
                 ->get();
 
