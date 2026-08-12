@@ -243,6 +243,14 @@ Puis ouvre : `http://127.0.0.1:8000`
 
 ---
 
+## 7. Petits Tricks
+
+### Migration sur notre serveur du SiMDE
+
+Comme on a pas la main pour faire `php artisan migrate` sur la machine files.mde.utc, le mieux à faire est de faire `php artisan migrate --pretend` en local pour voir le SQL qui serait rédigé, puis exec le SQL à la main sur PhpMyAdmin
+
+---
+
 ### Le mot de la fin
 
 > Rédigé en **A25** par votre super Resp Info, **Clément Chazelas**.
@@ -251,5 +259,3 @@ Puis ouvre : `http://127.0.0.1:8000`
 > Ne laissont pas ce super projet subir le cycle de renouvellement qu'on voit bien trop souvent dans le paysage associatif de notre belle école.
 > 
 > **Have fun !** 
-
-
