@@ -48,7 +48,7 @@ class SignatureResource extends Resource
                         <li>- Rester sobre pendant la permanence.</li>
                         <li>- Effectuer les tâches ménagères correctement.</li>
                     </ul>
-                    <p>La caution est un chèque de 200€ à l’ordre du BDE UTC Pic’asso. Le non-respect de ces règles peut entraîner l’encaissement de la caution, totale ou partielle selon la gravité.</p>
+                    <p>La caution est un chèque de 200€ à l’ordre du "BDE - PIC\'ASSO". Le non-respect de ces règles peut entraîner l’encaissement de la caution, totale ou partielle selon la gravité.</p>
                 '))
                 ->columnSpan('full'),
 
