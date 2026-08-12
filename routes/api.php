@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BachController;
 use App\Http\Controllers\ExonerationController;
+use App\Http\Controllers\PicStatusController;
 use App\Http\Controllers\Mobile\SignatureCharteController;
 use App\Http\Controllers\TodayConsumptionController;
 use App\Http\Controllers\TransactionController;
@@ -57,6 +58,10 @@ Route::post('/transaction', [TransactionController::class, 'handle']);
 // Bach sends products
 Route::post('/bach/send-products', [ProductController::class, 'receiveFromBach']);
 
+// Etat d'ouverture du Pic, lu/fixe depuis le header de bach une fois connecte
+Route::get('/bach/pic-status', [PicStatusController::class, 'show']);
+Route::post('/bach/pic-status', [PicStatusController::class, 'update']);
+
 Route::prefix('mobile')->group(function () {
 
     // L'app React Native appelle GET /auth/me  =>  /api/mobile/auth/me
@@ -65,6 +70,10 @@ Route::prefix('mobile')->group(function () {
 
     // L'app React Native refresh => POST /auth/refresh  =>  /api/mobile/auth/refresh
     Route::post('/auth/refresh', [AuthController::class, 'refresh'])
+        ->middleware('jwt');
+
+    // Etat d'ouverture du Pic (badge sur la page d'accueil)
+    Route::get('/pic-status', [PicStatusController::class, 'show'])
         ->middleware('jwt');
 
     // Annonces
