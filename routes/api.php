@@ -67,51 +67,22 @@ Route::prefix('mobile')->group(function () {
     Route::post('/auth/refresh', [AuthController::class, 'refresh'])
         ->middleware('jwt');
 
-    // Demande de permanence
-    Route::post('/perms', [PermController::class, 'store'])
-        ->middleware('jwt');
-    Route::get('/perms', [PermController::class, 'index'])
+    // Annonces
+    Route::get('/annonces', [AnnoncesController::class, 'index'])
         ->middleware('jwt');
 
     // Permanences de la semaine en cours
     Route::get('/perms/current-week', [PermController::class, 'currentWeek'])
         ->middleware('jwt');
 
-    // Annonces
-    Route::get('/annonces', [AnnoncesController::class, 'index'])
-        ->middleware('jwt');
-
-    // FAQs
-    Route::get('/faqs', [FaqController::class, 'index'])
-        ->middleware('jwt');
-
-    // Shotgun Events
-    Route::get('/shotgun-events', [ShotgunController::class, 'index'])
-        ->middleware('jwt');
-    Route::post('/shotgun-events/toggle', [ShotgunController::class, 'toggle'])
-        ->middleware('jwt');
-
-    // Jeux Temporaires
-    Route::get('/jeux-temporaires', [JeuxTemporaireController::class, 'index'])
-        ->middleware('jwt');
-
     // Évènements du semestre
     Route::get('/semester-events', [SemesterEventController::class, 'index'])
         ->middleware('jwt');
 
-    // Boite à Idées
-    Route::get('/boite-idees', [BoiteIdeesController::class, 'index'])
-        ->middleware('jwt');
-    Route::post('/boite-idees', [BoiteIdeesController::class, 'store'])
-        ->middleware('jwt');
-
-    Route::prefix('charte')->middleware('jwt')->group(function () {
-        Route::get('/signed', [SignatureCharteController::class, 'hasSigned']);
-        Route::post('/sign', [SignatureCharteController::class, 'sign']);
-    });
-
     // Products
     Route::get('/get-products', [ProductController::class, 'index'])
+        ->middleware('jwt');
+    Route::get('/menu-categories', [ProductController::class, 'getCategories'])
         ->middleware('jwt');
 
     // Elo
@@ -125,4 +96,41 @@ Route::prefix('mobile')->group(function () {
         Route::post('/respond-match-request', [\App\Http\Controllers\Mobile\Elo::class, 'respondMatch']);
         Route::delete('/cancel-match-record', [\App\Http\Controllers\Mobile\Elo::class, 'cancelMatchRecord']);
     });
+
+    // Jeux Temporaires
+    Route::get('/jeux-temporaires', [JeuxTemporaireController::class, 'index'])
+        ->middleware('jwt');
+
+    Route::prefix('charte')->middleware('jwt')->group(function () {
+        Route::get('/signed', [SignatureCharteController::class, 'hasSigned']);
+        Route::post('/sign', [SignatureCharteController::class, 'sign']);
+    });
+
+    // Permanence detail / update
+    Route::get('/perms/{id}', [PermController::class, 'show'])
+        ->middleware('jwt');
+    Route::post('/perms/{id}', [PermController::class, 'update'])
+        ->middleware('jwt');
+
+    // Demande de permanence
+    Route::post('/perms', [PermController::class, 'store'])
+        ->middleware('jwt');
+    Route::get('/perms', [PermController::class, 'index'])
+        ->middleware('jwt');
+
+    // Shotgun Events
+    Route::get('/shotgun-events', [ShotgunController::class, 'index'])
+        ->middleware('jwt');
+    Route::post('/shotgun-events/toggle', [ShotgunController::class, 'toggle'])
+        ->middleware('jwt');
+
+    // Boite à Idées
+    Route::get('/boite-idees', [BoiteIdeesController::class, 'index'])
+        ->middleware('jwt');
+    Route::post('/boite-idees', [BoiteIdeesController::class, 'store'])
+        ->middleware('jwt');
+
+    // FAQs
+    Route::get('/faqs', [FaqController::class, 'index'])
+        ->middleware('jwt');
 });
