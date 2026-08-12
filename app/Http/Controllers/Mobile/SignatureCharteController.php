@@ -75,7 +75,7 @@ class SignatureCharteController extends Controller
                 'signed' => $exists,
                 'semestre' => [
                     'id' => $semestre->id,
-                    'state' => $semestre->state ?? null,
+                    'name' => $semestre->state ?? null,
                     'startOfSemestre' => $semestre->startOfSemestre ?? null,
                     'endOfSemestre' => $semestre->endOfSemestre ?? null,
                     'activated' => $semestre->activated ?? null,
