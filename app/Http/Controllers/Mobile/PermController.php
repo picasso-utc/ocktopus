@@ -188,4 +188,61 @@ class PermController extends Controller
             ], 500);
         }
     }
+
+    public function show(Request $request, $id)
+    {
+        try {
+            $user = $request->get('user');
+            $perm = Perm::where('id', $id)->where('mail_resp', $user['email'])->firstOrFail();
+            return response()->json(['success' => true, 'data' => $perm]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Permanence introuvable.'], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = $request->get('user');
+        $perm = Perm::where('id', $id)->where('mail_resp', $user['email'])->first();
+        if (!$perm) {
+            return response()->json(['success' => false, 'message' => 'Permanence introuvable.'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nom' => 'sometimes|string|max:255',
+            'theme' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'teddy' => 'sometimes|boolean',
+            'repas' => 'sometimes|boolean',
+            'idea_repas' => 'nullable|string|max:255',
+            'nom_resp_2' => 'sometimes|string|max:255',
+            'mail_resp_2' => 'sometimes|email|max:255',
+            'asso' => 'sometimes|boolean',
+            'mail_asso' => 'nullable|email|max:255',
+            'ambiance' => 'sometimes|integer|min:1|max:5',
+            'periode' => 'sometimes|string|max:255',
+            'jour' => 'sometimes|array',
+            'membres' => 'sometimes',
+            'artiste' => 'sometimes|boolean',
+            'remarques' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation error', 'errors' => $validator->errors()], 422);
+        }
+
+        $updateData = $request->except(['image', '_method']);
+        if (isset($updateData['membres']) && is_array($updateData['membres'])) {
+            $updateData['membres'] = implode(' - ', $updateData['membres']);
+        }
+        $perm->update($updateData);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('perms', 'public');
+            $perm->update(['image_path' => $path]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Permanence mise a jour.', 'data' => $perm->fresh()]);
+    }
 }
