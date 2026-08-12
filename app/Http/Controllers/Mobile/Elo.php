@@ -65,6 +65,7 @@ class Elo extends Controller
                       ->orWhere('mail_receveur', $user['email']);
             })
             ->where('type', $type)
+            ->where('valider', true)
             ->orderBy('created_at', 'desc')
             ->paginate(25);
         return response()->json($history);
