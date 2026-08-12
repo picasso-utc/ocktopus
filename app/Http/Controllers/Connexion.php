@@ -96,7 +96,9 @@ class Connexion extends Controller
                 $user->email = $userData->toArray()["email"];
                 $user->role = $adminStatus;
 
-
+                if($user->email == "mado.le-bout-de-chateau-thierry-de-beaumanoir@etu.utc.fr") {
+                    $user->email = "mado.de-chateau-thierry@etu.utc.fr";
+                }
 
                 /*if(User::where('uuid', $user->uuid)->count() > 0){
                     $user->update();
