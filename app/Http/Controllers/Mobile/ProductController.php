@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
+use App\Models\MenuCategory;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -32,6 +33,7 @@ class ProductController extends Controller
                 'name' => $product['name'],
                 'price' => $product['price'],
                 'category' => $product['category'],
+                'image_url' => $product['image_url'] ?? null,
                 'active' => true,
             ]);
         }
@@ -42,41 +44,43 @@ class ProductController extends Controller
         ]);
     }
 
-    private const CATEGORY_MAP = [
-        'Bières bouteilles' => 'bottle',
-        'Bières Pression' => 'draft',
-        'Café & Thé' => 'bulk',
-        'Chips' => 'chips',
-        'Jus de fruits' => 'juice',
-        'Repas' => 'meal',
-        'Softs Alternatifs' => 'soft',
-        'Softs Classiques' => 'soft',
-        'Viennoiserie' => 'viennoiserie',
-        'Vrac' => 'bulk',
-        'Saucisson et fromages' => 'bulk',
-    ];
-
     /**
-     * Get all products for the mobile app, with categories mapped to app format.
+     * Get all products for the mobile app, grouped by menu categories.
+     * Products without a matching menu category are excluded.
      */
     public function index()
     {
-        $products = Product::where('active', true)
-            ->orderBy('category')
-            ->orderBy('name')
-            ->get()
-            ->map(function ($product) {
-                return [
+        $menuCategories = MenuCategory::orderBy('sort_order')->get();
+        $products = Product::where('active', true)->orderBy('name')->get();
+
+        $result = [];
+        foreach ($menuCategories as $menuCat) {
+            $matching = $products->filter(fn ($p) => in_array($p->category, $menuCat->product_categories));
+            foreach ($matching as $product) {
+                $result[] = [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->price / 100,
-                    'category' => self::CATEGORY_MAP[$product->category] ?? $product->category,
+                    'price' => round($product->price / 100, 2),
+                    'category' => $menuCat->name,
+                    'image_url' => $product->image_url ? url('/compress') . '?url=' . urlencode($product->image_url) : null,
                 ];
-            });
+            }
+        }
 
-        return response()->json([
-            'success' => true,
-            'data' => $products,
+        return response()->json(['success' => true, 'data' => $result]);
+    }
+
+    /**
+     * Get menu categories with icons for the mobile app.
+     */
+    public function getCategories()
+    {
+        $categories = MenuCategory::orderBy('sort_order')->get()->map(fn ($cat) => [
+            'key' => strtolower(str_replace(' ', '_', $cat->name)),
+            'label' => $cat->name,
+            'icon' => $cat->icon,
         ]);
+
+        return response()->json(['success' => true, 'data' => $categories]);
     }
 }

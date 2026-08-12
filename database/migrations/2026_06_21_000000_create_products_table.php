@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('price'); // in cents
             $table->string('category');
+            $table->string('image_url')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
