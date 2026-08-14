@@ -75,10 +75,14 @@ class ProductController extends Controller
      */
     public function getCategories()
     {
+        $products = Product::where('active', true)->get();
+
         $categories = MenuCategory::orderBy('sort_order')->get()->map(fn ($cat) => [
             'key' => strtolower(str_replace(' ', '_', $cat->name)),
             'label' => $cat->name,
             'icon' => $cat->icon,
+            'products_count' => $products->filter(fn ($p) => in_array($p->category, $cat->product_categories))->count(),
+            'position' => $cat->sort_order,
         ]);
 
         return response()->json(['success' => true, 'data' => $categories]);
