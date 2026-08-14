@@ -10,6 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class NoteAstreinteOverview extends BaseWidget
 {
+    protected static ?int $sort = 3;
 
     protected static function getStartSemester(): string
     {

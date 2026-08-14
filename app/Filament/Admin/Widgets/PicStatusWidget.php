@@ -7,6 +7,8 @@ use Filament\Widgets\Widget;
 
 class PicStatusWidget extends Widget
 {
+    protected static ?int $sort = 1;
+    
     protected static string $view = 'filament.admin.widgets.pic-status';
 
     protected static bool $isLazy = false;

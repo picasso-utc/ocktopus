@@ -10,6 +10,8 @@ use Carbon\Carbon;
 
 class NextCreneauxOverview extends BaseWidget
 {
+    protected static ?int $sort = 2;
+    
     protected function getStats(): array
     {
         $userId = User::where('uuid', session('user')->uuid)->pluck('id')->first();

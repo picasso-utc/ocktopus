@@ -24,19 +24,15 @@ use Filament\Widgets\TableWidget as BaseWidget;
  */
 class RankingAstreintes extends BaseWidget
 {
-
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 4;
 
     protected int | string | array $columnSpan = 'full';
-
-
-
 
     public function table(Table $table): Table
     {
         $semestreActif = Semestre::where('activated', true)->first();
         return $table
-            ->emptyStateHeading('Pas de semestre actif/ Pas de perms validé')
+            ->emptyStateHeading('Pas de semestre actif / Pas de perms validé')
             ->query(PermResource::getEloquentQuery()->where('validated',true)->where('semestre_id',$semestreActif?->id)
             )
             ->columns([
