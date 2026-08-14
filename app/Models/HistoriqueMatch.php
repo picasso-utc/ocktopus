@@ -18,6 +18,13 @@ class HistoriqueMatch extends Model
         'gagner',
         'valider',
         'score_envoyeur',
-        'score_receveur'
+        'score_receveur',
+        'elo_delta_envoyeur',
+        'elo_delta_receveur',
+    ];
+
+    protected $casts = [
+        'valider' => 'boolean',
+        'gagner' => 'boolean',
     ];
 }

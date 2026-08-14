@@ -17,7 +17,13 @@ class Elo extends Controller
         $rankings = ClassementElo::where('type', $type)
             ->orderBy('elo_score', 'desc')
             ->take(10)
-            ->get();
+            ->get()
+            ->map(function ($ranking) use ($type) {
+                $result = $ranking->toArray();
+                $result['elo_delta_week'] = $this->eloDeltaWeek($ranking->mail_user, $type);
+
+                return $result;
+            });
 
         return response()->json($rankings);
     }
@@ -53,6 +59,7 @@ class Elo extends Controller
 
         $result = $elo->toArray();
         $result['rank'] = $rank;
+        $result['elo_delta_week'] = $this->eloDeltaWeek($user['email'], $type);
 
         return response()->json($result);
     }
@@ -73,14 +80,20 @@ class Elo extends Controller
 
     public function createMatchRecord(Request $request){
         $user = $request->get('user');
+        $type = $request->input('type');
 
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'mail_receveur' => 'required|email',
             'type' => 'required|in:babyfoot,billard',
-            'gagner' => 'required|boolean',
-            'score_envoyeur' => 'nullable|integer',
-            'score_receveur' => 'nullable|integer',
-        ]);
+        ];
+        if ($type === 'babyfoot') {
+            $rules['score_envoyeur'] = 'required|integer|min:0';
+            $rules['score_receveur'] = 'required|integer|min:0|different:score_envoyeur';
+        } else {
+            $rules['gagner'] = 'required|boolean';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -97,29 +110,20 @@ class Elo extends Controller
             ], 401);
         }
 
-        $currentRequests = HistoriqueMatch::whereOr('mail_envoyeur', $user['email'])
-            ->whereOr('mail_receveur', $user['email'])
-            ->whereOr('mail_envoyeur', $request->input('mail_receveur'))
-            ->whereOr('mail_receveur', $request->input('mail_receveur'))
-            ->where('type', $request->input('type'))
-            ->where('valider', false)
-            ->count();
-        if ($currentRequests >= 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une demande de match est déjà en attente pour un de ces utilisateurs'
-            ], 409);
-        }
+        $isBabyfoot = $type === 'babyfoot';
+        $gagner = $isBabyfoot
+            ? $request->input('score_envoyeur') > $request->input('score_receveur')
+            : $request->boolean('gagner');
 
         $match = HistoriqueMatch::create([
             'mail_envoyeur' => $user['email'],
             'nom_envoyeur' => mailToName($user['email']),
             'mail_receveur' => $request->input('mail_receveur'),
             'nom_receveur' => mailToName($request->input('mail_receveur')),
-            'type' => $request->input('type'),
-            'gagner' => $request->input('gagner'),
-            'score_envoyeur' => $request->input('score_envoyeur'),
-            'score_receveur' => $request->input('score_receveur')
+            'type' => $type,
+            'gagner' => $gagner,
+            'score_envoyeur' => $isBabyfoot ? $request->input('score_envoyeur') : null,
+            'score_receveur' => $isBabyfoot ? $request->input('score_receveur') : null,
         ]);
 
         return response()->json([
@@ -146,7 +150,7 @@ class Elo extends Controller
                 'message' => 'Accès refusé pour ce match'
             ], 403);
         }
-        if ($match->valider === 1) {
+        if ($match->valider) {
             return response()->json([
                 'success' => false,
                 'message' => 'Ce match à déjà été accepté, il ne peut plus être annulé'
@@ -169,12 +173,31 @@ class Elo extends Controller
             ->where('type', $type)
             ->where('valider', false)
             ->orderBy('created_at', 'asc')
-            ->first();
+            ->get();
         return response()->json($requests);
     }
 
     private function probability($ratingA, $ratingB){
         return 1.0/(1+pow(10,($ratingA - $ratingB)/400));
+    }
+
+    private function eloDeltaWeek(string $email, string $type): int
+    {
+        $since = now()->subDays(7);
+
+        $asEnvoyeur = HistoriqueMatch::where('mail_envoyeur', $email)
+            ->where('type', $type)
+            ->where('valider', true)
+            ->where('updated_at', '>=', $since)
+            ->sum('elo_delta_envoyeur');
+
+        $asReceveur = HistoriqueMatch::where('mail_receveur', $email)
+            ->where('type', $type)
+            ->where('valider', true)
+            ->where('updated_at', '>=', $since)
+            ->sum('elo_delta_receveur');
+
+        return (int) ($asEnvoyeur + $asReceveur);
     }
 
     public function respondMatch(Request $request){
@@ -189,29 +212,17 @@ class Elo extends Controller
             ], 404);
         }
 
-        $olderMatches = HistoriqueMatch::where('mail_receveur', $user['email'])
-            ->where('type', $match->type)
-            ->where('valider', false)
-            ->where('created_at', '<', $match->created_at)
-            ->count();
-        if ($olderMatches > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vous devez d\'abord répondre aux anciens matchs en attente'
-            ], 409);
-        }
-
         if($accepter){
             $match->valider = $accepter;
             $match->save();
 
             $eloReceveur = ClassementElo::firstOrCreate(
                 ['mail_user' => $match->mail_receveur, 'type' => $match->type],
-                ['elo_score' => 1000]
+                ['elo_score' => 1000, 'nom_user' => mailToName($match->mail_receveur)]
             );
             $eloEnvoyeur = ClassementElo::firstOrCreate(
                 ['mail_user' => $match->mail_envoyeur, 'type' => $match->type],
-                ['elo_score' => 1000]
+                ['elo_score' => 1000, 'nom_user' => mailToName($match->mail_envoyeur)]
             );
 
             $K = 32;
@@ -226,6 +237,11 @@ class Elo extends Controller
                 $newEloEnvoyeur = $eloEnvoyeur->elo_score + $K * (0 - $probabilityEnvoyeur);
                 $newEloReceveur = $eloReceveur->elo_score + $K * (1 - $probabilityReceveur);
             }
+
+            $match->elo_delta_envoyeur = round($newEloEnvoyeur) - $eloEnvoyeur->elo_score;
+            $match->elo_delta_receveur = round($newEloReceveur) - $eloReceveur->elo_score;
+            $match->save();
+
             $eloEnvoyeur->elo_score = round($newEloEnvoyeur);
             $eloReceveur->elo_score = round($newEloReceveur);
             $eloEnvoyeur->save();

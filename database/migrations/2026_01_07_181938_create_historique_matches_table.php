@@ -22,6 +22,8 @@ return new class extends Migration
             $table->boolean('valider')->default(false);
             $table->integer('score_envoyeur')->nullable();
             $table->integer('score_receveur')->nullable();
+            $table->integer('elo_delta_envoyeur')->nullable();
+            $table->integer('elo_delta_receveur')->nullable();
             $table->timestamps();
         });
     }
