@@ -173,7 +173,8 @@ class PermController extends Controller
     {
         try {
             $user = $request->get('user');
-            $perms = Perm::where('mail_resp', $user['email'])
+            $perms = Perm::with(['semestre', 'creneaux'])
+                ->where('mail_resp', $user['email'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -193,7 +194,10 @@ class PermController extends Controller
     {
         try {
             $user = $request->get('user');
-            $perm = Perm::where('id', $id)->where('mail_resp', $user['email'])->firstOrFail();
+            $perm = Perm::with(['semestre', 'creneaux'])
+                ->where('id', $id)
+                ->where('mail_resp', $user['email'])
+                ->firstOrFail();
             return response()->json(['success' => true, 'data' => $perm]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Permanence introuvable.'], 404);
