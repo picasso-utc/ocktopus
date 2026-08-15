@@ -175,6 +175,7 @@ class PermController extends Controller
             $user = $request->get('user');
             $perms = Perm::with(['semestre', 'creneaux'])
                 ->where('mail_resp', $user['email'])
+                ->orWhere('mail_resp_2', $user['email'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
